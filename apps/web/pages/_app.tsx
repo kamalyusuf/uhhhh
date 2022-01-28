@@ -15,6 +15,8 @@ import { useState } from "react";
 import { queryClient } from "../lib/query-client";
 import { QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import { NotAuthenticated } from "../modules/auth/NotAuthenticated";
+import { Authenticate } from "../modules/auth/Authenticate";
 
 if (!process.env.NEXT_PUBLIC_API_URL) {
   throw new Error("where API_URL at?");
@@ -43,7 +45,17 @@ const MyApp = ({ Component: C, pageProps }: AppProps) => {
         <SocketProvider connect={Component.ws}>
           <NormalizeCSS />
           <GlobalStyles />
-          <Component {...pageProps} />
+          {Component.authenticate === "yes" ? (
+            <Authenticate>
+              <Component {...pageProps} />
+            </Authenticate>
+          ) : Component.authenticate === "not" ? (
+            <NotAuthenticated>
+              <Component {...pageProps} />
+            </NotAuthenticated>
+          ) : (
+            <Component {...pageProps} />
+          )}
           <ToastContainer
             position="top-center"
             autoClose={3000}

@@ -6,12 +6,17 @@ import { Heading } from "../../components/Heading";
 import { MdOutlineAdd } from "react-icons/md";
 import { CreateRoomModal } from "./CreateRoomModal";
 import { Rooms } from "./Rooms";
-import { withAuth } from "../../hocs/auth";
+import { PageComponent } from "../../types";
 
-export const RoomsPage = withAuth(() => {
+export const RoomsPage: PageComponent = () => {
   const [opened, setOpened] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) return null;
 
   return (
     <Layout>
@@ -43,6 +48,7 @@ export const RoomsPage = withAuth(() => {
       )}
     </Layout>
   );
-});
+};
 
+RoomsPage.authenticate = "yes";
 RoomsPage.ws = true;

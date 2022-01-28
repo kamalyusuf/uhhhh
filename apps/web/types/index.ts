@@ -12,6 +12,7 @@ export type Color =
   | "tertiary";
 
 export type PageComponent<T = {}> = NextPage<T> & {
+  authenticate?: "yes" | "not";
   ws?: boolean;
 };
 

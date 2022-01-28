@@ -12,8 +12,9 @@ import { useMeStore } from "../store/me";
 import { toast } from "react-toastify";
 import { Layout } from "../components/Layout";
 import { withNoAuth } from "../hocs/auth";
+import { PageComponent } from "../types";
 
-const HomePage = withNoAuth(() => {
+const HomePage: PageComponent = () => {
   const [name, setName] = useState("");
   const [remember, setRemember] = useState(false);
   const { load } = useMeStore();
@@ -62,6 +63,8 @@ const HomePage = withNoAuth(() => {
       </Box>
     </Layout>
   );
-});
+};
+
+HomePage.authenticate = "not";
 
 export default HomePage;
