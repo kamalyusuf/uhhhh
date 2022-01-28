@@ -1,4 +1,14 @@
-import { QueryClient } from "react-query";
+import { QueryClient, QueryFunction } from "react-query";
+import { api } from "./api";
+
+export const defaultQueryFn: QueryFunction = async ({ queryKey }) => {
+  try {
+    const { data } = await api.get(`${queryKey}`);
+    return data;
+  } catch (e) {
+    throw e;
+  }
+};
 
 export const queryClient = () => {
   return new QueryClient({
@@ -6,6 +16,7 @@ export const queryClient = () => {
       queries: {
         retry: false,
         staleTime: 60 * 1000 * 5,
+        queryFn: defaultQueryFn,
         refetchOnWindowFocus: false,
         refetchOnReconnect: false
       },

@@ -29,30 +29,40 @@ export const NavBar = () => {
           </Link>
 
           {me && (
-            <Group align="center" spacing={100}>
-              <Link href="/rooms">
-                <Heading
-                  title="rooms"
-                  order={3}
-                  sx={(theme) => ({
-                    cursor: "pointer",
-                    color: `${theme.colors.indigo[6]} !important`,
-                    "&:hover": {
-                      textDecoration: "underline"
-                    }
-                  })}
-                />
-              </Link>
-
-              <Button
-                rightIcon={<HiUser />}
-                size="sm"
-                onClick={() => router.push("/me")}
-              >
-                {me.display_name}
-              </Button>
-            </Group>
+            <Button
+              rightIcon={<HiUser />}
+              size="sm"
+              onClick={() => router.push("/me")}
+            >
+              {me.display_name}
+            </Button>
           )}
+
+          {/*{me && (*/}
+          {/*  <Group align="center" spacing={100}>*/}
+          {/*    <Link href="/rooms">*/}
+          {/*      <Heading*/}
+          {/*        title="rooms"*/}
+          {/*        order={3}*/}
+          {/*        sx={(theme) => ({*/}
+          {/*          cursor: "pointer",*/}
+          {/*          color: `${theme.colors.indigo[6]} !important`,*/}
+          {/*          "&:hover": {*/}
+          {/*            textDecoration: "underline"*/}
+          {/*          }*/}
+          {/*        })}*/}
+          {/*      />*/}
+          {/*    </Link>*/}
+
+          {/*    <Button*/}
+          {/*      rightIcon={<HiUser />}*/}
+          {/*      size="sm"*/}
+          {/*      onClick={() => router.push("/me")}*/}
+          {/*    >*/}
+          {/*      {me.display_name}*/}
+          {/*    </Button>*/}
+          {/*  </Group>*/}
+          {/*)}*/}
         </Group>
       </Container>
     </Box>

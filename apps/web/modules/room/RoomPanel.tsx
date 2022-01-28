@@ -5,8 +5,13 @@ import { c } from "../../lib/constants";
 import { UserBadge } from "../user/UserBadge";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
+import { Room } from "types";
 
-export const RoomPanel = () => {
+interface Props {
+  room: Room;
+}
+
+export const RoomPanel = ({ room }: Props) => {
   const router = useRouter();
   const [rands, setRands] = useState<string[]>([]);
 
@@ -22,13 +27,9 @@ export const RoomPanel = () => {
   return (
     <Group style={{ flex: 1 }}>
       <Group direction="column" spacing={0}>
-        <Heading title="room name" order={3} />
+        <Heading title={room.name} order={3} />
         <Text color="indigo" size="xs">
-          room description room description room description room description
-          room description room description room description room description
-          room description room description room description room description
-          room description room description room description room description
-          room description room description
+          {room.description}
         </Text>
       </Group>
 
