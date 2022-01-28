@@ -20,15 +20,12 @@ interface Props {
   connect: boolean;
 }
 
-export const SocketProvider = ({
-  children,
-  connect
-}: PropsWithChildren<Props>) => {
+export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
   const [socket, setSocket] = useState<V>(null);
   const { me } = useMeStore();
 
   useEffect(() => {
-    if (!socket && !!me && connect) {
+    if (!socket && !!me) {
       const s = io(process.env.NEXT_PUBLIC_API_URL, {
         rememberUpgrade: true,
         path: "/ws"
@@ -36,7 +33,7 @@ export const SocketProvider = ({
 
       setSocket(s);
     }
-  }, [socket, me, connect]);
+  }, [socket, me]);
 
   useEffect(() => {
     if (!socket) {

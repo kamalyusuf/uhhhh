@@ -15,7 +15,16 @@ const initial = (): User | null => {
   const who = typeof localStorage !== "undefined" && localStorage.getItem("me");
 
   if (remember === "true" && who) {
-    const me = JSON.parse(who);
+    let me;
+
+    try {
+      me = JSON.parse(who);
+    } catch (e) {}
+
+    if (!me) {
+      return null;
+    }
+
     const { success } = schema.safeParse(me);
     if (success) {
       return me as User;
@@ -39,6 +48,20 @@ const store = combine(
         if (remember) {
           localStorage.setItem("remember me", JSON.stringify(true));
           localStorage.setItem("me", JSON.stringify(me));
+        }
+
+        return { me };
+      }),
+    update: (display_name: string, remember: boolean) =>
+      set((state) => {
+        const me = { _id: state.me._id, display_name };
+
+        localStorage.setItem("remember me", JSON.stringify(remember));
+
+        if (remember) {
+          localStorage.setItem("me", JSON.stringify(me));
+        } else {
+          localStorage.removeItem("me");
         }
 
         return { me };

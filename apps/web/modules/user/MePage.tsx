@@ -1,25 +1,36 @@
-import React, { useState } from "react";
 import {
-  Button,
-  Group,
-  Paper,
-  TextInput,
   Box,
   Center,
-  Checkbox
+  Paper,
+  TextInput,
+  Checkbox,
+  Button,
+  Group
 } from "@mantine/core";
-import { useMeStore } from "../store/me";
+import { Layout } from "../../components/Layout";
+import { PageComponent } from "../../types";
 import { toast } from "react-toastify";
-import { Layout } from "../components/Layout";
-import { PageComponent } from "../types";
+import React, { useState, useEffect } from "react";
+import { useMeStore } from "../../store/me";
 
-const HomePage: PageComponent = () => {
-  const [name, setName] = useState("");
-  const [remember, setRemember] = useState(false);
-  const { load } = useMeStore();
+export const MePage: PageComponent = () => {
+  const { me, update } = useMeStore();
+  const [name, setName] = useState(me.display_name);
+  const [remember, setRemember] = useState(
+    localStorage.getItem("remember me") === "true"
+  );
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
-    <Layout spacing={50}>
+    <Layout>
       <Box>
         <Center>
           <Paper
@@ -51,10 +62,11 @@ const HomePage: PageComponent = () => {
                     return toast.warn("name should be at least 3 characters");
                   }
 
-                  load(name, remember);
+                  update(name, remember);
+                  toast.success("updated");
                 }}
               >
-                submit
+                update
               </Button>
             </Group>
           </Paper>
@@ -64,6 +76,4 @@ const HomePage: PageComponent = () => {
   );
 };
 
-HomePage.authenticate = "not";
-
-export default HomePage;
+MePage.authenticate = "yes";
