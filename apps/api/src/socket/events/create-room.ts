@@ -3,16 +3,17 @@ import { Event } from "../types";
 
 const handler: Event<"create room"> = {
   on: "create room",
-  invoke: async ({ payload, cb, socket }) => {
-    try {
-      const room = await roomService.create(payload);
-      cb({ room: room.toJSON() });
-    } catch (e) {
-      socket.emit("error", {
-        event: "create room",
-        message: (e as any).message
-      });
-    }
+  invoke: async ({ payload, cb }) => {
+    const room = await roomService.create(payload);
+    cb({
+      room: {
+        _id: room._id,
+        name: room.name,
+        description: room.description,
+        created_at: room.created_at.toISOString(),
+        updated_at: room.updated_at.toISOString()
+      }
+    });
   }
 };
 

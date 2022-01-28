@@ -27,8 +27,6 @@ export interface ServerToClientEvents<RtpCapabilities, OutgoingTransport> {
   rooms: (t: { rooms: Room[] }) => void;
 
   "create room": (t: { room: Room }) => void;
-
-  room: (t: { room: Room }) => void;
 }
 
 export interface ClientToServerEvents<
@@ -89,8 +87,6 @@ export interface ClientToServerEvents<
     t: { name: string; description: string },
     cb: Cb<{ room: Room }>
   ) => void;
-
-  room: (t: { _id: string }, cb: Cb<{ room: Room }>) => void;
 }
 
 export interface InterServerEvents {

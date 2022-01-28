@@ -5,7 +5,8 @@ import { Server as SocketServer } from "socket.io";
 import { ServerEvent, TypedIO, Event } from "./types";
 import fs from "fs";
 import path from "path";
-import { SocketError } from "../lib/SocketError";
+import { SocketError } from "../lib/socket-error";
+import { Request } from "express";
 
 class SocketIO {
   private _io?: TypedIO;
@@ -72,7 +73,8 @@ class SocketIO {
               socket,
               payload: data,
               cb,
-              event: event.on
+              event: event.on,
+              req: socket.request as Request
             });
 
             if (action) {

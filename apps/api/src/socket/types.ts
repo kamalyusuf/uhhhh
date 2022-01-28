@@ -12,6 +12,7 @@ import {
   SocketData
 } from "types";
 import { Socket, Server as SocketServer } from "socket.io";
+import { Request } from "express";
 
 interface OutgoingTransport {
   id: WebRtcTransport["id"];
@@ -74,6 +75,7 @@ export interface Event<K extends ServerEvent> {
     payload: Parameters<ClientToServerEvents[K]>[0];
     cb: Parameters<ClientToServerEvents[K]>[1];
     event: K;
+    req: Request;
   }) => Promise<Action<K>> | void | Promise<void>;
   // invoke: (
   //   payload: Parameters<ClientToServerEvents[K]>

@@ -2,8 +2,7 @@ import { Event } from "../types";
 
 const handler: Event<"create transport"> = {
   on: "create transport",
-
-  invoke: async ({ io, socket, payload }) => {
+  invoke: async ({ socket }) => {
     return {
       emit: "create transport",
       to: [socket.id],
