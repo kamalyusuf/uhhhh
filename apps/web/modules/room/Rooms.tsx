@@ -1,5 +1,5 @@
 import { useSocketQuery } from "../../hooks/useSocketQuery";
-import { Group, Center, Loader } from "@mantine/core";
+import { Group, Center, Loader, ScrollArea } from "@mantine/core";
 import { RoomCard } from "./RoomCard";
 import { ErrorAlert } from "../../components/ErrorAlert";
 
@@ -22,10 +22,12 @@ export const Rooms = () => {
   }
 
   return (
-    <Group direction="column" grow>
-      {data?.rooms.map((room) => (
-        <RoomCard key={room._id} room={room} />
-      ))}
-    </Group>
+    <ScrollArea>
+      <Group direction="column" grow style={{ paddingBottom: 20 }}>
+        {data?.rooms.map((room) => (
+          <RoomCard key={room._id} room={room} />
+        ))}
+      </Group>
+    </ScrollArea>
   );
 };
