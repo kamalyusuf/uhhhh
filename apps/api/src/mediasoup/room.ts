@@ -1,84 +1,157 @@
 import { Peer } from "./peer";
-import { Router, RtpCapabilities } from "mediasoup/node/lib/types";
+import { Router, RtpCapabilities, Producer } from "mediasoup/node/lib/types";
 import { EventEmitter } from "events";
 import { config } from "./config";
 import { workers } from "./workers";
-import { RoomDoc } from "../modules/rooms/room.model";
 import { NotFoundError } from "@kamalyb/errors";
-
-declare global {
-  var ms: MediasoupRoom;
-}
+import { TypedIO } from "../socket/types";
+import rtpCapabilities from "src/socket/events/rtp-capabilities";
 
 export class MediasoupRoom extends EventEmitter {
   static rooms: Map<string, MediasoupRoom> = new Map();
 
   public id: string;
-  private peers: Map<string, Peer>;
-  private router: Router;
+  public peers: Map<string, Peer>;
+  public router: Router;
 
-  static async create({ id, db_room }: { id: string; db_room: RoomDoc }) {
-    const router = await workers.next().createRouter({
-      mediaCodecs: config.mediasoup.router.media_codecs
-    });
-
-    const room = new MediasoupRoom({ id, router, db_room });
-    this.rooms.set(room.id, room);
-    return room;
-  }
-
-  static find() {
-    return this.rooms;
-  }
-
-  private constructor({
-    id,
-    router,
-    db_room
-  }: {
-    id: string;
-    router: Router;
-    db_room: RoomDoc;
-  }) {
+  private constructor({ id, router }: { id: string; router: Router }) {
     super();
     this.setMaxListeners(Infinity);
 
     this.id = id;
     this.router = router;
 
-    this.peers = new Map();
+    this.peers = new Map<string, Peer>();
+  }
+
+  static async create({ id }: { id: string }) {
+    const router = await workers.next().createRouter({
+      mediaCodecs: config.mediasoup.router.media_codecs
+    });
+
+    const room = new MediasoupRoom({ id, router });
+    this.rooms.set(room.id, room);
+    return room;
+  }
+
+  static findById(room_id: string) {
+    const room = this.rooms.get(room_id);
+    if (!room) {
+      throw new NotFoundError("no mediasoup room found");
+    }
+
+    return room;
+  }
+
+  static async findOrCreate(room_id: string): Promise<MediasoupRoom> {
+    const room = this.rooms.get(room_id);
+    if (room) {
+      return room;
+    }
+
+    return this.create({ id: room_id });
   }
 
   get rtpCapabilities(): RtpCapabilities {
     return this.router.rtpCapabilities;
   }
 
-  addPeer({
-    id,
-    name,
-    rtpCapabilities
-  }: {
-    id: string;
-    name: string;
-    rtpCapabilities: RtpCapabilities;
-  }) {
-    if (this.peers.has(id)) {
-      throw new Error(`peer with '${id}' already exists`);
+  join(peer: Peer) {
+    if (this.peers.has(peer.user._id)) {
+      throw new Error("peer already joined");
     }
 
-    const broadcaster = new Peer({ id, name, rtpCapabilities });
-
-    this.peers.set(broadcaster.id, broadcaster);
-
-    // TODO: notify the new broadcaster to all peers in the room
+    this.peers.set(peer.user._id, peer);
   }
 
-  static findById(id: string) {
-    const room = this.rooms.get(id);
-    if (!room) {
-      throw new NotFoundError("no room found");
+  users() {
+    return Array.from(this.peers.values()).map((peer) => peer.user);
+  }
+
+  _peers() {
+    return Array.from(this.peers.values());
+  }
+
+  hasPeer(id: string) {
+    return this.peers.has(id);
+  }
+
+  async createConsumer({
+    io,
+    consumer_peer,
+    producer_peer,
+    producer
+  }: {
+    io: TypedIO;
+    consumer_peer: Peer;
+    producer_peer: Peer;
+    producer: Producer;
+  }) {
+    if (
+      !consumer_peer.rtpCapabilities ||
+      !this.router.canConsume({
+        producerId: producer.id,
+        rtpCapabilities: consumer_peer.rtpCapabilities
+      })
+    ) {
+      return;
     }
 
-    return room;
+    const transports = Array.from(consumer_peer.transports.values());
+    const transport = transports.find((t) => t.appData.direction === "receive");
+    if (!transport) {
+      return;
+    }
+
+    const consumer = await transport.consume({
+      producerId: producer.id,
+      rtpCapabilities: consumer_peer.rtpCapabilities,
+      paused: true
+    });
+
+    consumer_peer.consumers.set(consumer.id, consumer);
+
+    consumer.on("transportclose", () => {
+      consumer_peer.consumers.delete(consumer.id);
+    });
+
+    consumer.on("producerclose", () => {
+      consumer_peer.consumers.delete(consumer.id);
+      io.to(consumer_peer.user._id).emit("consumer closed", {
+        consumer_id: consumer.id
+      });
+    });
+
+    consumer.on("producerpause", () => {
+      io.to(consumer_peer.user._id).emit("consumer paused", {
+        consumer_id: consumer.id
+      });
+    });
+
+    consumer.on("producerresume", () => {
+      io.to(consumer_peer.user._id).emit("consumer resumed", {
+        consumer_id: consumer.id
+      });
+    });
+
+    consumer.on("score", (score) => {
+      io.to(consumer_peer.user._id).emit("consumer score", {
+        consumer_id: consumer.id,
+        score
+      });
+    });
+
+    io.to(consumer_peer.user._id).emit("new consumer", {
+      peer_id: producer_peer.user._id,
+      producer_id: producer.id,
+      id: consumer.id,
+      kind: consumer.kind,
+      rtp_parameters: consumer.rtpParameters,
+      type: consumer.type,
+      app_data: producer.appData,
+      producer_paused: consumer.producerPaused
+    });
+
+    await consumer.resume();
   }
 }

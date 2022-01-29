@@ -32,7 +32,8 @@
     "socket.io": "^4.4.1",
     "ts-mongoose": "^0.0.24",
     "types": "*",
-    "winston": "^3.4.0"
+    "winston": "^3.4.0",
+    "zod": "^3.11.6"
   },
   "devDependencies": {
     "@types/cors": "^2.8.10",

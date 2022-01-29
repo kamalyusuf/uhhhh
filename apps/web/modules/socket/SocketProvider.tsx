@@ -30,7 +30,10 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
         rememberUpgrade: true,
         path: "/ws",
         autoConnect: true,
-        reconnectionAttempts: 5
+        reconnectionAttempts: 5,
+        query: {
+          user: JSON.stringify(me)
+        }
       });
 
       setSocket(s);
@@ -43,6 +46,14 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
     }
 
     socket.on("connect", () => toast.info(`socket ${socket.id} connected`));
+
+    socket.on("connect_error", (error) => {
+      toast.error(error.message);
+      console.log({
+        connect_error: error,
+        message: error.message
+      });
+    });
 
     return () => {
       socket.removeAllListeners();

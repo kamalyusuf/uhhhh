@@ -1,15 +1,13 @@
 import { Event } from "../types";
+import { MediasoupRoom } from "../../mediasoup/room";
 
 const handler: Event<"rtp capabilities"> = {
   on: "rtp capabilities",
-  invoke: async ({ cb }) => {
+  invoke: async ({ payload, cb }) => {
+    const room = await MediasoupRoom.findOrCreate(payload.room_id);
     cb({
-      rtp_capabilities: {
-        as: "uchiha madara",
-        when: Date.now(),
-        why: "am i getting this response"
-      }
-    } as any);
+      rtp_capabilities: room.rtpCapabilities
+    });
   }
 };
 

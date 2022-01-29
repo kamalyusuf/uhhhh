@@ -1,31 +1,31 @@
-import { Socket } from "socket.io";
 import {
   Producer,
   Consumer,
   Transport,
   RtpCapabilities
 } from "mediasoup/node/lib/types";
+import { User } from "types";
 
 export class Peer {
-  public id: string;
-  public name: string;
-  public rtpCapabilities: RtpCapabilities;
+  static peers: Map<string, Peer> = new Map();
+
+  // note to self: we're receiving the user from the client.
+  // and peer.user because user corresponds with the client socket
+  public user: User;
+  public rtpCapabilities?: RtpCapabilities;
   public producers: Map<string, Producer>;
   public consumers: Map<string, Consumer>;
   public transports: Map<string, Transport>;
 
-  constructor({
-    id,
-    name,
-    rtpCapabilities
-  }: {
-    id: string;
-    name: string;
-    rtpCapabilities: RtpCapabilities;
-  }) {
-    this.id = id;
-    this.name = name;
-    this.rtpCapabilities = rtpCapabilities;
+  static create(t: { user: User }) {
+    const peer = new Peer(t);
+    this.peers.set(peer.user._id, peer);
+
+    return peer;
+  }
+
+  private constructor({ user }: { user: User }) {
+    this.user = user;
 
     this.producers = new Map();
     this.consumers = new Map();

@@ -3,7 +3,15 @@ import { User } from "./user";
 
 type Cb<T> = (t: T) => void;
 
-export interface ServerToClientEvents<RtpCapabilities, OutgoingTransport> {
+export type Direction = "send" | "receive";
+
+export interface ServerToClientEvents<
+  RtpCapabilities,
+  OutgoingTransport,
+  MediaKind,
+  RtpParameters,
+  ConsumerType
+> {
   "rtp capabilities": (t: { rtp_capabilities: RtpCapabilities }) => void;
 
   "create transport": (t: { transport: OutgoingTransport }) => void;
@@ -12,14 +20,20 @@ export interface ServerToClientEvents<RtpCapabilities, OutgoingTransport> {
 
   produce: (t: { id: string }) => void;
 
-  join: (t: { users: User[] }) => void;
+  join: (t: { peers: User[] }) => void;
 
   test: (t: any) => void;
 
   error: (t: {
     message: string;
     event: Exclude<
-      keyof ServerToClientEvents<RtpCapabilities, OutgoingTransport>,
+      keyof ServerToClientEvents<
+        RtpCapabilities,
+        OutgoingTransport,
+        MediaKind,
+        RtpParameters,
+        ConsumerType
+      >,
       "error"
     >;
   }) => void;
@@ -33,6 +47,29 @@ export interface ServerToClientEvents<RtpCapabilities, OutgoingTransport> {
   "pause producer": () => void;
 
   "resume producer": () => void;
+
+  "new peer": (t: { peer: User }) => void;
+
+  "new consumer": (t: {
+    peer_id: string;
+    producer_id: string;
+    id: string;
+    kind: MediaKind;
+    rtp_parameters: RtpParameters;
+    type: ConsumerType;
+    producer_paused: boolean;
+    app_data: Record<string, string>;
+  }) => void;
+
+  "consumer closed": (t: { consumer_id: string }) => void;
+
+  "consumer paused": (t: { consumer_id: string }) => void;
+
+  "consumer resumed": (t: { consumer_id: string }) => void;
+
+  "consumer score": (t: { consumer_id: string; score: any }) => void;
+
+  "consumer layers changed": (t: any) => void;
 }
 
 export interface ClientToServerEvents<
@@ -52,6 +89,7 @@ export interface ClientToServerEvents<
       room_id: string;
       producing: boolean;
       consuming: boolean;
+      direction: Direction;
     },
     cb: Cb<{ transport_options: TransportOptions }>
   ) => void;
@@ -71,6 +109,7 @@ export interface ClientToServerEvents<
       transport_id: string;
       kind: MediaKind;
       rtp_parameters: RtpParameters;
+      app_data: Record<string, string>;
     },
     cb: Cb<{ id: string }>
   ) => void;
@@ -78,10 +117,9 @@ export interface ClientToServerEvents<
   join: (
     t: {
       room_id: string;
-      user: User;
       rtp_capabilities: RtpCapabilities; // only if we want to consume
     },
-    cb: Cb<{ users: User[] }>
+    cb: Cb<{ peers: User[] }>
   ) => void;
 
   test: (t: any, cb: Cb<any>) => void;
@@ -100,12 +138,12 @@ export interface ClientToServerEvents<
 
   "pause producer": (
     t: { room_id: string; producer_id: string },
-    cb: Cb<void>
+    cb: Cb<undefined>
   ) => void;
 
   "resume producer": (
     t: { room_id: string; producer_id: string },
-    cb: Cb<void>
+    cb: Cb<undefined>
   ) => void;
 }
 

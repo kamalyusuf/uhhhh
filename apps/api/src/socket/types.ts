@@ -3,7 +3,8 @@ import {
   MediaKind,
   RtpCapabilities,
   RtpParameters,
-  WebRtcTransport
+  WebRtcTransport,
+  ConsumerType
 } from "mediasoup/node/lib/types";
 import {
   ServerToClientEvents as TServerToClientEvents,
@@ -13,6 +14,7 @@ import {
 } from "types";
 import { Socket, Server as SocketServer } from "socket.io";
 import { Request } from "express";
+import { Peer } from "../mediasoup/peer";
 
 interface OutgoingTransport {
   id: WebRtcTransport["id"];
@@ -24,7 +26,10 @@ interface OutgoingTransport {
 
 export type ServerToClientEvents = TServerToClientEvents<
   RtpCapabilities,
-  OutgoingTransport
+  OutgoingTransport,
+  MediaKind,
+  RtpParameters,
+  ConsumerType
 >;
 
 export type ClientToServerEvents = TClientToServerEvents<
@@ -76,6 +81,7 @@ export interface Event<K extends ServerEvent> {
     cb: Parameters<ClientToServerEvents[K]>[1];
     event: K;
     req: Request;
+    peer: Peer;
   }) => Promise<Action<K>> | void | Promise<void>;
   // invoke: (
   //   payload: Parameters<ClientToServerEvents[K]>

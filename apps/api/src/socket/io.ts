@@ -7,6 +7,15 @@ import fs from "fs";
 import path from "path";
 import { SocketError } from "../lib/socket-error";
 import { Request } from "express";
+import { NotAuthorizedError } from "@kamalyb/errors";
+import { Peer } from "../mediasoup/peer";
+import { z } from "zod";
+import { User } from "types";
+
+const schema = z.object({
+  _id: z.string(),
+  display_name: z.string()
+});
 
 class SocketIO {
   private _io?: TypedIO;
@@ -40,12 +49,42 @@ class SocketIO {
       this.events.set(handler.on, handler);
     }
 
+    this._io.use((socket, next) => {
+      const raw = socket.handshake.query.user;
+      if (!raw || typeof raw !== "string") {
+        return next(new NotAuthorizedError());
+      }
+
+      let parsed;
+
+      try {
+        parsed = JSON.parse(raw);
+      } catch (e) {}
+
+      if (!parsed) {
+        return next(new NotAuthorizedError());
+      }
+
+      const { success } = schema.safeParse(parsed);
+      if (!success) {
+        return next(new NotAuthorizedError());
+      }
+
+      next();
+    });
+
     this._io.on("connection", (socket) => {
       logger.log({
         level: "info",
         dev: true,
         message: `socket ${socket.id} connected`.cyan
       });
+
+      const raw = socket.handshake.query.user as string;
+      const user = JSON.parse(raw) as User;
+      const peer = Peer.create({ user });
+
+      socket.join(user._id);
 
       for (const event of this.events.values()) {
         socket.on(event.on, async (data: any, cb: any) => {
@@ -74,7 +113,8 @@ class SocketIO {
               payload: data,
               cb,
               event: event.on,
-              req: socket.request as Request
+              req: socket.request as Request,
+              peer
             });
 
             if (action) {

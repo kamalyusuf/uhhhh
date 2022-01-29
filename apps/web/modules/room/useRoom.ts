@@ -65,7 +65,8 @@ export const useRoom = (room_id: string) => {
         data: {
           room_id,
           producing: true,
-          consuming: false
+          consuming: false,
+          direction: "send"
         }
       });
 
@@ -101,7 +102,7 @@ export const useRoom = (room_id: string) => {
       sendTransport.on(
         "produce",
         async (
-          { kind, rtpParameters: rtp_parameters },
+          { kind, rtpParameters: rtp_parameters, appData },
           callback,
           errorback
         ) => {
@@ -113,7 +114,8 @@ export const useRoom = (room_id: string) => {
                 room_id,
                 transport_id: sendTransport.id,
                 kind,
-                rtp_parameters
+                rtp_parameters,
+                app_data: appData
               }
             });
 
@@ -132,7 +134,8 @@ export const useRoom = (room_id: string) => {
         data: {
           room_id,
           producing: false,
-          consuming: true
+          consuming: true,
+          direction: "receive"
         }
       });
 
@@ -166,12 +169,11 @@ export const useRoom = (room_id: string) => {
         }
       );
 
-      const { users: peers } = await request({
+      const { peers } = await request({
         socket,
         event: "join",
         data: {
           room_id,
-          user: me,
           rtp_capabilities: device.rtpCapabilities
         }
       });
