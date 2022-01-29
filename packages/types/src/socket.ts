@@ -27,6 +27,12 @@ export interface ServerToClientEvents<RtpCapabilities, OutgoingTransport> {
   rooms: (t: { rooms: Room[] }) => void;
 
   "create room": (t: { room: Room }) => void;
+
+  "close producer": () => void;
+
+  "pause producer": () => void;
+
+  "resume producer": () => void;
 }
 
 export interface ClientToServerEvents<
@@ -34,7 +40,7 @@ export interface ClientToServerEvents<
   DtlsParameters,
   MediaKind,
   RtpParameters,
-  OutgoingTransport
+  TransportOptions
 > {
   "rtp capabilities": (
     t: { room_id: string },
@@ -47,7 +53,7 @@ export interface ClientToServerEvents<
       producing: boolean;
       consuming: boolean;
     },
-    cb: Cb<{ transport: OutgoingTransport }>
+    cb: Cb<{ transport_options: TransportOptions }>
   ) => void;
 
   "connect transport": (
@@ -72,9 +78,8 @@ export interface ClientToServerEvents<
   join: (
     t: {
       room_id: string;
-      display_name: string;
-      device: Record<string, string>;
-      rtp_capabilities?: RtpCapabilities; // only if we want to consume
+      user: User;
+      rtp_capabilities: RtpCapabilities; // only if we want to consume
     },
     cb: Cb<{ users: User[] }>
   ) => void;
@@ -86,6 +91,21 @@ export interface ClientToServerEvents<
   "create room": (
     t: { name: string; description: string },
     cb: Cb<{ room: Room }>
+  ) => void;
+
+  "close producer": (
+    t: { room_id: string; producer_id: string },
+    cb: Cb<undefined>
+  ) => void;
+
+  "pause producer": (
+    t: { room_id: string; producer_id: string },
+    cb: Cb<void>
+  ) => void;
+
+  "resume producer": (
+    t: { room_id: string; producer_id: string },
+    cb: Cb<void>
   ) => void;
 }
 

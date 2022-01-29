@@ -1,5 +1,5 @@
 import { useSocketQuery } from "../../hooks/useSocketQuery";
-import { Group, Center, Loader, ScrollArea, Box } from "@mantine/core";
+import { Group, Center, Loader, ScrollArea } from "@mantine/core";
 import { RoomCard } from "./RoomCard";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { c } from "../../lib/constants";
@@ -12,7 +12,7 @@ export const Rooms = () => {
 
   if (isLoading) {
     return (
-      <Center style={{}}>
+      <Center>
         <Loader size="lg" />
       </Center>
     );

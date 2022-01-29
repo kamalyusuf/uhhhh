@@ -1,5 +1,5 @@
 import { NextPage } from "next";
-import { ChatMessage } from "types";
+import { ChatMessage, User } from "types";
 
 export type Color =
   | "white"
@@ -18,4 +18,8 @@ export type PageComponent<T = {}> = NextPage<T> & {
 
 export interface Message extends ChatMessage {
   color: string;
+}
+
+export interface Peer extends User {
+  consumers: string[];
 }
