@@ -51,4 +51,3 @@ export const RoomsPage: PageComponent = () => {
 };
 
 RoomsPage.authenticate = "yes";
-RoomsPage.ws = true;

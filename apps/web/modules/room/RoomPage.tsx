@@ -29,7 +29,9 @@ export const RoomPage: PageComponent = () => {
     setMounted(true);
   }, []);
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <Layout>
@@ -52,4 +54,3 @@ export const RoomPage: PageComponent = () => {
 };
 
 RoomPage.authenticate = "yes";
-RoomPage.ws = true;

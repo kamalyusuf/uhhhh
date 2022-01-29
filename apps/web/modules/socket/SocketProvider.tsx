@@ -28,7 +28,9 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
     if (!socket && !!me) {
       const s = io(process.env.NEXT_PUBLIC_API_URL, {
         rememberUpgrade: true,
-        path: "/ws"
+        path: "/ws",
+        autoConnect: true,
+        reconnectionAttempts: 5
       });
 
       setSocket(s);

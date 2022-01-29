@@ -1,21 +1,31 @@
 import { useSocketQuery } from "../../hooks/useSocketQuery";
 import { Group, Center, Loader } from "@mantine/core";
 import { RoomCard } from "./RoomCard";
+import { ErrorAlert } from "../../components/ErrorAlert";
 
 export const Rooms = () => {
-  const { data, isLoading } = useSocketQuery("rooms", undefined, {
-    refetchOnMount: "always"
+  const { data, isLoading, isError } = useSocketQuery("rooms", undefined, {
+    refetchOnMount: "always",
+    retry: 3
   });
+
+  if (isLoading) {
+    return (
+      <Center style={{}}>
+        <Loader size="lg" />
+      </Center>
+    );
+  }
+
+  if (!data && !isLoading && isError) {
+    return <ErrorAlert message="failed to fetch rooms" />;
+  }
 
   return (
     <Group direction="column" grow>
-      {isLoading ? (
-        <Center style={{}}>
-          <Loader size="lg" />
-        </Center>
-      ) : (
-        data?.rooms.map((room) => <RoomCard key={room._id} room={room} />)
-      )}
+      {data?.rooms.map((room) => (
+        <RoomCard key={room._id} room={room} />
+      ))}
     </Group>
   );
 };
