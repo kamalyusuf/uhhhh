@@ -11,12 +11,18 @@ import { api } from "../../lib/api";
 import { isServer } from "../../utils/is-server";
 import { Room, ApiError } from "types";
 import { AxiosError } from "axios";
+import { ErrorAlert } from "../../components/ErrorAlert";
+import { parseApiError } from "../../utils/error";
 
 export const RoomPage: PageComponent = () => {
   const router = useRouter();
   const _id = router.query.id as string | undefined;
   const [mounted, setMounted] = useState(false);
-  const { data: room, isLoading } = useQuery<Room, AxiosError<ApiError>>(
+  const {
+    data: room,
+    isLoading,
+    error
+  } = useQuery<Room, AxiosError<ApiError>>(
     ["room", _id],
     async () => (await api.get(`/rooms/${_id}`)).data,
     {
@@ -33,20 +39,42 @@ export const RoomPage: PageComponent = () => {
     return null;
   }
 
+  if (isLoading) {
+    return (
+      <Layout>
+        <Container>
+          <Group style={{ height: "97%" }} align="start">
+            <Center>
+              <Loader size="lg" />
+            </Center>
+          </Group>
+        </Container>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <ErrorAlert title="uh-oh" message={parseApiError(error)[0]} />
+      </Layout>
+    );
+  }
+
+  if (!room) {
+    return (
+      <Layout>
+        <></>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       <Container style={{}}>
         <Group style={{ height: "97%" }} align="start">
-          {isLoading ? (
-            <Center>
-              <Loader size="lg" />
-            </Center>
-          ) : (
-            <>
-              <RoomPanel room={room} />
-              <RoomChat />
-            </>
-          )}
+          <RoomPanel room={room} />
+          <RoomChat />
         </Group>
       </Container>
     </Layout>

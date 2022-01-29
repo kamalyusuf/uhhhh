@@ -11,7 +11,9 @@
     "dev": "turbo run dev --parallel --no-cache",
     "api:dev": "turbo run dev --scope=api --scope=types --no-deps --no-cache",
     "api:build": "turbo run build --scope=api",
-    "web:dev": "turbo run dev --scope=web --scope=types --no-deps --no-cache"
+    "web:dev": "turbo run dev --scope=web --scope=types --no-deps --no-cache",
+    "web:build": "turbo run build --scope=web",
+    "web:start": "turbo run start --scope=web"
   },
   "devDependencies": {
     "lerna": "^4.0.0",
@@ -50,7 +52,8 @@
       },
       "dev": {
         "cache": false
-      }
+      },
+      "start": {}
     }
   },
   "engines": {

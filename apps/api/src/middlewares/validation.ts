@@ -242,7 +242,7 @@ export const useIsValidObjectId = ({
     .withMessage(`${field_name} is required`)
     .bail()
     .isMongoId()
-    .withMessage(message ?? `expected ${field_name} to be valid mongo id`);
+    .withMessage(message ?? `invalid id`);
 
   if (optional) {
     chain = chain.optional({ nullable: true, checkFalsy: false });
