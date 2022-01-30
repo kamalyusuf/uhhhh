@@ -74,6 +74,10 @@ export interface ServerToClientEvents<
   }) => void;
 
   "consumer layers changed": (t: any) => void;
+
+  leave: () => void;
+
+  "peer left": (t: { peer: User }) => void;
 }
 
 export interface ClientToServerEvents<
@@ -149,6 +153,8 @@ export interface ClientToServerEvents<
     t: { room_id: string; producer_id: string },
     cb: Cb<undefined>
   ) => void;
+
+  leave: (t: { room_id: string }, cb: Cb<undefined>) => void;
 }
 
 export interface InterServerEvents {

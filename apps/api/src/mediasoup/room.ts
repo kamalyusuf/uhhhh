@@ -51,6 +51,12 @@ export class MediasoupRoom extends EventEmitter {
     return this.create({ id: room_id });
   }
 
+  static remove(room_id: string) {
+    if (this.rooms.has(room_id)) {
+      this.rooms.delete(room_id);
+    }
+  }
+
   get rtpCapabilities(): RtpCapabilities {
     return this.router.rtpCapabilities;
   }
@@ -156,5 +162,37 @@ export class MediasoupRoom extends EventEmitter {
     });
 
     await consumer.resume();
+  }
+
+  leave(peer: Peer) {
+    if (
+      !peer.activeRoomId ||
+      !this.peers.has(peer.user._id) ||
+      peer.activeRoomId !== this.id
+    ) {
+      return;
+    }
+
+    console.log("about to leave room for peer", peer);
+
+    for (const producer of peer.producers.values()) {
+      producer.close();
+    }
+
+    for (const transport of peer.transports.values()) {
+      transport.close();
+    }
+
+    for (const consumer of peer.consumers.values()) {
+      consumer.close();
+    }
+
+    peer.activeRoomId = undefined;
+    this.peers.delete(peer.user._id);
+
+    if (this._peers().length === 0) {
+      // todo: delete the room from database
+      MediasoupRoom.remove(this.id);
+    }
   }
 }

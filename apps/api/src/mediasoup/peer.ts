@@ -12,6 +12,7 @@ export class Peer {
   // note to self: we're receiving the user from the client.
   // and peer.user because user corresponds with the client socket
   public user: User;
+  public activeRoomId?: string;
   public rtpCapabilities?: RtpCapabilities;
   public producers: Map<string, Producer>;
   public consumers: Map<string, Consumer>;

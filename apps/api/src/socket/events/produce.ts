@@ -10,7 +10,7 @@ const handler: Event<"produce"> = {
     cb
   }) => {
     const room = MediasoupRoom.findById(room_id);
-    if (!room.hasPeer(peer.user._id)) {
+    if (!room.hasPeer(peer.user._id) || peer.activeRoomId !== room.id) {
       throw new Error("peer not yet joined");
     }
 

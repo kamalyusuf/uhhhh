@@ -11,6 +11,7 @@ import { NotAuthorizedError } from "@kamalyb/errors";
 import { Peer } from "../mediasoup/peer";
 import { z } from "zod";
 import { User } from "types";
+import { onDisconnect } from "./events/disconnect";
 
 const schema = z.object({
   _id: z.string(),
@@ -45,6 +46,10 @@ class SocketIO {
     const files = fs.readdirSync(dir);
 
     for (const file of files) {
+      if (file === "disconnect.ts") {
+        continue;
+      }
+
       const handler = require(`./events/${file}`).default;
       this.events.set(handler.on, handler);
     }
@@ -126,15 +131,11 @@ class SocketIO {
         });
       }
 
-      console.log({ "listening events": socket.eventNames() });
+      if (env.isDevelopment) {
+        console.log({ "listening events": socket.eventNames() });
+      }
 
-      socket.on("disconnect", (reason) => {
-        logger.log({
-          level: "info",
-          dev: true,
-          message: `socket ${socket.id} disconnected because ${reason}`.magenta
-        });
-      });
+      socket.on("disconnect", onDisconnect({ io: this._io!, socket, peer }));
     });
   }
 }
