@@ -18,6 +18,14 @@ export class Peer {
   public consumers: Map<string, Consumer>;
   public transports: Map<string, Transport>;
 
+  private constructor({ user }: { user: User }) {
+    this.user = user;
+
+    this.producers = new Map();
+    this.consumers = new Map();
+    this.transports = new Map();
+  }
+
   static create(t: { user: User }) {
     const peer = new Peer(t);
     this.peers.set(peer.user._id, peer);
@@ -25,11 +33,11 @@ export class Peer {
     return peer;
   }
 
-  private constructor({ user }: { user: User }) {
-    this.user = user;
+  static remove(peer: Peer) {
+    if (!this.peers.has(peer.user._id)) {
+      return;
+    }
 
-    this.producers = new Map();
-    this.consumers = new Map();
-    this.transports = new Map();
+    this.peers.delete(peer.user._id);
   }
 }
