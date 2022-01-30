@@ -4,7 +4,7 @@ import { Peer } from "../../mediasoup/peer";
 import { MediasoupRoom } from "../../mediasoup/room";
 
 export const onDisconnect =
-  ({ io, socket, peer }: { io: TypedIO; socket: TypedSocket; peer: Peer }) =>
+  ({ socket, peer }: { io: TypedIO; socket: TypedSocket; peer: Peer }) =>
   (reason: string) => {
     logger.log({
       level: "info",

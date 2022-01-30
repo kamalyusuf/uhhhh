@@ -173,8 +173,6 @@ export class MediasoupRoom extends EventEmitter {
       return;
     }
 
-    console.log("about to leave room for peer", peer);
-
     for (const producer of peer.producers.values()) {
       producer.close();
     }

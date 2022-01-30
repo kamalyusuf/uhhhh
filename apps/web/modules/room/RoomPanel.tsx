@@ -64,9 +64,11 @@ export const RoomPanel = ({ room }: Props) => {
             paddingBottom: 5
           }}
         >
-          {Object.values(peers).map((peer) => (
-            <PeerBadge key={peer._id} peer={peer} />
-          ))}
+          {Object.values(peers)
+            .filter(Boolean)
+            .map((peer) => (
+              <PeerBadge key={peer._id} peer={peer} />
+            ))}
         </Group>
       </ScrollArea>
     </Group>

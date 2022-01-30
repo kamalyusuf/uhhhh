@@ -62,6 +62,10 @@ export const SocketHandler = () => {
       consumerStore.pause(peer_id);
     });
 
+    socket.on("peer left", ({ peer }) => {
+      peerStore.remove(peer._id);
+    });
+
     return () => {
       socket.removeAllListeners();
     };
