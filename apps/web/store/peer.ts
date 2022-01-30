@@ -1,13 +1,21 @@
 import create from "zustand";
 import { combine, devtools } from "zustand/middleware";
-import { Peer } from "../types";
+import { User } from "types";
 
 const store = combine(
   {
-    peers: [] as Peer[]
+    peers: {} as Record<string, User>
   },
   (set) => ({
-    add: (peer: Peer) => set((state) => ({ peers: [...state.peers, peer] }))
+    add: (peer: User) =>
+      set((state) => {
+        return {
+          peers: {
+            ...state.peers,
+            [peer._id]: peer
+          }
+        };
+      })
   })
 );
 

@@ -13,6 +13,9 @@ import { Room, ApiError } from "types";
 import { AxiosError } from "axios";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { parseApiError } from "../../utils/error";
+import { useRoom } from "./useRoom";
+import { useRoomStore } from "../../store/room";
+import { useSocket } from "../../hooks/useSocket";
 
 export const RoomPage: PageComponent = () => {
   const router = useRouter();
@@ -30,16 +33,25 @@ export const RoomPage: PageComponent = () => {
       refetchOnMount: "always"
     }
   );
+  const { join } = useRoom(room._id);
+  const { state } = useRoomStore();
+  const { state: socketState } = useSocket();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (mounted && _id && socketState === "connected") {
+      join();
+    }
+  }, [mounted, _id, socketState]);
+
   if (!mounted) {
     return null;
   }
 
-  if (isLoading) {
+  if (isLoading || state === "connecting") {
     return (
       <Layout>
         <Container>
@@ -69,9 +81,17 @@ export const RoomPage: PageComponent = () => {
     );
   }
 
+  if (state === "error") {
+    return (
+      <Layout>
+        <ErrorAlert title="uh-oh" message="could not join room" />
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
-      <Container style={{}}>
+      <Container style={{ width: "100%" }}>
         <Group style={{ height: "97%" }} align="start">
           <RoomPanel room={room} />
           <RoomChat />

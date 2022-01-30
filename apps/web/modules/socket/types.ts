@@ -26,7 +26,10 @@ type TransportOptions = {
 
 export type ServerToClientEvents = TServerToClientEvents<
   RtpCapabilities,
-  TransportOptions
+  TransportOptions,
+  MediaKind,
+  RtpParameters,
+  any
 >;
 
 export type ClientToServerEvents = TClientToServerEvents<

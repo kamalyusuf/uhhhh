@@ -20,7 +20,7 @@ export const useSocketQuery = <T extends ServerEvent>(
     "enabled"
   > & { e?: boolean } = {}
 ) => {
-  const socket = useSocket();
+  const { socket } = useSocket();
 
   return useQuery<
     Parameters<Parameters<ClientToServerEvents[T]>[1]>[0],

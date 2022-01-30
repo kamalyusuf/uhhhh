@@ -5,7 +5,6 @@ import { config } from "./config";
 import { workers } from "./workers";
 import { NotFoundError } from "@kamalyb/errors";
 import { TypedIO } from "../socket/types";
-import rtpCapabilities from "src/socket/events/rtp-capabilities";
 
 export class MediasoupRoom extends EventEmitter {
   static rooms: Map<string, MediasoupRoom> = new Map();

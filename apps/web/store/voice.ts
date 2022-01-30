@@ -7,7 +7,12 @@ const store = combine(
     send_transport: null as Transport | null,
     receive_transport: null as Transport | null
   },
-  (set) => ({ set })
+  (set) => ({
+    setSendTransport: (send_transport: Transport | null) =>
+      set({ send_transport }),
+    setReceiveTransport: (receive_transport: Transport | null) =>
+      set({ receive_transport })
+  })
 );
 
 export const useVoiceStore = create(devtools(store, { name: "VoiceStore" }));

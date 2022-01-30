@@ -2,7 +2,7 @@ import { useContext } from "react";
 import { SocketContext } from "../modules/socket/SocketProvider";
 
 export const useSocket = () => {
-  const { socket } = useContext(SocketContext);
+  const { socket, state } = useContext(SocketContext);
 
-  return socket;
+  return { socket, state };
 };

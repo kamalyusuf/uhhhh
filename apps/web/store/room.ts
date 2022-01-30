@@ -6,7 +6,8 @@ type RoomState =
   | "connecting"
   | "connected"
   | "disconnected"
-  | "closed";
+  | "closed"
+  | "error";
 
 const store = combine(
   {

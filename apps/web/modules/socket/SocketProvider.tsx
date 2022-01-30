@@ -6,14 +6,18 @@ import { useMeStore } from "../../store/me";
 
 type V = TypedSocket | null;
 
+type SocketState = "idle" | "connected" | "connecting" | "error";
+
 type Context = {
   socket: TypedSocket;
   setSocket: (socket: TypedSocket) => void;
+  state: SocketState;
 };
 
 export const SocketContext = React.createContext<Context>({
   socket: null,
-  setSocket: () => {}
+  setSocket: () => {},
+  state: "idle"
 });
 
 interface Props {
@@ -23,9 +27,12 @@ interface Props {
 export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
   const [socket, setSocket] = useState<V>(null);
   const { me } = useMeStore();
+  const [state, setState] = useState<SocketState>("idle");
 
   useEffect(() => {
     if (!socket && !!me) {
+      setState("connecting");
+
       const s = io(process.env.NEXT_PUBLIC_API_URL, {
         rememberUpgrade: true,
         path: "/ws",
@@ -45,26 +52,24 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
       return;
     }
 
-    socket.on("connect", () => toast.info(`socket ${socket.id} connected`));
+    socket.on("connect", () => {
+      setState("connected");
+    });
 
     socket.on("connect_error", (error) => {
+      setState("error");
       toast.error(error.message);
-      console.log({
-        connect_error: error,
-        message: error.message
-      });
     });
 
     return () => {
       socket.removeAllListeners();
-      // socket.off("connect");
       socket.disconnect();
     };
   }, [socket]);
 
   return (
     <SocketContext.Provider
-      value={useMemo(() => ({ socket, setSocket }), [socket])}
+      value={useMemo(() => ({ socket, setSocket, state }), [socket, state])}
     >
       {children}
     </SocketContext.Provider>

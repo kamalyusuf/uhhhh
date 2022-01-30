@@ -1,11 +1,9 @@
-import { useEffect, useState, useRef } from "react";
+import { useRef } from "react";
 import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../hooks/useSocket";
 import { request } from "../../lib/request";
-import { Room } from "types";
 import { detectDevice, Device } from "mediasoup-client";
 import { useVoiceStore } from "../../store/voice";
-import { useMeStore } from "../../store/me";
 import { toast } from "react-toastify";
 import { usePeerStore } from "../../store/peer";
 import { useProducerStore } from "../../store/producer";
@@ -25,11 +23,9 @@ const PC_PROPRIETARY_CONSTRAINTS = {
 
 export const useRoom = (room_id: string) => {
   const { setState } = useRoomStore();
-  const socket = useSocket();
-  // const { device } = useDeviceStore();
+  const { socket } = useSocket();
   const device = useRef(getDevice()).current;
   const voiceStore = useVoiceStore();
-  const { me } = useMeStore();
   const peerStore = usePeerStore();
   const producerStore = useProducerStore();
   const { producer } = producerStore;
@@ -102,7 +98,7 @@ export const useRoom = (room_id: string) => {
       sendTransport.on(
         "produce",
         async (
-          { kind, rtpParameters: rtp_parameters, appData },
+          { kind, rtpParameters: rtp_parameters, appData: app_data },
           callback,
           errorback
         ) => {
@@ -115,7 +111,7 @@ export const useRoom = (room_id: string) => {
                 transport_id: sendTransport.id,
                 kind,
                 rtp_parameters,
-                app_data: appData
+                app_data
               }
             });
 
@@ -126,7 +122,7 @@ export const useRoom = (room_id: string) => {
         }
       );
 
-      voiceStore.set({ send_transport: sendTransport });
+      voiceStore.setSendTransport(sendTransport);
 
       const { transport_options: receiveTransportOptions } = await request({
         socket,
@@ -150,7 +146,7 @@ export const useRoom = (room_id: string) => {
         iceServers: []
       });
 
-      voiceStore.set({ receive_transport: receiveTransport });
+      voiceStore.setReceiveTransport(receiveTransport);
 
       receiveTransport.on(
         "connect",
@@ -183,43 +179,39 @@ export const useRoom = (room_id: string) => {
       toast.info("connected");
 
       for (const peer of peers) {
-        peerStore.add({ ...peer, consumers: [] });
+        peerStore.add(peer);
       }
 
-      await enableMic();
+      // enabling mic
+      if (!device.canProduce("audio")) {
+        return toast.error("cannot produce audio");
+      }
+
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const track = stream.getAudioTracks()[0];
+
+      const producer = await sendTransport.produce({
+        track,
+        codecOptions: {
+          opusStereo: true,
+          opusDtx: true
+        }
+      });
+
+      producer.on("transportclose", () => {
+        producerStore.set({ producer: null });
+      });
+
+      producer.on("trackended", () => {
+        toast.error("microphone disconnected");
+        disableMic();
+      });
+
+      producerStore.add(producer);
     } catch (e) {
       console.log("could not join room", e);
+      setState("error");
     }
-  };
-
-  const enableMic = async () => {
-    if (producerStore.producer) return;
-
-    if (!device.canProduce("audio")) {
-      return toast.error("cannot produce audio");
-    }
-
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const track = stream.getAudioTracks()[0];
-
-    const producer = await voiceStore.send_transport.produce({
-      track,
-      codecOptions: {
-        opusStereo: true,
-        opusDtx: true
-      }
-    });
-
-    producerStore.add(producer);
-
-    producerStore.producer.on("transportclose", () => {
-      producerStore.set({ producer: null });
-    });
-
-    producerStore.producer.on("trackended", () => {
-      toast.error("microphone disconnected");
-      disableMic();
-    });
   };
 
   const disableMic = async () => {

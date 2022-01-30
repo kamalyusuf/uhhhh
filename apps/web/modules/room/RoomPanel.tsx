@@ -2,10 +2,11 @@ import { Group, Text, Divider, Button, ScrollArea } from "@mantine/core";
 import { Heading } from "../../components/Heading";
 import { ToggleMuteButton } from "../audio/ToggleMuteButton";
 import { c } from "../../lib/constants";
-import { UserBadge } from "../user/UserBadge";
-import React, { useState, useEffect } from "react";
+import { PeerBadge } from "../user/PeerBadge";
+import React from "react";
 import { useRouter } from "next/router";
 import { Room } from "types";
+import { usePeerStore } from "../../store/peer";
 
 interface Props {
   room: Room;
@@ -13,16 +14,7 @@ interface Props {
 
 export const RoomPanel = ({ room }: Props) => {
   const router = useRouter();
-  const [rands, setRands] = useState<string[]>([]);
-
-  useEffect(() => {
-    const run = () => {
-      for (let i = 1; i <= 100; i++) {
-        setRands((rands) => [...rands, Math.random().toString()]);
-      }
-    };
-    run();
-  }, []);
+  const { peers } = usePeerStore();
 
   return (
     <Group style={{ flex: 1 }}>
@@ -57,7 +49,8 @@ export const RoomPanel = ({ room }: Props) => {
 
       <ScrollArea
         style={{
-          height: 500
+          height: 500,
+          width: "100%"
         }}
         styles={{ thumb: { backgroundColor: c.colors.indigo } }}
         type="auto"
@@ -65,13 +58,14 @@ export const RoomPanel = ({ room }: Props) => {
       >
         <Group
           spacing={12}
+          grow
           style={{
             paddingTop: 5,
             paddingBottom: 5
           }}
         >
-          {rands.map((ninja) => (
-            <UserBadge key={ninja} name={ninja} />
+          {Object.values(peers).map((peer) => (
+            <PeerBadge key={peer._id} peer={peer} />
           ))}
         </Group>
       </ScrollArea>

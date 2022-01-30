@@ -18,6 +18,10 @@ export const request = async <T extends ServerEvent>({
 }): Promise<Parameters<Parameters<ClientToServerEvents[T]>[1]>[0]> => {
   return new Promise<Parameters<Parameters<ClientToServerEvents[T]>[1]>[0]>(
     async (resolve, reject) => {
+      if (!socket) {
+        return reject(new Error("socket not initialized"));
+      }
+
       if (!socket.connected) {
         return reject(new Error("socket not connected"));
       }

@@ -9,7 +9,7 @@ interface Props {
 }
 
 export const CreateRoomForm = ({ onCancel }: Props) => {
-  const socket = useSocket();
+  const { socket } = useSocket();
   const router = useRouter();
 
   return (

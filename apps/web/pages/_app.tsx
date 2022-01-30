@@ -17,6 +17,7 @@ import { QueryClientProvider, Hydrate } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import { NotAuthenticated } from "../modules/auth/NotAuthenticated";
 import { Authenticate } from "../modules/auth/Authenticate";
+import { SocketHandler } from "../modules/socket/SocketHandler";
 
 if (!process.env.NEXT_PUBLIC_API_URL) {
   throw new Error("where API_URL at?");
@@ -67,6 +68,7 @@ const MyApp = ({ Component: C, pageProps }: AppProps) => {
               transition={Slide}
               limit={5}
             />
+            <SocketHandler />
           </SocketProvider>
         </MantineProvider>
         <ReactQueryDevtools initialIsOpen={false} />

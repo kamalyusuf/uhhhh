@@ -6,7 +6,7 @@ const handler: Event<"join"> = {
   invoke: async ({ io, peer, payload, socket, cb }) => {
     const room = MediasoupRoom.findById(payload.room_id);
     if (room.hasPeer(peer.user._id)) {
-      throw new Error("peer already joined");
+      room.peers.delete(peer.user._id);
     }
 
     peer.rtpCapabilities = payload.rtp_capabilities;
