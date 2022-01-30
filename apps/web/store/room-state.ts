@@ -18,4 +18,4 @@ const store = combine(
   })
 );
 
-export const useRoomStore = create(devtools(store, { name: "RoomStore" }));
+export const useRoomState = create(devtools(store, { name: "RoomStateStore" }));

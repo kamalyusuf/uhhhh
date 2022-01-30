@@ -14,7 +14,7 @@ import { AxiosError } from "axios";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { parseApiError } from "../../utils/error";
 import { useRoom } from "./useRoom";
-import { useRoomStore } from "../../store/room";
+import { useRoomState } from "../../store/room-state";
 import { useSocket } from "../../hooks/useSocket";
 
 export const RoomPage: PageComponent = () => {
@@ -34,7 +34,7 @@ export const RoomPage: PageComponent = () => {
     }
   );
   const { join } = useRoom(_id);
-  const { state } = useRoomStore();
+  const { state } = useRoomState();
   const { state: socketState } = useSocket();
 
   useEffect(() => {

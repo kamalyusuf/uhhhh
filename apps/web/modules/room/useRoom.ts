@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useRoomStore } from "../../store/room";
+import { useRoomState } from "../../store/room-state";
 import { useSocket } from "../../hooks/useSocket";
 import { request } from "../../lib/request";
 import { detectDevice, Device } from "mediasoup-client";
@@ -22,7 +22,7 @@ const PC_PROPRIETARY_CONSTRAINTS = {
 };
 
 export const useRoom = (room_id: string) => {
-  const { setState } = useRoomStore();
+  const { setState } = useRoomState();
   const { socket } = useSocket();
   const device = useRef(getDevice()).current;
   const transportStore = useTransportStore();
