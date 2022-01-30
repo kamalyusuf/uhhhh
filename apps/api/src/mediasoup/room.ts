@@ -117,25 +117,29 @@ export class MediasoupRoom extends EventEmitter {
     consumer.on("producerclose", () => {
       consumer_peer.consumers.delete(consumer.id);
       io.to(consumer_peer.user._id).emit("consumer closed", {
-        consumer_id: consumer.id
+        consumer_id: consumer.id,
+        peer_id: producer_peer.user._id
       });
     });
 
     consumer.on("producerpause", () => {
       io.to(consumer_peer.user._id).emit("consumer paused", {
-        consumer_id: consumer.id
+        consumer_id: consumer.id,
+        peer_id: producer_peer.user._id
       });
     });
 
     consumer.on("producerresume", () => {
       io.to(consumer_peer.user._id).emit("consumer resumed", {
-        consumer_id: consumer.id
+        consumer_id: consumer.id,
+        peer_id: producer_peer.user._id
       });
     });
 
     consumer.on("score", (score) => {
       io.to(consumer_peer.user._id).emit("consumer score", {
         consumer_id: consumer.id,
+        peer_id: producer_peer.user._id,
         score
       });
     });

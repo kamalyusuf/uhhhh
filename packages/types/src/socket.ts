@@ -61,13 +61,17 @@ export interface ServerToClientEvents<
     app_data: Record<string, string>;
   }) => void;
 
-  "consumer closed": (t: { consumer_id: string }) => void;
+  "consumer closed": (t: { consumer_id: string; peer_id: string }) => void;
 
-  "consumer paused": (t: { consumer_id: string }) => void;
+  "consumer paused": (t: { consumer_id: string; peer_id: string }) => void;
 
-  "consumer resumed": (t: { consumer_id: string }) => void;
+  "consumer resumed": (t: { consumer_id: string; peer_id: string }) => void;
 
-  "consumer score": (t: { consumer_id: string; score: any }) => void;
+  "consumer score": (t: {
+    consumer_id: string;
+    score: any;
+    peer_id: string;
+  }) => void;
 
   "consumer layers changed": (t: any) => void;
 }

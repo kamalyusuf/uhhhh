@@ -1,13 +1,13 @@
 import { useEffect } from "react";
 import { useSocket } from "../../hooks/useSocket";
-import { useVoiceStore } from "../../store/voice";
+import { useTransportStore } from "../../store/transport";
 import { useConsumerStore } from "../../store/consumer";
 import { usePeerStore } from "../../store/peer";
 import { toast } from "react-toastify";
 
 export const SocketHandler = () => {
   const { socket } = useSocket();
-  const voiceStore = useVoiceStore();
+  const transportStore = useTransportStore();
   const consumerStore = useConsumerStore();
   const peerStore = usePeerStore();
 
@@ -26,11 +26,11 @@ export const SocketHandler = () => {
         app_data,
         producer_paused
       }) => {
-        if (!voiceStore.receive_transport) {
+        if (!transportStore.receive_transport) {
           return;
         }
 
-        const consumer = await voiceStore.receive_transport.consume({
+        const consumer = await transportStore.receive_transport.consume({
           id,
           producerId: producer_id,
           kind,
@@ -41,7 +41,7 @@ export const SocketHandler = () => {
           }
         });
 
-        consumerStore.add(consumer, peer_id);
+        consumerStore.add(peer_id, consumer);
       }
     );
 
@@ -50,22 +50,22 @@ export const SocketHandler = () => {
       toast.info(`${peer.display_name} has joined the room`);
     });
 
-    socket.on("consumer closed", ({ consumer_id }) => {
-      consumerStore.remove(consumer_id);
+    socket.on("consumer closed", ({ consumer_id, peer_id }) => {
+      consumerStore.remove(peer_id);
     });
 
-    socket.on("consumer paused", ({ consumer_id }) => {
-      consumerStore.pause(consumer_id);
+    socket.on("consumer paused", ({ consumer_id, peer_id }) => {
+      consumerStore.pause(peer_id);
     });
 
-    socket.on("consumer resumed", ({ consumer_id }) => {
-      consumerStore.pause(consumer_id);
+    socket.on("consumer resumed", ({ consumer_id, peer_id }) => {
+      consumerStore.pause(peer_id);
     });
 
     return () => {
       socket.removeAllListeners();
     };
-  }, [socket, voiceStore.receive_transport]);
+  }, [socket, transportStore.receive_transport]);
 
   return null;
 };

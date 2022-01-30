@@ -15,4 +15,6 @@ const store = combine(
   })
 );
 
-export const useVoiceStore = create(devtools(store, { name: "VoiceStore" }));
+export const useTransportStore = create(
+  devtools(store, { name: "TransportStore" })
+);

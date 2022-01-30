@@ -3,7 +3,7 @@ import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../hooks/useSocket";
 import { request } from "../../lib/request";
 import { detectDevice, Device } from "mediasoup-client";
-import { useVoiceStore } from "../../store/voice";
+import { useTransportStore } from "../../store/transport";
 import { toast } from "react-toastify";
 import { usePeerStore } from "../../store/peer";
 import { useProducerStore } from "../../store/producer";
@@ -25,7 +25,7 @@ export const useRoom = (room_id: string) => {
   const { setState } = useRoomStore();
   const { socket } = useSocket();
   const device = useRef(getDevice()).current;
-  const voiceStore = useVoiceStore();
+  const transportStore = useTransportStore();
   const peerStore = usePeerStore();
   const producerStore = useProducerStore();
   const { producer } = producerStore;
@@ -122,7 +122,7 @@ export const useRoom = (room_id: string) => {
         }
       );
 
-      voiceStore.setSendTransport(sendTransport);
+      transportStore.setSendTransport(sendTransport);
 
       const { transport_options: receiveTransportOptions } = await request({
         socket,
@@ -146,7 +146,7 @@ export const useRoom = (room_id: string) => {
         iceServers: []
       });
 
-      voiceStore.setReceiveTransport(receiveTransport);
+      transportStore.setReceiveTransport(receiveTransport);
 
       receiveTransport.on(
         "connect",

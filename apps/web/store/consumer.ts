@@ -7,7 +7,7 @@ const store = combine(
     consumers: {} as Record<string, Consumer>
   },
   (set) => ({
-    add: (consumer: Consumer, peer_id: string) =>
+    add: (peer_id: string, consumer: Consumer) =>
       set((state) => {
         return {
           consumers: {
@@ -16,25 +16,25 @@ const store = combine(
           }
         };
       }),
-    remove: (consumer_id: string) =>
+    remove: (peer_id: string) =>
       set((state) => {
         return {
           consumers: {
             ...state.consumers,
-            [consumer_id]: undefined
+            [peer_id]: undefined
           }
         };
       }),
-    pause: (consumer_id: string) =>
+    pause: (peer_id: string) =>
       set((state) => {
-        const consumer = state.consumers[consumer_id];
+        const consumer = state.consumers[peer_id];
         if (consumer) consumer.pause();
 
         return state;
       }),
-    resume: (consumer_id: string) =>
+    resume: (peer_id: string) =>
       set((state) => {
-        const consumer = state.consumers[consumer_id];
+        const consumer = state.consumers[peer_id];
         if (consumer) consumer.resume();
 
         return state;
