@@ -9,12 +9,14 @@ export const request = async <T extends ServerEvent>({
   socket,
   event,
   data: payload,
-  tt = false
+  onError,
+  notify = true
 }: {
   socket: TypedSocket;
   event: T;
   data: Parameters<ClientToServerEvents[T]>[0];
-  tt?: boolean;
+  onError?: (error: { message: string; event: string }) => void;
+  notify?: boolean;
 }): Promise<Parameters<Parameters<ClientToServerEvents[T]>[1]>[0]> => {
   return new Promise<Parameters<Parameters<ClientToServerEvents[T]>[1]>[0]>(
     async (resolve, reject) => {
@@ -26,25 +28,42 @@ export const request = async <T extends ServerEvent>({
         return reject(new Error("socket not connected"));
       }
 
-      socket.on("error", (error) => {
+      socket.on("event error", (error) => {
+        onError?.({ message: error.message, event: error.event });
+        if (notify) {
+          toast.error(error.message);
+        }
         reject(error);
       });
 
-      try {
-        socket.emit(
-          event,
-          // @ts-ignore
-          payload,
-          (response: Parameters<Parameters<ClientToServerEvents[T]>[1]>[0]) => {
-            resolve(response);
-          }
-        );
-      } catch (e) {
-        if (tt) throw e;
-        toast.error(`${e.message}`);
-      } finally {
-        socket.off("error");
-      }
+      socket.emit(
+        event,
+        // @ts-ignore
+        payload,
+        (response: Parameters<Parameters<ClientToServerEvents[T]>[1]>[0]) => {
+          resolve(response);
+        }
+      );
+
+      // try {
+      //   socket.emit(
+      //     event,
+      //     // @ts-ignore
+      //     payload,
+      //     (response: Parameters<Parameters<ClientToServerEvents[T]>[1]>[0]) => {
+      //       console.log("on Cb", response);
+      //       resolve(response);
+      //     }
+      //   );
+      // } catch (e) {
+      //   console.log("in request.catch block", { tt });
+      //   if (tt) throw e;
+      //   toast.error(`${e.message}`);
+      // } finally {
+      //   socket.off("event error");
+      // }
     }
-  );
+  ).finally(() => {
+    socket.off("event error");
+  });
 };

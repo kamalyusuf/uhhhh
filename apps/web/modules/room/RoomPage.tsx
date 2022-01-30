@@ -33,7 +33,7 @@ export const RoomPage: PageComponent = () => {
       refetchOnMount: "always"
     }
   );
-  const { join } = useRoom(room._id);
+  const { join } = useRoom(_id);
   const { state } = useRoomStore();
   const { state: socketState } = useSocket();
 
@@ -81,6 +81,17 @@ export const RoomPage: PageComponent = () => {
     );
   }
 
+  if (socketState === "error") {
+    return (
+      <Layout>
+        <ErrorAlert
+          title="uh-oh! failed to establish websocket connection"
+          message="could not join room"
+        />
+      </Layout>
+    );
+  }
+
   if (state === "error") {
     return (
       <Layout>
@@ -89,16 +100,20 @@ export const RoomPage: PageComponent = () => {
     );
   }
 
-  return (
-    <Layout>
-      <Container style={{ width: "100%" }}>
-        <Group style={{ height: "97%" }} align="start">
-          <RoomPanel room={room} />
-          <RoomChat />
-        </Group>
-      </Container>
-    </Layout>
-  );
+  if (state === "connected") {
+    return (
+      <Layout>
+        <Container style={{ width: "100%" }}>
+          <Group style={{ height: "97%" }} align="start">
+            <RoomPanel room={room} />
+            <RoomChat />
+          </Group>
+        </Container>
+      </Layout>
+    );
+  }
+
+  return null;
 };
 
 RoomPage.authenticate = "yes";

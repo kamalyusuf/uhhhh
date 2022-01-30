@@ -61,6 +61,10 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
       toast.error(error.message);
     });
 
+    socket.on("error", (error) => {
+      toast.error(error.message);
+    });
+
     return () => {
       socket.removeAllListeners();
       socket.disconnect();

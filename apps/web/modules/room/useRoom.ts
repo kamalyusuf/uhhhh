@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../hooks/useSocket";
 import { request } from "../../lib/request";
@@ -208,8 +208,9 @@ export const useRoom = (room_id: string) => {
       });
 
       producerStore.add(producer);
+
+      setState("connected");
     } catch (e) {
-      console.log("could not join room", e);
       setState("error");
     }
   };

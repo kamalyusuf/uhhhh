@@ -24,7 +24,7 @@ export interface ServerToClientEvents<
 
   test: (t: any) => void;
 
-  error: (t: {
+  "event error": (t: {
     message: string;
     event: Exclude<
       keyof ServerToClientEvents<
@@ -34,9 +34,11 @@ export interface ServerToClientEvents<
         RtpParameters,
         ConsumerType
       >,
-      "error"
+      "error" | "event error"
     >;
   }) => void;
+
+  error: (t: { message: string }) => void;
 
   rooms: (t: { rooms: Room[] }) => void;
 

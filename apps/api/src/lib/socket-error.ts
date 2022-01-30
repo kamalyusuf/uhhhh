@@ -34,7 +34,7 @@ const type = (error: any) => {
   };
 };
 
-export class SocketError {
+export class EventError {
   public message: string;
 
   constructor(public event: ServerEvent, error: any) {

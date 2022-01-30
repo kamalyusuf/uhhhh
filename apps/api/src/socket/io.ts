@@ -5,7 +5,7 @@ import { Server as SocketServer } from "socket.io";
 import { ServerEvent, TypedIO, Event } from "./types";
 import fs from "fs";
 import path from "path";
-import { SocketError } from "../lib/socket-error";
+import { EventError } from "../lib/socket-error";
 import { Request } from "express";
 import { NotAuthorizedError } from "@kamalyb/errors";
 import { Peer } from "../mediasoup/peer";
@@ -99,15 +99,13 @@ class SocketIO {
 
           if (typeof data !== "object" || Array.isArray(data)) {
             return socket.emit("error", {
-              message: "expected data to be an object",
-              event: event.on
+              message: "expected data to be an object"
             });
           }
 
           if (typeof cb !== "function") {
             return socket.emit("error", {
-              message: "expected callback to be a function",
-              event: event.on
+              message: "expected callback to be a function"
             });
           }
 
@@ -126,7 +124,7 @@ class SocketIO {
               this._io.to(action.to).emit(action.emit, action.send as any);
             }
           } catch (e) {
-            socket.emit("error", new SocketError(event.on, e));
+            socket.emit("event error", new EventError(event.on, e));
           }
         });
       }
