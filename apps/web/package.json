@@ -15,6 +15,7 @@
     "@ngneat/falso": "^2.19.0",
     "axios": "^0.24.0",
     "formik": "^2.2.9",
+    "hark": "^1.2.3",
     "mediasoup-client": "^3.6.49",
     "nanoid": "^3.2.0",
     "next": "^12.0.0",
@@ -31,6 +32,7 @@
     "zustand": "^3.6.5"
   },
   "devDependencies": {
+    "@types/hark": "^1.2.2",
     "@types/node": "^16.11.6",
     "@types/nprogress": "^0.2.0",
     "@types/react": "^17.0.33",

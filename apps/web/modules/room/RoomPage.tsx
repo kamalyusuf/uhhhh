@@ -14,8 +14,10 @@ import { AxiosError } from "axios";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { parseApiError } from "../../utils/error";
 import { useRoom } from "./useRoom";
-import { useRoomState } from "../../store/room-state";
+import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../hooks/useSocket";
+import hark from "hark";
+import { useMicStore } from "../../store/mic";
 
 export const RoomPage: PageComponent = () => {
   const router = useRouter();
@@ -33,19 +35,38 @@ export const RoomPage: PageComponent = () => {
       refetchOnMount: "always"
     }
   );
-  const { join } = useRoom(_id);
-  const { state } = useRoomState();
-  const { state: socketState } = useSocket();
+  const { join } = useRoom(room?._id);
+  const { state } = useRoomStore();
+  const { state: socketState, socket } = useSocket();
+  const { stream } = useMicStore();
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (mounted && _id && socketState === "connected") {
+    if (mounted && room && socketState === "connected") {
       join();
     }
-  }, [mounted, _id, socketState]);
+  }, [mounted, room, socketState]);
+
+  useEffect(() => {
+    if (!stream) return;
+
+    const harker = hark(stream, { threshold: -65, interval: 75 });
+
+    harker.on("speaking", () => {
+      socket.emit("active speaker", { value: true });
+    });
+
+    harker.on("stopped_speaking", () => {
+      socket.emit("active speaker", { value: false });
+    });
+
+    return () => {
+      harker.stop();
+    };
+  }, [stream]);
 
   if (!mounted) {
     return null;
@@ -68,7 +89,10 @@ export const RoomPage: PageComponent = () => {
   if (error) {
     return (
       <Layout>
-        <ErrorAlert title="uh-oh" message={parseApiError(error)[0]} />
+        <ErrorAlert
+          title="uh-oh! failed to fetch room"
+          message={parseApiError(error)[0]}
+        />
       </Layout>
     );
   }

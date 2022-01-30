@@ -1,8 +1,17 @@
 import { Badge } from "@mantine/core";
 import { User } from "types";
+import { c } from "../../lib/constants";
 import { Audio } from "../audio/Audio";
 
-export const PeerBadge = ({ peer }: { peer: User }) => {
+export const PeerBadge = ({
+  peer,
+  audio = true,
+  speaker
+}: {
+  peer: User;
+  audio?: boolean;
+  speaker: boolean;
+}) => {
   return (
     <>
       <Badge
@@ -13,10 +22,13 @@ export const PeerBadge = ({ peer }: { peer: User }) => {
             color: "white"
           }
         }}
+        style={{
+          boxShadow: speaker ? `0px 0px 6px 3px ${c.colors.indigo}` : ""
+        }}
       >
         {peer.display_name}
       </Badge>
-      <Audio peer={peer} />
+      {audio && <Audio peer={peer} />}
     </>
   );
 };

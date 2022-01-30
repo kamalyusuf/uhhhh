@@ -80,6 +80,8 @@ export interface ServerToClientEvents<
   leave: () => void;
 
   "peer left": (t: { peer: User }) => void;
+
+  "active speaker": (t: { peer_id: string; value: boolean }) => void;
 }
 
 export interface ClientToServerEvents<
@@ -157,6 +159,8 @@ export interface ClientToServerEvents<
   ) => void;
 
   leave: (t: { room_id: string }, cb: Cb<undefined>) => void;
+
+  "active speaker": (t: { value: boolean }) => void;
 }
 
 export interface InterServerEvents {

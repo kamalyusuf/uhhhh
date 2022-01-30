@@ -4,12 +4,14 @@ import { useTransportStore } from "../../store/transport";
 import { useConsumerStore } from "../../store/consumer";
 import { usePeerStore } from "../../store/peer";
 import { toast } from "react-toastify";
+import { useRoomStore } from "../../store/room";
 
 export const SocketHandler = () => {
   const { socket } = useSocket();
   const transportStore = useTransportStore();
   const consumerStore = useConsumerStore();
   const peerStore = usePeerStore();
+  const roomStore = useRoomStore();
 
   useEffect(() => {
     if (!socket) return;
@@ -64,6 +66,10 @@ export const SocketHandler = () => {
 
     socket.on("peer left", ({ peer }) => {
       peerStore.remove(peer._id);
+    });
+
+    socket.on("active speaker", ({ peer_id, value }) => {
+      roomStore.setActiveSpeaker(peer_id, value);
     });
 
     return () => {

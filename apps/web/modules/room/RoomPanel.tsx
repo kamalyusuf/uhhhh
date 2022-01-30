@@ -7,6 +7,8 @@ import React from "react";
 import { useRouter } from "next/router";
 import { Room } from "types";
 import { usePeerStore } from "../../store/peer";
+import { useMeStore } from "../../store/me";
+import { useRoomStore } from "../../store/room";
 
 interface Props {
   room: Room;
@@ -15,6 +17,8 @@ interface Props {
 export const RoomPanel = ({ room }: Props) => {
   const router = useRouter();
   const { peers } = usePeerStore();
+  const { me } = useMeStore();
+  const { active_speakers } = useRoomStore();
 
   return (
     <Group style={{ flex: 1 }}>
@@ -64,10 +68,19 @@ export const RoomPanel = ({ room }: Props) => {
             paddingBottom: 5
           }}
         >
+          <PeerBadge
+            peer={me}
+            audio={false}
+            speaker={active_speakers[me._id]}
+          />
           {Object.values(peers)
             .filter(Boolean)
             .map((peer) => (
-              <PeerBadge key={peer._id} peer={peer} />
+              <PeerBadge
+                key={peer._id}
+                peer={peer}
+                speaker={active_speakers[peer._id]}
+              />
             ))}
         </Group>
       </ScrollArea>

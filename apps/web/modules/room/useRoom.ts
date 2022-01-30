@@ -1,5 +1,5 @@
 import { useRef, useState } from "react";
-import { useRoomState } from "../../store/room-state";
+import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../hooks/useSocket";
 import { request } from "../../lib/request";
 import { detectDevice, Device } from "mediasoup-client";
@@ -7,6 +7,7 @@ import { useTransportStore } from "../../store/transport";
 import { toast } from "react-toastify";
 import { usePeerStore } from "../../store/peer";
 import { useProducerStore } from "../../store/producer";
+import { useMicStore } from "../../store/mic";
 
 const getDevice = () => {
   let handlerName = detectDevice();
@@ -22,13 +23,14 @@ const PC_PROPRIETARY_CONSTRAINTS = {
 };
 
 export const useRoom = (room_id: string) => {
-  const { setState } = useRoomState();
+  const { setState } = useRoomStore();
   const { socket } = useSocket();
   const device = useRef(getDevice()).current;
   const transportStore = useTransportStore();
   const peerStore = usePeerStore();
   const producerStore = useProducerStore();
   const { producer } = producerStore;
+  const micStore = useMicStore();
 
   const join = async () => {
     try {
@@ -174,21 +176,22 @@ export const useRoom = (room_id: string) => {
         }
       });
 
-      setState("connected");
-
-      toast.info("connected");
-
       for (const peer of peers) {
         peerStore.add(peer);
       }
 
       // enabling mic
       if (!device.canProduce("audio")) {
-        return toast.error("cannot produce audio");
+        setState("connected");
+        toast.info("connected");
+        return toast.warn("cannot produce audio");
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const track = stream.getAudioTracks()[0];
+
+      micStore.setStream(stream);
+      micStore.setTrack(track);
 
       const producer = await sendTransport.produce({
         track,
@@ -208,11 +211,14 @@ export const useRoom = (room_id: string) => {
       });
 
       producerStore.add(producer);
-
       setState("connected");
     } catch (e) {
       setState("error");
     }
+  };
+
+  const leave = async () => {
+    setState("disconnecting");
   };
 
   const disableMic = async () => {

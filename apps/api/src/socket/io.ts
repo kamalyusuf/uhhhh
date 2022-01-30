@@ -2,7 +2,7 @@ import { logger } from "../lib/logger";
 import { env } from "../lib/env";
 import { Server } from "http";
 import { Server as SocketServer } from "socket.io";
-import { ServerEvent, TypedIO, Event } from "./types";
+import { ServerEvent, TypedIO, Event, ClientEvent } from "./types";
 import fs from "fs";
 import path from "path";
 import { EventError } from "../lib/socket-error";
@@ -17,6 +17,8 @@ const schema = z.object({
   _id: z.string(),
   display_name: z.string()
 });
+
+const exclude: Readonly<ClientEvent[]> = ["active speaker"];
 
 class SocketIO {
   private _io?: TypedIO;
@@ -103,7 +105,7 @@ class SocketIO {
             });
           }
 
-          if (typeof cb !== "function") {
+          if (!exclude.includes(event.on) && typeof cb !== "function") {
             return socket.emit("error", {
               message: "expected callback to be a function"
             });
