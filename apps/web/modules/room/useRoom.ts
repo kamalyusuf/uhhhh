@@ -207,7 +207,7 @@ export const useRoom = (room_id: string) => {
 
       producer.on("trackended", () => {
         toast.error("microphone disconnected");
-        disableMic();
+        // disableMic();
       });
 
       producerStore.add(producer);
@@ -215,10 +215,6 @@ export const useRoom = (room_id: string) => {
     } catch (e) {
       setState("error");
     }
-  };
-
-  const leave = async () => {
-    setState("disconnecting");
   };
 
   const disableMic = async () => {
@@ -237,7 +233,7 @@ export const useRoom = (room_id: string) => {
       }
     });
 
-    producerStore.remove();
+    producerStore.reset();
   };
 
   const mute = async () => {

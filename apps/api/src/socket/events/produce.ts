@@ -41,7 +41,7 @@ const handler: Event<"produce"> = {
         io,
         consumer_peer: p,
         producer_peer: peer,
-        producer
+        producer: producer
       });
     }
 

@@ -9,7 +9,15 @@ const store = combine(
   (set) => ({
     setTrack: (track: MediaStreamTrack) => set({ track }),
     setStream: (stream: MediaStream) => set({ stream }),
-    reset: () => ({ track: null, stream: null })
+    reset: () =>
+      set((state) => {
+        state.track?.stop();
+
+        return {
+          track: null,
+          stream: null
+        };
+      })
   })
 );
 

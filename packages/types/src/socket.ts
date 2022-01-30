@@ -158,7 +158,7 @@ export interface ClientToServerEvents<
     cb: Cb<undefined>
   ) => void;
 
-  leave: (t: { room_id: string }, cb: Cb<undefined>) => void;
+  leave: (t: undefined, cb: Cb<undefined>) => void;
 
   "active speaker": (t: { value: boolean }) => void;
 }

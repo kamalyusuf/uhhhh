@@ -11,7 +11,13 @@ const store = combine(
     setSendTransport: (send_transport: Transport | null) =>
       set({ send_transport }),
     setReceiveTransport: (receive_transport: Transport | null) =>
-      set({ receive_transport })
+      set({ receive_transport }),
+    reset: () =>
+      set((state) => {
+        state.send_transport?.close();
+        state.receive_transport?.close();
+        return { send_transport: null, receive_transport: null };
+      })
   })
 );
 

@@ -16,7 +16,7 @@ import { Socket, Server as SocketServer } from "socket.io";
 import { Request } from "express";
 import { Peer } from "../mediasoup/peer";
 
-interface OutgoingTransport {
+interface OutgoingTransportOptions {
   id: WebRtcTransport["id"];
   ice_parameters: WebRtcTransport["iceParameters"];
   ice_candidates: WebRtcTransport["iceCandidates"];
@@ -26,7 +26,7 @@ interface OutgoingTransport {
 
 export type ServerToClientEvents = TServerToClientEvents<
   RtpCapabilities,
-  OutgoingTransport,
+  OutgoingTransportOptions,
   MediaKind,
   RtpParameters,
   ConsumerType
@@ -37,7 +37,7 @@ export type ClientToServerEvents = TClientToServerEvents<
   DtlsParameters,
   MediaKind,
   RtpParameters,
-  OutgoingTransport
+  OutgoingTransportOptions
 >;
 
 export type ServerEvent = keyof ClientToServerEvents;

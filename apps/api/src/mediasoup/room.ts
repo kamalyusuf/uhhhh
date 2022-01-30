@@ -108,6 +108,14 @@ export class MediasoupRoom extends EventEmitter {
       return;
     }
 
+    console.log({
+      transport,
+      consumer_peer,
+      producer_peer,
+      producer,
+      producer_id: producer.id
+    });
+
     const consumer = await transport.consume({
       producerId: producer.id,
       rtpCapabilities: consumer_peer.rtpCapabilities,

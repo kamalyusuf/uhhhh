@@ -3,12 +3,17 @@ import { Heading } from "../../components/Heading";
 import { ToggleMuteButton } from "../audio/ToggleMuteButton";
 import { c } from "../../lib/constants";
 import { PeerBadge } from "../user/PeerBadge";
-import React from "react";
+import React, { useCallback } from "react";
 import { useRouter } from "next/router";
 import { Room } from "types";
 import { usePeerStore } from "../../store/peer";
 import { useMeStore } from "../../store/me";
 import { useRoomStore } from "../../store/room";
+import { useSocket } from "../../hooks/useSocket";
+import { request } from "../../lib/request";
+import { useMicStore } from "../../store/mic";
+import { useTransportStore } from "../../store/transport";
+import { useProducerStore } from "../../store/producer";
 
 interface Props {
   room: Room;
@@ -18,7 +23,29 @@ export const RoomPanel = ({ room }: Props) => {
   const router = useRouter();
   const { peers } = usePeerStore();
   const { me } = useMeStore();
-  const { active_speakers } = useRoomStore();
+  const { active_speakers, setState, state } = useRoomStore();
+  const leaving = state === "disconnecting";
+  const { socket } = useSocket();
+  const micStore = useMicStore();
+  const transportStore = useTransportStore();
+  const producerStore = useProducerStore();
+
+  const leave = async () => {
+    setState("disconnecting");
+
+    await request({
+      socket,
+      event: "leave",
+      data: undefined
+    });
+
+    micStore.reset();
+    transportStore.reset();
+    producerStore.reset();
+
+    setState("disconnected");
+    router.replace("/rooms");
+  };
 
   return (
     <Group style={{ flex: 1 }}>
@@ -43,7 +70,9 @@ export const RoomPanel = ({ room }: Props) => {
               backgroundColor: theme.colors.dark[8]
             }
           })}
-          onClick={() => router.push("/rooms")}
+          onClick={leave}
+          disabled={leaving}
+          loading={leaving}
         >
           leave
         </Button>

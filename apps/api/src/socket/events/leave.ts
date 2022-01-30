@@ -3,13 +3,18 @@ import { MediasoupRoom } from "../../mediasoup/room";
 
 const handler: Event<"leave"> = {
   on: "leave",
-  invoke: async ({ peer, payload: { room_id }, socket, cb }) => {
-    const room = MediasoupRoom.findById(room_id);
+  invoke: async ({ peer, socket, cb }) => {
+    if (!peer.activeRoomId) {
+      throw new Error("peer not a memeber room");
+    }
+
+    const rid = peer.activeRoomId;
+    const room = MediasoupRoom.findById(rid);
 
     room.leave(peer);
 
-    socket.leave(room_id);
-    socket.to(room_id).emit("peer left", { peer: peer.user });
+    socket.leave(rid);
+    socket.to(rid).emit("peer left", { peer: peer.user });
 
     cb(undefined);
   }

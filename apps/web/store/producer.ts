@@ -16,7 +16,12 @@ const store = combine(
 
         return { producer };
       }),
-    remove: () => set({ producer: null })
+    reset: () =>
+      set((state) => {
+        state.producer?.close();
+
+        return { producer: null };
+      })
   })
 );
 

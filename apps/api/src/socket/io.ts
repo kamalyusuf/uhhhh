@@ -126,6 +126,7 @@ class SocketIO {
               this._io.to(action.to).emit(action.emit, action.send as any);
             }
           } catch (e) {
+            console.log(e);
             socket.emit("event error", new EventError(event.on, e));
           }
         });
