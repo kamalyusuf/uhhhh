@@ -1,10 +1,16 @@
 import { Peer } from "./peer";
-import { Router, RtpCapabilities, Producer } from "mediasoup/node/lib/types";
+import {
+  Router,
+  RtpCapabilities,
+  Producer,
+  Consumer
+} from "mediasoup/node/lib/types";
 import { EventEmitter } from "events";
 import { config } from "./config";
 import { workers } from "./workers";
 import { NotFoundError } from "@kamalyb/errors";
 import { TypedIO } from "../socket/types";
+import { logger } from "../lib/logger";
 
 export class MediasoupRoom extends EventEmitter {
   static rooms: Map<string, MediasoupRoom> = new Map();
@@ -99,28 +105,46 @@ export class MediasoupRoom extends EventEmitter {
         rtpCapabilities: consumer_peer.rtpCapabilities
       })
     ) {
+      logger.log({
+        level: "warning",
+        dev: true,
+        message: `[createConsumer()] ${consumer_peer.user.display_name} doest not have rtpCapabilities or router cannot consume`
+      });
+
       return;
     }
 
     const transports = Array.from(consumer_peer.transports.values());
     const transport = transports.find((t) => t.appData.direction === "receive");
     if (!transport) {
+      logger.log({
+        level: "warning",
+        dev: true,
+        message: `[createConsumer()] transport not found for consumer_peer ${consumer_peer.user.display_name}`
+      });
+
       return;
     }
 
-    console.log({
-      transport,
-      consumer_peer,
-      producer_peer,
-      producer,
-      producer_id: producer.id
-    });
+    let consumer: Consumer;
 
-    const consumer = await transport.consume({
-      producerId: producer.id,
-      rtpCapabilities: consumer_peer.rtpCapabilities,
-      paused: true
-    });
+    try {
+      consumer = await transport.consume({
+        producerId: producer.id,
+        rtpCapabilities: consumer_peer.rtpCapabilities,
+        paused: true
+      });
+    } catch (e: any) {
+      console.log("[transport.consume] error".red);
+      console.log(e);
+      logger.log({
+        level: "warning",
+        dev: true,
+        message: `[createConsumer() -> transport.consume()] ${e.message}`
+      });
+
+      return;
+    }
 
     consumer_peer.consumers.set(consumer.id, consumer);
 
@@ -169,7 +193,7 @@ export class MediasoupRoom extends EventEmitter {
       producer_paused: consumer.producerPaused
     });
 
-    await consumer.resume();
+    // await consumer.resume();
   }
 
   leave(peer: Peer) {
@@ -181,22 +205,23 @@ export class MediasoupRoom extends EventEmitter {
       return;
     }
 
-    for (const producer of peer.producers.values()) {
-      producer.close();
-    }
+    // for (const producer of peer.producers.values()) {
+    //   producer.close();
+    // }
 
     for (const transport of peer.transports.values()) {
       transport.close();
     }
 
-    for (const consumer of peer.consumers.values()) {
-      consumer.close();
-    }
+    // for (const consumer of peer.consumers.values()) {
+    //   consumer.close();
+    // }
 
     peer.activeRoomId = undefined;
     this.peers.delete(peer.user._id);
 
     if (this._peers().length === 0) {
+      this.router.close();
       // todo: delete the room from database
       MediasoupRoom.remove(this.id);
     }

@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../hooks/useSocket";
 import { request } from "../../lib/request";
@@ -29,7 +29,6 @@ export const useRoom = (room_id: string) => {
   const transportStore = useTransportStore();
   const peerStore = usePeerStore();
   const producerStore = useProducerStore();
-  const { producer } = producerStore;
   const micStore = useMicStore();
 
   const join = async () => {
@@ -207,60 +206,15 @@ export const useRoom = (room_id: string) => {
 
       producer.on("trackended", () => {
         toast.error("microphone disconnected");
-        // disableMic();
       });
 
       producerStore.add(producer);
+
       setState("connected");
     } catch (e) {
       setState("error");
     }
   };
 
-  const disableMic = async () => {
-    if (!producer) return;
-
-    if (producer.closed) return;
-
-    producer.close();
-
-    await request({
-      socket,
-      event: "close producer",
-      data: {
-        room_id,
-        producer_id: producer.id
-      }
-    });
-
-    producerStore.reset();
-  };
-
-  const mute = async () => {
-    producer.pause();
-
-    await request({
-      socket,
-      event: "pause producer",
-      data: {
-        room_id,
-        producer_id: producer.id
-      }
-    });
-  };
-
-  const unmute = async () => {
-    producer.resume();
-
-    await request({
-      socket,
-      event: "resume producer",
-      data: {
-        room_id,
-        producer_id: producer.id
-      }
-    });
-  };
-
-  return { join, mute, unmute };
+  return { join };
 };

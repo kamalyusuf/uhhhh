@@ -3,7 +3,7 @@ import { Heading } from "../../components/Heading";
 import { ToggleMuteButton } from "../audio/ToggleMuteButton";
 import { c } from "../../lib/constants";
 import { PeerBadge } from "../user/PeerBadge";
-import React, { useCallback } from "react";
+import React from "react";
 import { useRouter } from "next/router";
 import { Room } from "types";
 import { usePeerStore } from "../../store/peer";
@@ -23,15 +23,16 @@ export const RoomPanel = ({ room }: Props) => {
   const router = useRouter();
   const { peers } = usePeerStore();
   const { me } = useMeStore();
-  const { active_speakers, setState, state } = useRoomStore();
-  const leaving = state === "disconnecting";
   const { socket } = useSocket();
+  const roomStore = useRoomStore();
   const micStore = useMicStore();
   const transportStore = useTransportStore();
   const producerStore = useProducerStore();
 
+  const leaving = roomStore.state === "disconnecting";
+
   const leave = async () => {
-    setState("disconnecting");
+    roomStore.setState("disconnecting");
 
     await request({
       socket,
@@ -41,9 +42,9 @@ export const RoomPanel = ({ room }: Props) => {
 
     micStore.reset();
     transportStore.reset();
-    producerStore.reset();
+    roomStore.reset();
+    // producerStore.reset();
 
-    setState("disconnected");
     router.replace("/rooms");
   };
 
@@ -100,7 +101,7 @@ export const RoomPanel = ({ room }: Props) => {
           <PeerBadge
             peer={me}
             audio={false}
-            speaker={active_speakers[me._id]}
+            speaker={roomStore.active_speakers[me._id]}
           />
           {Object.values(peers)
             .filter(Boolean)
@@ -108,7 +109,7 @@ export const RoomPanel = ({ room }: Props) => {
               <PeerBadge
                 key={peer._id}
                 peer={peer}
-                speaker={active_speakers[peer._id]}
+                speaker={roomStore.active_speakers[peer._id]}
               />
             ))}
         </Group>

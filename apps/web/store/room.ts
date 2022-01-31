@@ -25,7 +25,8 @@ const store = combine(
             [peer_id]: value
           }
         };
-      })
+      }),
+    reset: () => set({ state: "disconnected", active_speakers: {} })
   })
 );
 

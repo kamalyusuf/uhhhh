@@ -18,7 +18,10 @@ const schema = z.object({
   display_name: z.string()
 });
 
-const exclude: Readonly<ClientEvent[]> = ["active speaker"];
+const exclude: Readonly<ClientEvent[]> = [
+  "active speaker",
+  "consumer consumed"
+];
 
 class SocketIO {
   private _io?: TypedIO;

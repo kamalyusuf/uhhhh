@@ -82,7 +82,13 @@ export interface Event<K extends ServerEvent> {
     event: K;
     req: Request;
     peer: Peer;
-  }) => Promise<Action<K>> | void | Promise<void>;
+  }) =>
+    | Action<K>
+    | Promise<Action<K>>
+    | void
+    | Promise<void>
+    | undefined
+    | Promise<undefined>;
   // invoke: (
   //   payload: Parameters<ClientToServerEvents[K]>
   // ) => Promise<(Action<K> | undefined)[]>;

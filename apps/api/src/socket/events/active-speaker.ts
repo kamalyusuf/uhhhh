@@ -3,9 +3,10 @@ import { Event } from "../types";
 
 const handler: Event<"active speaker"> = {
   on: "active speaker",
+  // @ts-ignore
   invoke: async ({ peer, payload }) => {
     if (!peer.activeRoomId) {
-      throw new Error("peer not in a room");
+      return;
     }
 
     const room = MediasoupRoom.findById(peer.activeRoomId);
