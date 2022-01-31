@@ -72,8 +72,8 @@ export const SocketHandler = () => {
       peerStore.remove(peer._id);
     });
 
-    socket.on("active speaker", ({ peer_id, value }) => {
-      roomStore.setActiveSpeaker(peer_id, value);
+    socket.on("active speaker", ({ peer_id, speaking }) => {
+      roomStore.setActiveSpeaker(peer_id, speaking);
     });
 
     return () => {

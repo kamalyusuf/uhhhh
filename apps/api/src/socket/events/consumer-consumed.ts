@@ -7,7 +7,7 @@ const handler: Event<"consumer consumed"> = {
     const consumer = peer.consumers.get(payload.consumer_id);
     if (!consumer) {
       logger.log({
-        level: "warning",
+        level: "warn",
         dev: true,
         message: `[consumer consumed] consumer with id ${payload.consumer_id} not found for peer ${peer.user.display_name}`
       });

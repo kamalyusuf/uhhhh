@@ -81,7 +81,7 @@ export interface ServerToClientEvents<
 
   "peer left": (t: { peer: User }) => void;
 
-  "active speaker": (t: { peer_id: string; value: boolean }) => void;
+  "active speaker": (t: { peer_id: string; speaking: boolean }) => void;
 
   "consumer consumed": () => void;
 }
@@ -162,7 +162,7 @@ export interface ClientToServerEvents<
 
   leave: (t: undefined, cb: Cb<undefined>) => void;
 
-  "active speaker": (t: { value: boolean }) => void;
+  "active speaker": (t: { speaking: boolean }) => void;
 
   "consumer consumed": (t: { consumer_id: string }) => void;
 }

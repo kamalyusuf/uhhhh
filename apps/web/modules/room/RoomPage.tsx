@@ -56,11 +56,11 @@ export const RoomPage: PageComponent = () => {
     const harker = hark(stream, { threshold: -65, interval: 75 });
 
     harker.on("speaking", () => {
-      socket.emit("active speaker", { value: true });
+      socket.emit("active speaker", { speaking: true });
     });
 
     harker.on("stopped_speaking", () => {
-      socket.emit("active speaker", { value: false });
+      socket.emit("active speaker", { speaking: false });
     });
 
     return () => {

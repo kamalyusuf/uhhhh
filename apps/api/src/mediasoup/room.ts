@@ -106,7 +106,7 @@ export class MediasoupRoom extends EventEmitter {
       })
     ) {
       logger.log({
-        level: "warning",
+        level: "warn",
         dev: true,
         message: `[createConsumer()] ${consumer_peer.user.display_name} doest not have rtpCapabilities or router cannot consume`
       });
@@ -118,7 +118,7 @@ export class MediasoupRoom extends EventEmitter {
     const transport = transports.find((t) => t.appData.direction === "receive");
     if (!transport) {
       logger.log({
-        level: "warning",
+        level: "warn",
         dev: true,
         message: `[createConsumer()] transport not found for consumer_peer ${consumer_peer.user.display_name}`
       });
@@ -135,10 +135,8 @@ export class MediasoupRoom extends EventEmitter {
         paused: true
       });
     } catch (e: any) {
-      console.log("[transport.consume] error".red);
-      console.log(e);
       logger.log({
-        level: "warning",
+        level: "warn",
         dev: true,
         message: `[createConsumer() -> transport.consume()] ${e.message}`
       });
@@ -193,7 +191,7 @@ export class MediasoupRoom extends EventEmitter {
       producer_paused: consumer.producerPaused
     });
 
-    // await consumer.resume();
+    // await consumer.resume(); // moved to "consumer consumed" event
   }
 
   leave(peer: Peer) {

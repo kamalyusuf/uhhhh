@@ -9,9 +9,17 @@ export const onDisconnect =
     logger.log({
       level: "info",
       dev: true,
-      message: `socket ${socket.id} disconnected because ${reason}`.magenta
+      message: `peer ${peer.user.display_name} disconnected because ${reason}`
+        .magenta
     });
+
     if (!peer.activeRoomId) {
+      logger.log({
+        level: "warn",
+        dev: true,
+        message: `[onDisconnect] peer ${peer.user.display_name} isn't a member of any room. finna return`
+      });
+
       return;
     }
 

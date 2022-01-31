@@ -1,11 +1,18 @@
 import { MediasoupRoom } from "../../mediasoup/room";
 import { Event } from "../types";
+import { logger } from "../../lib/logger";
 
 const handler: Event<"active speaker"> = {
   on: "active speaker",
   // @ts-ignore
   invoke: async ({ peer, payload }) => {
     if (!peer.activeRoomId) {
+      logger.log({
+        level: "warn",
+        dev: true,
+        message: `[active speaker] peer ${peer.user.display_name} isn't a member of any room. finna return`
+      });
+
       return;
     }
 
@@ -19,7 +26,7 @@ const handler: Event<"active speaker"> = {
       to: [room.id],
       send: {
         peer_id: peer.user._id,
-        value: payload.value
+        speaking: payload.speaking
       }
     };
   }

@@ -84,17 +84,17 @@ class SocketIO {
     });
 
     this._io.on("connection", (socket) => {
-      logger.log({
-        level: "info",
-        dev: true,
-        message: `socket ${socket.id} connected`.cyan
-      });
-
       const raw = socket.handshake.query.user as string;
       const user = JSON.parse(raw) as User;
       const peer = Peer.create({ user });
 
-      socket.join(user._id);
+      logger.log({
+        level: "info",
+        dev: true,
+        message: `peer ${peer.user.display_name} connected`.cyan
+      });
+
+      socket.join(peer.user._id);
 
       for (const event of this.events.values()) {
         socket.on(event.on, async (data: any, cb: any) => {
@@ -128,16 +128,24 @@ class SocketIO {
             if (action) {
               this._io.to(action.to).emit(action.emit, action.send as any);
             }
-          } catch (e) {
-            console.log(e);
+          } catch (e: any) {
+            logger.log({
+              level: "error",
+              dev: true,
+              message: `[${event.on}] ${e.message}`
+            });
             socket.emit("event error", new EventError(event.on, e));
           }
         });
       }
 
-      if (env.isDevelopment) {
-        console.log({ "listening events": socket.eventNames() });
-      }
+      logger.log({
+        level: "info",
+        dev: true,
+        message: `${peer.user.display_name}'s listening events: '${socket
+          .eventNames()
+          .join(", ")}'`
+      });
 
       socket.on("disconnect", onDisconnect({ io: this._io!, socket, peer }));
     });
