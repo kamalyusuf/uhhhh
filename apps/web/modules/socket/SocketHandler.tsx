@@ -5,6 +5,8 @@ import { useConsumerStore } from "../../store/consumer";
 import { usePeerStore } from "../../store/peer";
 import { toast } from "react-toastify";
 import { useRoomStore } from "../../store/room";
+import { useQueryClient } from "react-query";
+import { Room } from "types";
 
 export const SocketHandler = () => {
   const { socket } = useSocket();
@@ -12,6 +14,7 @@ export const SocketHandler = () => {
   const consumerStore = useConsumerStore();
   const peerStore = usePeerStore();
   const roomStore = useRoomStore();
+  const client = useQueryClient();
 
   useEffect(() => {
     if (!socket) return;
@@ -74,6 +77,16 @@ export const SocketHandler = () => {
 
     socket.on("active speaker", ({ peer_id, speaking }) => {
       roomStore.setActiveSpeaker(peer_id, speaking);
+    });
+
+    socket.on("delete room", ({ room_id }) => {
+      client.setQueryData<{ rooms: Room[] } | undefined>("rooms", (cached) => {
+        if (!cached) return undefined;
+
+        return {
+          rooms: cached.rooms.filter((room) => room._id !== room_id)
+        };
+      });
     });
 
     return () => {

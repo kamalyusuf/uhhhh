@@ -11,7 +11,7 @@ const handler: Event<"leave"> = {
     const rid = peer.activeRoomId;
     const room = MediasoupRoom.findById(rid);
 
-    room.leave(peer);
+    await room.leave(peer);
 
     socket.leave(rid);
     socket.to(rid).emit("peer left", { peer: peer.user });

@@ -65,4 +65,8 @@ export abstract class BaseRepository<
 
     return doc.save(options);
   }
+
+  async deleteOne(filter: FilterQuery<Doc>) {
+    return this.model.deleteOne(filter);
+  }
 }

@@ -11,6 +11,8 @@ import { workers } from "./workers";
 import { NotFoundError } from "@kamalyb/errors";
 import { TypedIO } from "../socket/types";
 import { logger } from "../lib/logger";
+import { roomService } from "../modules/room/room.service";
+import { Types } from "mongoose";
 
 export class MediasoupRoom extends EventEmitter {
   static rooms: Map<string, MediasoupRoom> = new Map();
@@ -203,7 +205,7 @@ export class MediasoupRoom extends EventEmitter {
     // await consumer.resume(); // moved to "consumer consumed" event
   }
 
-  leave(peer: Peer) {
+  async leave(peer: Peer) {
     if (
       !peer.activeRoomId ||
       !this.peers.has(peer.user._id) ||
@@ -217,7 +219,7 @@ export class MediasoupRoom extends EventEmitter {
 
     if (this._peers().length === 0) {
       this.router.close();
-      // todo: delete the room from database
+      await roomService.deleteById(new Types.ObjectId(this.id));
       MediasoupRoom.remove(this.id);
     }
   }
