@@ -6,7 +6,7 @@ import { logger } from "./logger";
 mongoose.set("strict", "throw");
 mongoose.set("strictQuery", "throw");
 mongoose.set("sanitizeProjection", true);
-mongoose.set("sanitizeFilter", true);
+// mongoose.set("sanitizeFilter", true);
 mongoose.set("strictPopulate", true);
 mongoose.plugin(uniqueValidator, { message: `{PATH} already exists` });
 // TODO: cast() does not exist on type probably because of the v6 upgrade

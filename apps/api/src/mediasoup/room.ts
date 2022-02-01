@@ -219,7 +219,7 @@ export class MediasoupRoom extends EventEmitter {
 
     if (this._peers().length === 0) {
       this.router.close();
-      await roomService.deleteById(new Types.ObjectId(this.id));
+      await roomService._delete(new Types.ObjectId(this.id));
       MediasoupRoom.remove(this.id);
     }
   }

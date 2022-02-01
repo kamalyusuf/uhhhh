@@ -9,46 +9,26 @@ import { Room } from "types";
 import { usePeerStore } from "../../store/peer";
 import { useMeStore } from "../../store/me";
 import { useRoomStore } from "../../store/room";
-import { useSocket } from "../../hooks/useSocket";
-import { request } from "../../lib/request";
-import { useMicStore } from "../../store/mic";
-import { useTransportStore } from "../../store/transport";
-import { useProducerStore } from "../../store/producer";
 
 interface Props {
   room: Room;
+  actions: {
+    leave: () => Promise<void>;
+  };
 }
 
-export const RoomPanel = ({ room }: Props) => {
+export const RoomPanel = ({ room, actions }: Props) => {
   const router = useRouter();
   const peerStore = usePeerStore();
   const { me } = useMeStore();
-  const { socket } = useSocket();
   const roomStore = useRoomStore();
-  const micStore = useMicStore();
-  const transportStore = useTransportStore();
-  const producerStore = useProducerStore();
 
   const leaving = roomStore.state === "disconnecting";
 
   const leave = async () => {
     roomStore.setState("disconnecting");
 
-    await request({
-      socket,
-      event: "leave",
-      data: undefined
-    });
-
-    await new Promise<void>((resolve) => {
-      micStore.reset();
-      transportStore.reset();
-      producerStore.reset();
-      peerStore.reset();
-      roomStore.reset();
-
-      resolve();
-    });
+    await actions.leave();
 
     router.replace("/rooms");
   };

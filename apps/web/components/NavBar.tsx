@@ -5,10 +5,12 @@ import { Container } from "./Container";
 import { HiUser } from "react-icons/hi";
 import { useMeStore } from "../store/me";
 import { useRouter } from "next/router";
+import { useRoomStore } from "../store/room";
 
 export const NavBar = () => {
   const { me } = useMeStore();
   const router = useRouter();
+  const { state } = useRoomStore();
 
   return (
     <Box
@@ -24,7 +26,10 @@ export const NavBar = () => {
             <Heading
               title="uhhhh"
               color="indigo"
-              style={{ cursor: "pointer" }}
+              style={{
+                cursor: "pointer",
+                pointerEvents: state === "connected" ? "none" : undefined
+              }}
             />
           </Link>
 
@@ -33,6 +38,9 @@ export const NavBar = () => {
               rightIcon={<HiUser />}
               size="sm"
               onClick={() => router.push("/me")}
+              style={{
+                pointerEvents: state === "connected" ? "none" : undefined
+              }}
             >
               {me.display_name}
             </Button>

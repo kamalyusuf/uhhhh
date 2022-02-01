@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { usePeerStore } from "../../store/peer";
 import { useProducerStore } from "../../store/producer";
 import { useMicStore } from "../../store/mic";
+import { unstable_batchedUpdates as batch } from "react-dom";
 
 const getDevice = () => {
   let handlerName = detectDevice();
@@ -30,10 +31,15 @@ export const useRoom = (room_id: string) => {
   const peerStore = usePeerStore();
   const producerStore = useProducerStore();
   const micStore = useMicStore();
+  const roomStore = useRoomStore();
 
   const join = async () => {
     try {
       setState("connecting");
+
+      if (roomStore.state === "connected") {
+        await leave();
+      }
 
       const { rtp_capabilities: routerRtpCapabilities } = await request({
         socket,
@@ -179,7 +185,6 @@ export const useRoom = (room_id: string) => {
         peerStore.add(peer);
       }
 
-      // enabling mic
       if (!device.canProduce("audio")) {
         setState("connected");
         toast.info("connected");
@@ -216,5 +221,21 @@ export const useRoom = (room_id: string) => {
     }
   };
 
-  return { join };
+  const leave = async () => {
+    await request({
+      socket,
+      event: "leave",
+      data: undefined
+    });
+
+    batch(() => {
+      micStore.reset();
+      transportStore.reset();
+      producerStore.reset();
+      peerStore.reset();
+      roomStore.reset();
+    });
+  };
+
+  return { join, leave };
 };

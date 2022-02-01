@@ -5,7 +5,7 @@ import { MediasoupRoom } from "../../mediasoup/room";
 
 export const onDisconnect =
   ({ socket, peer }: { io: TypedIO; socket: TypedSocket; peer: Peer }) =>
-  (reason: string) => {
+  async (reason: string) => {
     logger.log({
       level: "info",
       dev: true,
@@ -26,7 +26,7 @@ export const onDisconnect =
     const rid = peer.activeRoomId;
     const room = MediasoupRoom.findById(rid);
 
-    room.leave(peer);
+    await room.leave(peer);
     Peer.remove(peer);
 
     socket.to(rid).emit("peer left", { peer: peer.user });
