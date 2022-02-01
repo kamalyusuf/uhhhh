@@ -40,4 +40,34 @@ export class Peer {
 
     this.peers.delete(peer.user._id);
   }
+
+  private closeProducers() {
+    for (const producer of this.producers.values()) {
+      producer.close();
+    }
+    this.producers.clear();
+  }
+
+  private closeTransports() {
+    for (const transport of this.transports.values()) {
+      transport.close();
+    }
+    this.transports.clear();
+  }
+
+  private closeConsumers() {
+    for (const consumer of this.consumers.values()) {
+      consumer.close();
+    }
+    this.consumers.clear();
+  }
+
+  reset() {
+    this.closeProducers();
+    this.closeTransports();
+    this.closeConsumers();
+
+    this.activeRoomId = undefined;
+    this.rtpCapabilities = undefined;
+  }
 }

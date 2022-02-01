@@ -212,23 +212,7 @@ export class MediasoupRoom extends EventEmitter {
       return;
     }
 
-    for (const producer of peer.producers.values()) {
-      producer.close();
-    }
-    peer.producers.clear();
-
-    for (const transport of peer.transports.values()) {
-      transport.close();
-    }
-    peer.transports.clear();
-
-    for (const consumer of peer.consumers.values()) {
-      consumer.close();
-    }
-    peer.consumers.clear();
-
-    peer.activeRoomId = undefined;
-    peer.rtpCapabilities = undefined;
+    peer.reset();
     this.peers.delete(peer.user._id);
 
     if (this._peers().length === 0) {
