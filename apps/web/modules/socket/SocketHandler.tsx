@@ -89,6 +89,16 @@ export const SocketHandler = () => {
       });
     });
 
+    socket.on("create room", ({ room }) => {
+      client.setQueryData<{ rooms: Room[] } | undefined>("rooms", (cached) => {
+        if (!cached) return undefined;
+
+        return {
+          rooms: [...cached.rooms, room]
+        };
+      });
+    });
+
     return () => {
       socket.removeAllListeners();
     };
