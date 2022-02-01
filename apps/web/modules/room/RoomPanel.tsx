@@ -21,7 +21,7 @@ interface Props {
 
 export const RoomPanel = ({ room }: Props) => {
   const router = useRouter();
-  const { peers } = usePeerStore();
+  const peerStore = usePeerStore();
   const { me } = useMeStore();
   const { socket } = useSocket();
   const roomStore = useRoomStore();
@@ -40,10 +40,15 @@ export const RoomPanel = ({ room }: Props) => {
       data: undefined
     });
 
-    micStore.reset();
-    transportStore.reset();
-    roomStore.reset();
-    // producerStore.reset();
+    await new Promise<void>((resolve) => {
+      micStore.reset();
+      transportStore.reset();
+      producerStore.reset();
+      peerStore.reset();
+      roomStore.reset();
+
+      resolve();
+    });
 
     router.replace("/rooms");
   };
@@ -103,7 +108,7 @@ export const RoomPanel = ({ room }: Props) => {
             audio={false}
             speaker={roomStore.active_speakers[me._id]}
           />
-          {Object.values(peers)
+          {Object.values(peerStore.peers)
             .filter(Boolean)
             .map((peer) => (
               <PeerBadge

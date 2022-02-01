@@ -18,13 +18,16 @@ const store = combine(
       }),
     remove: (peer_id: string) =>
       set((state) => {
+        if (!state.peers[peer_id]) return state;
+
         return {
           peers: {
             ...state.peers,
             [peer_id]: undefined
           }
         };
-      })
+      }),
+    reset: () => set({ peers: {} })
   })
 );
 

@@ -23,11 +23,11 @@ export const onDisconnect =
       return;
     }
 
-    const room_id = peer.activeRoomId;
-    const room = MediasoupRoom.findById(peer.activeRoomId);
+    const rid = peer.activeRoomId;
+    const room = MediasoupRoom.findById(rid);
 
     room.leave(peer);
     Peer.remove(peer);
 
-    socket.to(room_id).emit("peer left", { peer: peer.user });
+    socket.to(rid).emit("peer left", { peer: peer.user });
   };

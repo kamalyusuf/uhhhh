@@ -98,8 +98,17 @@ export class MediasoupRoom extends EventEmitter {
     producer_peer: Peer;
     producer: Producer;
   }) {
+    if (!consumer_peer.rtpCapabilities) {
+      logger.log({
+        level: "warn",
+        dev: true,
+        message: `[createConsumer()] ${consumer_peer.user.display_name} does not have rtpCapabilities. returning`
+      });
+
+      return;
+    }
+
     if (
-      !consumer_peer.rtpCapabilities ||
       !this.router.canConsume({
         producerId: producer.id,
         rtpCapabilities: consumer_peer.rtpCapabilities
@@ -108,7 +117,7 @@ export class MediasoupRoom extends EventEmitter {
       logger.log({
         level: "warn",
         dev: true,
-        message: `[createConsumer()] ${consumer_peer.user.display_name} doest not have rtpCapabilities or router cannot consume`
+        message: `[createConsumer()] router cannot consume ${consumer_peer.user.display_name}'s rtpCapabilities or maybe the producer with id ${producer.id}. returning`
       });
 
       return;
@@ -138,7 +147,7 @@ export class MediasoupRoom extends EventEmitter {
       logger.log({
         level: "warn",
         dev: true,
-        message: `[createConsumer() -> transport.consume()] ${e.message}`
+        message: `[createConsumer() -> transport.consume()] ${e.message} for consumer_peer ${consumer_peer.user.display_name} and producer_peer ${producer_peer.user.display_name}`
       });
 
       return;
@@ -203,19 +212,23 @@ export class MediasoupRoom extends EventEmitter {
       return;
     }
 
-    // for (const producer of peer.producers.values()) {
-    //   producer.close();
-    // }
+    for (const producer of peer.producers.values()) {
+      producer.close();
+    }
+    peer.producers.clear();
 
     for (const transport of peer.transports.values()) {
       transport.close();
     }
+    peer.transports.clear();
 
-    // for (const consumer of peer.consumers.values()) {
-    //   consumer.close();
-    // }
+    for (const consumer of peer.consumers.values()) {
+      consumer.close();
+    }
+    peer.consumers.clear();
 
     peer.activeRoomId = undefined;
+    peer.rtpCapabilities = undefined;
     this.peers.delete(peer.user._id);
 
     if (this._peers().length === 0) {

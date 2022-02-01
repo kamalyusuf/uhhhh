@@ -20,13 +20,9 @@ const handler: Event<"join"> = {
     socket.join(room.id);
     peer.activeRoomId = room.id;
 
-    const peers = room._peers();
+    const peers = room._peers().filter((p) => p.user._id !== peer.user._id);
 
     for (const p of peers) {
-      if (p.user._id === peer.user._id) {
-        continue;
-      }
-
       for (const producer of p.producers.values()) {
         await room.createConsumer({
           io,

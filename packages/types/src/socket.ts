@@ -145,20 +145,11 @@ export interface ClientToServerEvents<
     cb: Cb<{ room: Room }>
   ) => void;
 
-  "close producer": (
-    t: { room_id: string; producer_id: string },
-    cb: Cb<undefined>
-  ) => void;
+  "close producer": (t: { producer_id: string }, cb: Cb<undefined>) => void;
 
-  "pause producer": (
-    t: { room_id: string; producer_id: string },
-    cb: Cb<undefined>
-  ) => void;
+  "pause producer": (t: { producer_id: string }, cb: Cb<undefined>) => void;
 
-  "resume producer": (
-    t: { room_id: string; producer_id: string },
-    cb: Cb<undefined>
-  ) => void;
+  "resume producer": (t: { producer_id: string }, cb: Cb<undefined>) => void;
 
   leave: (t: undefined, cb: Cb<undefined>) => void;
 
