@@ -1,16 +1,12 @@
 import { useEffect, useRef } from "react";
-import { User } from "types";
-import { useConsumerStore } from "../../store/consumer";
+import { Consumer } from "mediasoup-client/lib/types";
 
 interface Props {
-  peer: User;
+  consumer: Consumer;
 }
 
-export const Audio = ({ peer }: Props) => {
+export const Audio = ({ consumer }: Props) => {
   const ref = useRef<HTMLAudioElement | null>();
-  const { consumers } = useConsumerStore();
-  const c = consumers[peer._id];
-  const consumer = c?.consumer;
 
   useEffect(() => {
     if (!consumer) return;
