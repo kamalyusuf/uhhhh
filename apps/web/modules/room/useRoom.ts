@@ -225,6 +225,9 @@ export const useRoom = (room_id: string) => {
 
       producer.on("trackended", () => {
         toast.error("microphone disconnected");
+        disable().catch((e) => {
+          console.log("[trackended -> disable()]", e);
+        });
       });
 
       producerStore.add(producer);
@@ -291,6 +294,23 @@ export const useRoom = (room_id: string) => {
     });
 
     producerStore.setPaused(false);
+  }, [producerStore.producer, socket]);
+
+  const disable = useCallback(async () => {
+    const producer = producerStore.producer;
+    if (!producer) return;
+
+    producer.close();
+
+    await request({
+      socket,
+      event: "close producer",
+      data: {
+        producer_id: producer.id
+      }
+    });
+
+    producerStore.remove();
   }, [producerStore.producer, socket]);
 
   return { join, leave, mute, unmute };

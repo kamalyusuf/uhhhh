@@ -23,7 +23,8 @@ const store = combine(
 
         return { producer: null, paused: false };
       }),
-    setPaused: (paused: boolean) => set({ paused })
+    setPaused: (paused: boolean) => set({ paused }),
+    remove: () => set({ producer: null, paused: false })
   })
 );
 

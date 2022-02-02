@@ -17,7 +17,9 @@ export const request = async <T extends ServerEvent>({
   data: Parameters<ClientToServerEvents[T]>[0];
   onError?: (error: { message: string; event: string }) => void;
   notify?: boolean;
+  // @ts-ignore
 }): Promise<Parameters<Parameters<ClientToServerEvents[T]>[1]>[0]> => {
+  // @ts-ignore
   return new Promise<Parameters<Parameters<ClientToServerEvents[T]>[1]>[0]>(
     async (resolve, reject) => {
       if (!socket) {
@@ -40,6 +42,7 @@ export const request = async <T extends ServerEvent>({
         event,
         // @ts-ignore
         payload,
+        // @ts-ignore
         (response: Parameters<Parameters<ClientToServerEvents[T]>[1]>[0]) => {
           resolve(response);
         }
