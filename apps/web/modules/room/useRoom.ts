@@ -10,6 +10,7 @@ import { useProducerStore } from "../../store/producer";
 import { useMicStore } from "../../store/mic";
 import { unstable_batchedUpdates as batch } from "react-dom";
 import { useRoomChatStore } from "../../store/room-chat";
+import { useRouter } from "next/router";
 
 const getDevice = () => {
   let handlerName = detectDevice();
@@ -25,7 +26,6 @@ const PC_PROPRIETARY_CONSTRAINTS = {
 };
 
 export const useRoom = (room_id: string) => {
-  const { setState } = useRoomStore();
   const { socket } = useSocket();
   const device = useRef(getDevice()).current;
   const transportStore = useTransportStore();
@@ -34,10 +34,11 @@ export const useRoom = (room_id: string) => {
   const micStore = useMicStore();
   const roomStore = useRoomStore();
   const chatStore = useRoomChatStore();
+  const router = useRouter();
 
   const join = useCallback(async () => {
     try {
-      setState("connecting");
+      roomStore.setState("connecting");
 
       if (roomStore.state === "connected") {
         await leave();
@@ -200,9 +201,13 @@ export const useRoom = (room_id: string) => {
       }
 
       if (!device.canProduce("audio")) {
-        setState("connected");
+        roomStore.set({
+          state: "connected",
+          warn_message: "cannot produce audio"
+        });
+
         toast.info("connected");
-        return toast.warn("cannot produce audio");
+        return;
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -223,18 +228,28 @@ export const useRoom = (room_id: string) => {
         producerStore.set({ producer: null });
       });
 
-      producer.on("trackended", () => {
-        toast.error("microphone disconnected");
-        disable().catch((e) => {
-          console.log("[trackended -> disable()]", e);
-        });
+      producer.on("trackended", async () => {
+        toast.warn("microphone disconnected");
+        await leave();
+        router.replace("/rooms");
       });
 
       producerStore.add(producer);
 
-      setState("connected");
+      roomStore.setState("connected");
     } catch (e) {
-      setState("error");
+      batch(() => {
+        micStore.reset();
+        transportStore.reset();
+        producerStore.reset();
+        peerStore.reset();
+        chatStore.reset();
+        roomStore.set({
+          state: "error",
+          error_message: e.message,
+          active_speakers: {}
+        });
+      });
     }
   }, [
     room_id,

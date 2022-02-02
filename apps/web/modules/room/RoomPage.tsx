@@ -1,4 +1,4 @@
-import { Group, Center, Loader } from "@mantine/core";
+import { Group, Center, Loader, Notification } from "@mantine/core";
 import { Layout } from "../../components/Layout";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";
@@ -36,7 +36,7 @@ export const RoomPage: PageComponent = () => {
     }
   );
   const { join, leave, mute, unmute } = useRoom(room?._id);
-  const { state } = useRoomStore();
+  const roomStore = useRoomStore();
   const { state: socketState, socket } = useSocket();
   const { stream } = useMicStore();
 
@@ -72,7 +72,7 @@ export const RoomPage: PageComponent = () => {
     return null;
   }
 
-  if (isLoading || state === "connecting") {
+  if (isLoading || roomStore.state === "connecting") {
     return (
       <Layout>
         <Container>
@@ -116,15 +116,27 @@ export const RoomPage: PageComponent = () => {
     );
   }
 
-  if (state === "error") {
+  if (roomStore.state === "error") {
+    const isDeviceError = roomStore.error_message === "already loaded";
+    const isMicError = roomStore.error_message === "Permission denied";
+
     return (
       <Layout>
-        <ErrorAlert title="uh-oh" message="could not join room" />
+        <ErrorAlert
+          title="uh-oh"
+          message={
+            isDeviceError
+              ? "please refresh the page"
+              : isMicError
+              ? "microphone access is denied"
+              : "could not join room"
+          }
+        />
       </Layout>
     );
   }
 
-  if (state === "connected") {
+  if (roomStore.state === "connected") {
     return (
       <Layout>
         <Container style={{ width: "100%" }}>

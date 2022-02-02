@@ -13,9 +13,12 @@ type RoomState =
 const store = combine(
   {
     state: "idle" as RoomState,
-    active_speakers: {} as Record<string, boolean>
+    active_speakers: {} as Record<string, boolean>,
+    error_message: "",
+    warn_message: ""
   },
   (set) => ({
+    set,
     setState: (state: RoomState) => set({ state }),
     setActiveSpeaker: (peer_id: string, value: boolean) =>
       set((state) => {
@@ -26,7 +29,8 @@ const store = combine(
           }
         };
       }),
-    reset: () => set({ state: "disconnected", active_speakers: {} })
+    reset: () =>
+      set({ state: "disconnected", active_speakers: {}, error_message: "" })
   })
 );
 
