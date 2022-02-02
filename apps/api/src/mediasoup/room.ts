@@ -88,6 +88,11 @@ export class MediasoupRoom extends EventEmitter {
     }
 
     this.peers.set(peer.user._id, peer);
+
+    this._io.emit("update room members count", {
+      room_id: this.id,
+      members_count: this.count()
+    });
   }
 
   users() {
@@ -227,6 +232,11 @@ export class MediasoupRoom extends EventEmitter {
 
     peer.reset();
     this.peers.delete(peer.user._id);
+
+    this._io.emit("update room members count", {
+      room_id: this.id,
+      members_count: this.count()
+    });
 
     if (this._peers().length === 0) {
       this.router.close();

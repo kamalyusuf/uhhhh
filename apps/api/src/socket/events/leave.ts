@@ -15,10 +15,6 @@ const handler: Event<"leave"> = {
 
     socket.leave(rid);
     socket.to(rid).emit("peer left", { peer: peer.user });
-    io.emit("update room members count", {
-      room_id: room.id,
-      members_count: room.count()
-    });
 
     cb(undefined);
   }

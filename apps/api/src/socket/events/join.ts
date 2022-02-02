@@ -11,7 +11,6 @@ const handler: Event<"join"> = {
 
     if (room.hasPeer(peer.user._id)) {
       throw new Error("peer already joined");
-      // room.peers.delete(peer.user._id);
     }
 
     peer.rtpCapabilities = payload.rtp_capabilities;
@@ -33,10 +32,6 @@ const handler: Event<"join"> = {
     }
 
     socket.to(payload.room_id).emit("new peer", { peer: peer.user });
-    io.emit("update room members count", {
-      room_id: room.id,
-      members_count: room.count()
-    });
 
     cb({ peers: room.users().filter((p) => p._id !== peer.user._id) });
   }
