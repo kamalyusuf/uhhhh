@@ -35,7 +35,7 @@ export const MePage: PageComponent = () => {
 
   return (
     <>
-      <Layout>
+      <Layout title={`uhhhh | ${me.display_name ?? "user"}`}>
         <Box>
           <Center>
             <Paper

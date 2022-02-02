@@ -74,7 +74,7 @@ export const RoomPage: PageComponent = () => {
 
   if (isLoading || roomStore.state === "connecting") {
     return (
-      <Layout>
+      <Layout title={`uhhhh | ${room?.name}`}>
         <Container>
           <Group style={{ height: "97%" }} align="start">
             <Center>
@@ -88,7 +88,7 @@ export const RoomPage: PageComponent = () => {
 
   if (error) {
     return (
-      <Layout>
+      <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
         <ErrorAlert
           title="uh-oh! failed to fetch room"
           message={parseApiError(error)[0]}
@@ -99,7 +99,7 @@ export const RoomPage: PageComponent = () => {
 
   if (!room) {
     return (
-      <Layout>
+      <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
         <></>
       </Layout>
     );
@@ -107,7 +107,7 @@ export const RoomPage: PageComponent = () => {
 
   if (socketState === "error") {
     return (
-      <Layout>
+      <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
         <ErrorAlert
           title="uh-oh! failed to establish websocket connection"
           message="could not join room"
@@ -121,7 +121,7 @@ export const RoomPage: PageComponent = () => {
     const isMicError = roomStore.error_message === "Permission denied";
 
     return (
-      <Layout>
+      <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
         <ErrorAlert
           title="uh-oh"
           message={
@@ -138,7 +138,7 @@ export const RoomPage: PageComponent = () => {
 
   if (roomStore.state === "connected") {
     return (
-      <Layout>
+      <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
         <Container style={{ width: "100%" }}>
           <Group style={{ height: "97%" }} align="start">
             <RoomPanel room={room} actions={{ leave, mute, unmute }} />

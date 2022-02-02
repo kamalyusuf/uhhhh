@@ -19,48 +19,50 @@ const HomePage: PageComponent = () => {
   const { load } = useMeStore();
 
   return (
-    <Layout spacing={50}>
-      <Box>
-        <Center>
-          <Paper
-            padding={"xl"}
-            shadow={"sm"}
-            radius="md"
-            style={{ width: 350 }}
-          >
-            <Group direction="column" grow>
-              <TextInput
-                placeholder="display name"
-                label="display name"
-                required
-                value={name}
-                onChange={(event) => setName(event.currentTarget.value)}
-              />
-              <Checkbox
-                label="remember me"
-                size="xs"
-                checked={remember}
-                onChange={(e) => setRemember(e.currentTarget.checked)}
-              />
-              <Button
-                onClick={() => {
-                  if (!name.trim()) {
-                    return toast.warn("where yo name at?");
-                  }
-                  if (name.trim().length < 3) {
-                    return toast.warn("name should be at least 3 characters");
-                  }
+    <>
+      <Layout spacing={50} title="uhhhh">
+        <Box>
+          <Center>
+            <Paper
+              padding={"xl"}
+              shadow={"sm"}
+              radius="md"
+              style={{ width: 350 }}
+            >
+              <Group direction="column" grow>
+                <TextInput
+                  placeholder="display name"
+                  label="display name"
+                  required
+                  value={name}
+                  onChange={(event) => setName(event.currentTarget.value)}
+                />
+                <Checkbox
+                  label="remember me"
+                  size="xs"
+                  checked={remember}
+                  onChange={(e) => setRemember(e.currentTarget.checked)}
+                />
+                <Button
+                  onClick={() => {
+                    if (!name.trim()) {
+                      return toast.warn("where yo name at?");
+                    }
+                    if (name.trim().length < 3) {
+                      return toast.warn("name should be at least 3 characters");
+                    }
 
-                  load(name, remember);
-                }}
-              >
-                submit
-              </Button>
-            </Group>
-          </Paper>
-        </Center>
-      </Box>
-    </Layout>
+                    load(name, remember);
+                  }}
+                >
+                  submit
+                </Button>
+              </Group>
+            </Paper>
+          </Center>
+        </Box>
+      </Layout>
+    </>
   );
 };
 
