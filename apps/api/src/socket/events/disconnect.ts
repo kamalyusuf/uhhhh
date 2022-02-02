@@ -1,10 +1,9 @@
-import { TypedIO, TypedSocket } from "../types";
 import { logger } from "../../lib/logger";
 import { Peer } from "../../mediasoup/peer";
 import { MediasoupRoom } from "../../mediasoup/room";
 
 export const onDisconnect =
-  ({ socket, peer }: { io: TypedIO; socket: TypedSocket; peer: Peer }) =>
+  ({ peer }: { peer: Peer }) =>
   async (reason: string) => {
     logger.log({
       level: "info",
@@ -27,7 +26,6 @@ export const onDisconnect =
     const room = MediasoupRoom.findById(rid);
 
     await room.leave(peer);
+    peer.socket.to(rid).emit("peer left", { peer: peer.user });
     Peer.remove(peer);
-
-    socket.to(rid).emit("peer left", { peer: peer.user });
   };

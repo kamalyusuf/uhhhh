@@ -86,7 +86,7 @@ class SocketIO {
     this._io.on("connection", (socket) => {
       const raw = socket.handshake.query.user as string;
       const user = JSON.parse(raw) as User;
-      const peer = Peer.create({ user });
+      const peer = Peer.create({ user, socket });
 
       logger.log({
         level: "info",
@@ -134,6 +134,7 @@ class SocketIO {
               dev: true,
               message: `[${event.on}] ${e.message}`
             });
+
             socket.emit("event error", new EventError(event.on, e));
           }
         });
@@ -147,7 +148,7 @@ class SocketIO {
           .join(", ")}'`
       });
 
-      socket.on("disconnect", onDisconnect({ io: this._io!, socket, peer }));
+      socket.on("disconnect", onDisconnect({ peer }));
     });
   }
 }
