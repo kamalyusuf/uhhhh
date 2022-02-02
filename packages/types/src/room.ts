@@ -1,3 +1,5 @@
+import { User } from "./user";
+
 export interface Room {
   _id: string;
   name: string;
@@ -9,9 +11,6 @@ export interface Room {
 export interface ChatMessage {
   _id: string;
   text: string;
-  creator: {
-    _id: string;
-    display_name: string;
-  };
+  creator: User;
   created_at: string;
 }

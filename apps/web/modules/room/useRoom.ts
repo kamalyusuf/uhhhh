@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, useCallback } from "react";
 import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../hooks/useSocket";
 import { request } from "../../lib/request";
@@ -33,12 +33,24 @@ export const useRoom = (room_id: string) => {
   const micStore = useMicStore();
   const roomStore = useRoomStore();
 
-  const join = async () => {
+  const join = useCallback(async () => {
     try {
       setState("connecting");
 
       if (roomStore.state === "connected") {
         await leave();
+      }
+
+      if (producerStore.producer) {
+        producerStore.reset();
+      }
+
+      if (transportStore.send_transport) {
+        transportStore.resetSendTransport();
+      }
+
+      if (transportStore.receive_transport) {
+        transportStore.resetReceiveTransport();
       }
 
       const { rtp_capabilities: routerRtpCapabilities } = await request({
@@ -219,9 +231,16 @@ export const useRoom = (room_id: string) => {
     } catch (e) {
       setState("error");
     }
-  };
+  }, [
+    room_id,
+    socket,
+    roomStore.state,
+    producerStore.producer,
+    transportStore.send_transport,
+    transportStore.receive_transport
+  ]);
 
-  const leave = async () => {
+  const leave = useCallback(async () => {
     await request({
       socket,
       event: "leave",
@@ -235,9 +254,9 @@ export const useRoom = (room_id: string) => {
       peerStore.reset();
       roomStore.reset();
     });
-  };
+  }, [socket]);
 
-  const mute = async () => {
+  const mute = useCallback(async () => {
     const producer = producerStore.producer;
     if (!producer) return;
 
@@ -252,9 +271,9 @@ export const useRoom = (room_id: string) => {
     });
 
     producerStore.setPaused(true);
-  };
+  }, [producerStore.producer, socket]);
 
-  const unmute = async () => {
+  const unmute = useCallback(async () => {
     const producer = producerStore.producer;
     if (!producer) return;
 
@@ -269,7 +288,7 @@ export const useRoom = (room_id: string) => {
     });
 
     producerStore.setPaused(false);
-  };
+  }, [producerStore.producer, socket]);
 
   return { join, leave, mute, unmute };
 };

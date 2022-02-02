@@ -12,6 +12,16 @@ const store = combine(
       set({ send_transport }),
     setReceiveTransport: (receive_transport: Transport | null) =>
       set({ receive_transport }),
+    resetSendTransport: () =>
+      set((state) => {
+        state.send_transport?.close();
+        return { send_transport: null };
+      }),
+    resetReceiveTransport: () =>
+      set((state) => {
+        state.receive_transport?.close();
+        return { receive_transport: null };
+      }),
     reset: () =>
       set((state) => {
         state.send_transport?.close();
