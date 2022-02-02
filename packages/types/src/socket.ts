@@ -90,6 +90,11 @@ export interface ServerToClientEvents<
   "chat message": (t: { message: ChatMessage }) => void;
 
   "update display name": () => void;
+
+  "update room members count": (t: {
+    room_id: string;
+    members_count: number;
+  }) => void;
 }
 
 export interface ClientToServerEvents<

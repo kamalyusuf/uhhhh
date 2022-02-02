@@ -6,6 +6,7 @@ export interface Room {
   description: string;
   created_at: string;
   updated_at: string;
+  members_count: number;
 }
 
 export interface ChatMessage {

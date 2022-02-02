@@ -237,4 +237,8 @@ export class MediasoupRoom extends EventEmitter {
       MediasoupRoom.remove(this.id);
     }
   }
+
+  count() {
+    return this._peers().length;
+  }
 }

@@ -33,6 +33,10 @@ const handler: Event<"join"> = {
     }
 
     socket.to(payload.room_id).emit("new peer", { peer: peer.user });
+    io.emit("update room members count", {
+      room_id: room.id,
+      members_count: room.count()
+    });
 
     cb({ peers: room.users().filter((p) => p._id !== peer.user._id) });
   }

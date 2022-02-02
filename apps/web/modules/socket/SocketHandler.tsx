@@ -96,6 +96,25 @@ export const SocketHandler = () => {
       chatStore.add(message);
     });
 
+    socket.on("update room members count", ({ room_id, members_count }) => {
+      client.setQueryData<{ rooms: Room[] } | undefined>("rooms", (cached) => {
+        if (!cached) return undefined;
+
+        return {
+          rooms: cached.rooms.map((room) => {
+            if (room._id === room_id) {
+              return {
+                ...room,
+                members_count
+              };
+            } else {
+              return room;
+            }
+          })
+        };
+      });
+    });
+
     return () => {
       socket.removeAllListeners();
     };

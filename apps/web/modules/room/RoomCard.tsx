@@ -37,7 +37,7 @@ export const RoomCard = ({ room }: Props) => {
               <GoPrimitiveDot />
             </ThemeIcon>
             <Text color="white" size="sm">
-              23
+              {room.members_count}
             </Text>
           </Group>
         </Group>
