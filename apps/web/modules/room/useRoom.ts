@@ -203,7 +203,8 @@ export const useRoom = (room_id: string) => {
       if (!device.canProduce("audio")) {
         roomStore.set({
           state: "connected",
-          warn_message: "cannot produce audio"
+          warn_message: " cannot consume your audio due to some unknown error",
+          show_warning: true
         });
 
         toast.info("connected");
@@ -247,7 +248,9 @@ export const useRoom = (room_id: string) => {
         roomStore.set({
           state: "error",
           error_message: e.message,
-          active_speakers: {}
+          active_speakers: {},
+          warn_message: "",
+          show_warning: false
         });
       });
     }

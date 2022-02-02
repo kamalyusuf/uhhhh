@@ -1,4 +1,4 @@
-import { Group, Center, Loader, Notification } from "@mantine/core";
+import { Group, Center, Loader } from "@mantine/core";
 import { Layout } from "../../components/Layout";
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/router";

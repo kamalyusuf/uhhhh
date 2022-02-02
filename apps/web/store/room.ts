@@ -15,7 +15,8 @@ const store = combine(
     state: "idle" as RoomState,
     active_speakers: {} as Record<string, boolean>,
     error_message: "",
-    warn_message: ""
+    warn_message: "",
+    show_warning: false
   },
   (set) => ({
     set,
@@ -30,7 +31,13 @@ const store = combine(
         };
       }),
     reset: () =>
-      set({ state: "disconnected", active_speakers: {}, error_message: "" })
+      set({
+        state: "disconnected",
+        active_speakers: {},
+        error_message: "",
+        warn_message: "",
+        show_warning: false
+      })
   })
 );
 

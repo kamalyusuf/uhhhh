@@ -5,30 +5,33 @@ import { Audio } from "../audio/Audio";
 
 export const PeerBadge = ({
   peer,
-  audio = true,
-  speaker
+  speaker,
+  me
 }: {
   peer: User;
-  audio?: boolean;
   speaker: boolean;
+  me: boolean;
 }) => {
   return (
     <>
       <Badge
         variant="dot"
         size="md"
+        color={me ? "red" : "indigo"}
         styles={{
           inner: {
             color: "white"
           }
         }}
         style={{
-          boxShadow: speaker ? `0px 0px 6px 3px ${c.colors.indigo}` : ""
+          boxShadow: speaker
+            ? `0px 0px 6px 3px ${me ? c.colors.red : c.colors.indigo}`
+            : ""
         }}
       >
-        {peer.display_name}
+        {me ? "you" : peer.display_name}
       </Badge>
-      {audio && <Audio peer={peer} />}
+      {!me && <Audio peer={peer} />}
     </>
   );
 };

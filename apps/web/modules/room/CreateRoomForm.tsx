@@ -1,4 +1,4 @@
-import { Button, Group, TextInput } from "@mantine/core";
+import { Button, Group, TextInput, Text } from "@mantine/core";
 import { Field, FieldProps, Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import { useSocket } from "../../hooks/useSocket";
@@ -28,6 +28,9 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
     >
       {({ isSubmitting, values }) => (
         <Form>
+          <Text size="xs" color="yellow" style={{ fontStyle: "italic" }}>
+            note: rooms are automatically deleted upon leaving
+          </Text>
           <Group direction="column" grow>
             <Field name="name">
               {({ field }: FieldProps) => (

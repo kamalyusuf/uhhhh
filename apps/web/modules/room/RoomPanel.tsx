@@ -1,4 +1,12 @@
-import { Group, Text, Divider, Button, ScrollArea } from "@mantine/core";
+import {
+  Group,
+  Text,
+  Divider,
+  Button,
+  ScrollArea,
+  Notification,
+  Space
+} from "@mantine/core";
 import { Heading } from "../../components/Heading";
 import { ToggleMuteButton } from "../audio/ToggleMuteButton";
 import { c } from "../../lib/constants";
@@ -37,7 +45,21 @@ export const RoomPanel = ({ room, actions }: Props) => {
 
   return (
     <Group style={{ flex: 1 }}>
-      <Group direction="column" spacing={0}>
+      <Group direction="column" spacing={0} style={{ width: "100%" }}>
+        {roomStore.warn_message && roomStore.show_warning && (
+          <Notification
+            color="yellow"
+            sx={{ width: "100%" }}
+            onClose={() =>
+              roomStore.set({ show_warning: false, warn_message: "" })
+            }
+          >
+            {roomStore.warn_message}
+          </Notification>
+        )}
+
+        <Space h="md" />
+
         <Heading title={room.name} order={3} />
         <Text color="indigo" size="xs">
           {room.description}
@@ -78,7 +100,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
         offsetScrollbars
       >
         <Group
-          spacing={12}
+          spacing={25}
           grow
           style={{
             paddingTop: 5,
@@ -87,8 +109,8 @@ export const RoomPanel = ({ room, actions }: Props) => {
         >
           <PeerBadge
             peer={me}
-            audio={false}
             speaker={roomStore.active_speakers[me._id]}
+            me={true}
           />
           {Object.values(peerStore.peers)
             .filter(Boolean)
@@ -97,6 +119,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
                 key={peer._id}
                 peer={peer}
                 speaker={roomStore.active_speakers[peer._id]}
+                me={false}
               />
             ))}
         </Group>
