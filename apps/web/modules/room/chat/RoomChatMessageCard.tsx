@@ -28,7 +28,7 @@ export const RoomChatMessageCard = ({ message }: Props) => {
         </Text>
         <span style={{ color: "white", fontSize: 14 }}>: </span>
         <Text color="white" sx={{ display: "inline", fontSize: 14 }}>
-          {message.text}
+          {message.content}
         </Text>
       </Box>
     </Group>

@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { useRoomStore } from "../../store/room";
 import { useQueryClient } from "react-query";
 import { Room } from "types";
+import { useRoomChatStore } from "../../store/room-chat";
 
 export const SocketHandler = () => {
   const { socket } = useSocket();
@@ -15,22 +16,14 @@ export const SocketHandler = () => {
   const peerStore = usePeerStore();
   const roomStore = useRoomStore();
   const client = useQueryClient();
+  const chatStore = useRoomChatStore();
 
   useEffect(() => {
     if (!socket) return;
 
     socket.on(
       "new consumer",
-      async ({
-        peer_id,
-        producer_id,
-        id,
-        kind,
-        rtp_parameters,
-        type,
-        app_data,
-        producer_paused
-      }) => {
+      async ({ peer_id, producer_id, id, kind, rtp_parameters, app_data }) => {
         if (!transportStore.receive_transport) {
           return;
         }
@@ -59,15 +52,15 @@ export const SocketHandler = () => {
       toast.info(`${peer.display_name} has joined the room`);
     });
 
-    socket.on("consumer closed", ({ consumer_id, peer_id }) => {
+    socket.on("consumer closed", ({ peer_id }) => {
       consumerStore.remove(peer_id);
     });
 
-    socket.on("consumer paused", ({ consumer_id, peer_id }) => {
+    socket.on("consumer paused", ({ peer_id }) => {
       consumerStore.pause(peer_id);
     });
 
-    socket.on("consumer resumed", ({ consumer_id, peer_id }) => {
+    socket.on("consumer resumed", ({ peer_id }) => {
       consumerStore.resume(peer_id);
     });
 
@@ -97,6 +90,10 @@ export const SocketHandler = () => {
           rooms: [...cached.rooms, room]
         };
       });
+    });
+
+    socket.on("chat message", ({ message }) => {
+      chatStore.add(message);
     });
 
     return () => {

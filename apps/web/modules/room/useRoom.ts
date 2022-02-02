@@ -9,6 +9,7 @@ import { usePeerStore } from "../../store/peer";
 import { useProducerStore } from "../../store/producer";
 import { useMicStore } from "../../store/mic";
 import { unstable_batchedUpdates as batch } from "react-dom";
+import { useRoomChatStore } from "../../store/room-chat";
 
 const getDevice = () => {
   let handlerName = detectDevice();
@@ -32,6 +33,7 @@ export const useRoom = (room_id: string) => {
   const producerStore = useProducerStore();
   const micStore = useMicStore();
   const roomStore = useRoomStore();
+  const chatStore = useRoomChatStore();
 
   const join = useCallback(async () => {
     try {
@@ -253,6 +255,7 @@ export const useRoom = (room_id: string) => {
       producerStore.reset();
       peerStore.reset();
       roomStore.reset();
+      chatStore.reset();
     });
   }, [socket]);
 

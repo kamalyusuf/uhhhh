@@ -10,7 +10,7 @@ export interface Room {
 
 export interface ChatMessage {
   _id: string;
-  text: string;
+  content: string;
   creator: User;
   created_at: string;
 }

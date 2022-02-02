@@ -2,8 +2,6 @@ import create from "zustand";
 import { combine, devtools } from "zustand/middleware";
 import { Message } from "../types";
 import { ChatMessage } from "types";
-import { nanoid } from "nanoid";
-import { randUserName, randSentence } from "@ngneat/falso";
 import { c } from "../lib/constants";
 
 const colors = [
@@ -28,22 +26,7 @@ const color = (str: string) => {
   return colors[sum % colors.length];
 };
 
-const messages = Array.from(Array(4).keys()).map((n) => {
-  const _id = nanoid(24);
-
-  const creator = {
-    _id: nanoid(24),
-    display_name: randUserName()
-  };
-  return {
-    _id,
-    text: randSentence().slice(0, c.chat.text_limit),
-    creator,
-    color: color(creator._id)
-  };
-});
-
-const store = combine({ messages: messages as Message[] }, (set) => ({
+const store = combine({ messages: [] as Message[] }, (set) => ({
   add: (message: ChatMessage) =>
     set((state) => {
       return {
@@ -55,28 +38,7 @@ const store = combine({ messages: messages as Message[] }, (set) => ({
         ]
       };
     }),
-  _add: (text: string) =>
-    set((state) => {
-      const _id = nanoid(24);
-
-      const creator = {
-        _id: nanoid(24),
-        display_name: randUserName()
-      };
-
-      return {
-        messages: [
-          ...state.messages,
-          {
-            _id,
-            text,
-            creator,
-            color: color(creator._id),
-            created_at: new Date().toISOString()
-          }
-        ]
-      };
-    })
+  reset: () => set({ messages: [] })
 }));
 
 export const useRoomChatStore = create(devtools(store, { name: "RoomChat" }));

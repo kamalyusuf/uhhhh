@@ -1,23 +1,23 @@
 import { TextInput, ActionIcon } from "@mantine/core";
 import { AiOutlineSend } from "react-icons/ai";
-import { useRoomChatStore } from "../../../store/room-chat";
 import { useState, useCallback, useEffect } from "react";
 import { c } from "../../../lib/constants";
+import { useSocket } from "../../../hooks/useSocket";
 
 export const RoomChatInput = () => {
-  const [text, setText] = useState("");
+  const [content, setContent] = useState("");
   const [count, setCount] = useState(0);
-  const { _add } = useRoomChatStore();
+  const { socket } = useSocket();
 
   useEffect(() => {
-    setCount(text.length);
-  }, [text]);
+    setCount(content.length);
+  }, [content]);
 
   const send = useCallback(() => {
-    if (!text.trim()) return;
-    _add(text);
-    setText("");
-  }, [text]);
+    if (!content.trim()) return;
+    socket.emit("chat message", { content });
+    setContent("");
+  }, [content, socket]);
 
   return (
     <>
@@ -34,9 +34,9 @@ export const RoomChatInput = () => {
             width: "100%"
           }
         }}
-        value={text}
+        value={content}
         onChange={(e) =>
-          setText(e.currentTarget.value.slice(0, c.chat.text_limit))
+          setContent(e.currentTarget.value.slice(0, c.chat.text_limit))
         }
         onKeyDown={(e) => {
           switch (e.key) {

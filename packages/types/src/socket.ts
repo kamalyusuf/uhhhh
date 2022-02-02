@@ -1,4 +1,4 @@
-import { Room } from "./room";
+import { Room, ChatMessage } from "./room";
 import { User } from "./user";
 
 type Cb<T> = (t: T) => void;
@@ -86,6 +86,8 @@ export interface ServerToClientEvents<
   "delete room": (t: { room_id: string }) => void;
 
   "consumer consumed": () => void;
+
+  "chat message": (t: { message: ChatMessage }) => void;
 }
 
 export interface ClientToServerEvents<
@@ -155,9 +157,11 @@ export interface ClientToServerEvents<
 
   leave: (t: undefined, cb: Cb<undefined>) => void;
 
-  "active speaker": (t: { speaking: boolean }) => void;
+  "active speaker": (t: { speaking: boolean }, cb: void) => void;
 
-  "consumer consumed": (t: { consumer_id: string }) => void;
+  "consumer consumed": (t: { consumer_id: string }, cb: void) => void;
+
+  "chat message": (t: { content: string }, cb: void) => void;
 }
 
 export interface InterServerEvents {
