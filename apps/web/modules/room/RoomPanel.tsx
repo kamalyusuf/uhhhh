@@ -14,6 +14,8 @@ interface Props {
   room: Room;
   actions: {
     leave: () => Promise<void>;
+    mute: () => Promise<void>;
+    unmute: () => Promise<void>;
   };
 }
 
@@ -45,7 +47,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
       <Divider variant="solid" color="indigo" style={{ width: "100%" }} />
 
       <Group position="apart" style={{ width: "100%" }}>
-        <ToggleMuteButton />
+        <ToggleMuteButton mute={actions.mute} unmute={actions.unmute} />
         <Button
           size="xs"
           radius="xl"

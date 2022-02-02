@@ -4,7 +4,7 @@ import { Consumer } from "mediasoup-client/lib/types";
 
 const store = combine(
   {
-    consumers: {} as Record<string, Consumer>
+    consumers: {} as Record<string, { consumer: Consumer; paused: boolean }>
   },
   (set) => ({
     add: (peer_id: string, consumer: Consumer) =>
@@ -12,7 +12,10 @@ const store = combine(
         return {
           consumers: {
             ...state.consumers,
-            [peer_id]: consumer
+            [peer_id]: {
+              consumer,
+              paused: false
+            }
           }
         };
       }),
@@ -27,17 +30,37 @@ const store = combine(
       }),
     pause: (peer_id: string) =>
       set((state) => {
-        const consumer = state.consumers[peer_id];
-        if (consumer) consumer.pause();
+        const c = state.consumers[peer_id];
+        if (!c) return state;
 
-        return state;
+        c.consumer.pause();
+
+        return {
+          consumers: {
+            ...state.consumers,
+            [peer_id]: {
+              ...state.consumers[peer_id],
+              paused: true
+            }
+          }
+        };
       }),
     resume: (peer_id: string) =>
       set((state) => {
-        const consumer = state.consumers[peer_id];
-        if (consumer) consumer.resume();
+        const c = state.consumers[peer_id];
+        if (!c) return state;
 
-        return state;
+        c.consumer.resume();
+
+        return {
+          consumers: {
+            ...state.consumers,
+            [peer_id]: {
+              ...state.consumers[peer_id],
+              paused: false
+            }
+          }
+        };
       })
   })
 );

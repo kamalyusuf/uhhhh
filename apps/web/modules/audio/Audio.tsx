@@ -9,7 +9,8 @@ interface Props {
 export const Audio = ({ peer }: Props) => {
   const ref = useRef<HTMLAudioElement | null>();
   const { consumers } = useConsumerStore();
-  const consumer = consumers[peer._id];
+  const c = consumers[peer._id];
+  const consumer = c?.consumer;
 
   useEffect(() => {
     if (!consumer) return;

@@ -68,7 +68,7 @@ export const SocketHandler = () => {
     });
 
     socket.on("consumer resumed", ({ consumer_id, peer_id }) => {
-      consumerStore.pause(peer_id);
+      consumerStore.resume(peer_id);
     });
 
     socket.on("peer left", ({ peer }) => {

@@ -35,7 +35,7 @@ export const RoomPage: PageComponent = () => {
       refetchOnMount: "always"
     }
   );
-  const { join, leave } = useRoom(room?._id);
+  const { join, leave, mute, unmute } = useRoom(room?._id);
   const { state } = useRoomStore();
   const { state: socketState, socket } = useSocket();
   const { stream } = useMicStore();
@@ -129,7 +129,7 @@ export const RoomPage: PageComponent = () => {
       <Layout>
         <Container style={{ width: "100%" }}>
           <Group style={{ height: "97%" }} align="start">
-            <RoomPanel room={room} actions={{ leave }} />
+            <RoomPanel room={room} actions={{ leave, mute, unmute }} />
             <RoomChat />
           </Group>
         </Container>

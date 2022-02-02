@@ -237,5 +237,39 @@ export const useRoom = (room_id: string) => {
     });
   };
 
-  return { join, leave };
+  const mute = async () => {
+    const producer = producerStore.producer;
+    if (!producer) return;
+
+    producer.pause();
+
+    await request({
+      socket,
+      event: "pause producer",
+      data: {
+        producer_id: producer.id
+      }
+    });
+
+    producerStore.setPaused(true);
+  };
+
+  const unmute = async () => {
+    const producer = producerStore.producer;
+    if (!producer) return;
+
+    producer.resume();
+
+    await request({
+      socket,
+      event: "resume producer",
+      data: {
+        producer_id: producer.id
+      }
+    });
+
+    producerStore.setPaused(false);
+  };
+
+  return { join, leave, mute, unmute };
 };

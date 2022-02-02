@@ -4,7 +4,8 @@ import { combine, devtools } from "zustand/middleware";
 
 const store = combine(
   {
-    producer: null as Producer | null
+    producer: null as Producer | null,
+    paused: false
   },
   (set) => ({
     set,
@@ -20,8 +21,9 @@ const store = combine(
       set((state) => {
         state.producer?.close();
 
-        return { producer: null };
-      })
+        return { producer: null, paused: false };
+      }),
+    setPaused: (paused: boolean) => set({ paused })
   })
 );
 

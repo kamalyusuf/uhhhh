@@ -5,7 +5,7 @@ const handler: Event<"leave"> = {
   on: "leave",
   invoke: async ({ peer, socket, cb }) => {
     if (!peer.activeRoomId) {
-      throw new Error("peer not a memeber room");
+      throw new Error("peer not a memeber of any room");
     }
 
     const rid = peer.activeRoomId;
