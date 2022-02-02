@@ -4,11 +4,15 @@ export interface Env {
   PORT: number;
   WEB_URL: string;
   MONGO_URL: string;
+  LISTEN_IP: string;
+  ANNOUNCED_IP: string;
 }
 
 export const env = envalid.cleanEnv<Env>(process.env, {
   PORT: envalid.port(),
   WEB_URL: envalid.str(),
   MONGO_URL:
-    process.env.NODE_ENV === "production" ? envalid.url() : envalid.str()
+    process.env.NODE_ENV === "production" ? envalid.url() : envalid.str(),
+  LISTEN_IP: envalid.str(),
+  ANNOUNCED_IP: envalid.str()
 });

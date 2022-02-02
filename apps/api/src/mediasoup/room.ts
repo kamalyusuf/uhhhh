@@ -6,7 +6,6 @@ import {
   Consumer
 } from "mediasoup/node/lib/types";
 import { EventEmitter } from "events";
-import { config } from "./config";
 import { workers } from "./workers";
 import { NotFoundError } from "@kamalyb/errors";
 import { TypedIO } from "../socket/types";
@@ -43,7 +42,22 @@ export class MediasoupRoom extends EventEmitter {
 
   static async create({ id, io }: { id: string; io: TypedIO }) {
     const router = await workers.next().createRouter({
-      mediaCodecs: config.mediasoup.router.media_codecs
+      mediaCodecs: [
+        {
+          kind: "audio",
+          mimeType: "audio/opus",
+          clockRate: 48000,
+          channels: 2
+        },
+        {
+          kind: "video",
+          mimeType: "video/VP8",
+          clockRate: 90000,
+          parameters: {
+            "x-google-start-bitrate": 1000
+          }
+        }
+      ]
     });
 
     const room = new MediasoupRoom({ id, router, io });

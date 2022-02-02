@@ -1,6 +1,6 @@
 import * as mediasoup from "mediasoup";
-import { config } from "./config";
 import { Worker } from "mediasoup/node/lib/types";
+import os from "os";
 
 class MediasoupWorkers {
   private workers: Worker[];
@@ -11,12 +11,25 @@ class MediasoupWorkers {
   }
 
   async run() {
-    for (let i = 0; i < config.mediasoup.workers_count; i++) {
+    for (let i = 0; i < Object.keys(os.cpus()).length; i++) {
       const worker = await mediasoup.createWorker({
-        logLevel: config.mediasoup.worker.log_level,
-        logTags: config.mediasoup.worker.log_tags,
-        rtcMinPort: config.mediasoup.worker.rtc_min_port,
-        rtcMaxPort: config.mediasoup.worker.rtc_max_port
+        logLevel: "warn",
+        logTags: [
+          "info",
+          "ice",
+          "dtls",
+          "rtp",
+          "srtp",
+          "rtcp",
+          "rtx",
+          "bwe",
+          "score",
+          "simulcast",
+          "svc",
+          "sctp"
+        ],
+        rtcMinPort: 10000,
+        rtcMaxPort: 10100
       });
 
       worker.on("died", () => {
