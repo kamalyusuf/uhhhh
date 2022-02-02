@@ -21,7 +21,8 @@ const schema = z.object({
 const exclude: Readonly<ClientEvent[]> = [
   "active speaker",
   "consumer consumed",
-  "chat message"
+  "chat message",
+  "update display name"
 ];
 
 class SocketIO {

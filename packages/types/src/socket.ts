@@ -88,6 +88,8 @@ export interface ServerToClientEvents<
   "consumer consumed": () => void;
 
   "chat message": (t: { message: ChatMessage }) => void;
+
+  "update display name": () => void;
 }
 
 export interface ClientToServerEvents<
@@ -162,6 +164,8 @@ export interface ClientToServerEvents<
   "consumer consumed": (t: { consumer_id: string }, cb: void) => void;
 
   "chat message": (t: { content: string }, cb: void) => void;
+
+  "update display name": (t: { new_display_name: string }, cb: void) => void;
 }
 
 export interface InterServerEvents {

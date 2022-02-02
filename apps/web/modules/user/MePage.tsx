@@ -12,6 +12,7 @@ import { PageComponent } from "../../types";
 import { toast } from "react-toastify";
 import React, { useState, useEffect } from "react";
 import { useMeStore } from "../../store/me";
+import { useSocket } from "../../hooks/useSocket";
 
 export const MePage: PageComponent = () => {
   const { me, update } = useMeStore();
@@ -20,6 +21,7 @@ export const MePage: PageComponent = () => {
     localStorage.getItem("remember me") === "true"
   );
   const [mounted, setMounted] = useState(false);
+  const { socket } = useSocket();
 
   useEffect(() => {
     setMounted(true);
@@ -63,6 +65,9 @@ export const MePage: PageComponent = () => {
                   }
 
                   update(name, remember);
+                  socket.emit("update display name", {
+                    new_display_name: name
+                  });
                   toast.success("updated");
                 }}
               >
