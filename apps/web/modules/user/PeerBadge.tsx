@@ -17,6 +17,7 @@ export const PeerBadge = ({
 }) => {
   const { consumers } = useConsumerStore();
   const consumer = consumers[peer._id]?.consumer;
+  const paused = consumers[peer._id]?.paused;
 
   return (
     <>
@@ -35,7 +36,7 @@ export const PeerBadge = ({
             : ""
         }}
         rightSection={
-          consumer?.paused ? (
+          paused ? (
             <Icon color="red">
               <AiOutlineAudioMuted size={15} />
             </Icon>

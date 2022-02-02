@@ -23,7 +23,15 @@ export const SocketHandler = () => {
 
     socket.on(
       "new consumer",
-      async ({ peer_id, producer_id, id, kind, rtp_parameters, app_data }) => {
+      async ({
+        peer_id,
+        producer_id,
+        id,
+        kind,
+        rtp_parameters,
+        app_data,
+        producer_paused
+      }) => {
         if (!transportStore.receive_transport) {
           return;
         }
@@ -39,7 +47,7 @@ export const SocketHandler = () => {
           }
         });
 
-        consumerStore.add(peer_id, consumer);
+        consumerStore.add(peer_id, consumer, producer_paused);
 
         socket.emit("consumer consumed", {
           consumer_id: consumer.id

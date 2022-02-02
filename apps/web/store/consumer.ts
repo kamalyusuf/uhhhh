@@ -4,17 +4,17 @@ import { Consumer } from "mediasoup-client/lib/types";
 
 const store = combine(
   {
-    consumers: {} as Record<string, { consumer: Consumer; paused?: boolean }>
+    consumers: {} as Record<string, { consumer: Consumer; paused: boolean }>
   },
   (set) => ({
-    add: (peer_id: string, consumer: Consumer) =>
+    add: (peer_id: string, consumer: Consumer, paused: boolean) =>
       set((state) => {
         return {
           consumers: {
             ...state.consumers,
             [peer_id]: {
-              consumer
-              // paused: consumer.paused
+              consumer,
+              paused
             }
           }
         };
