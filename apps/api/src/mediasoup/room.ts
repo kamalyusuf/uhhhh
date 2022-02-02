@@ -174,35 +174,35 @@ export class MediasoupRoom extends EventEmitter {
 
     consumer.on("producerclose", () => {
       consumer_peer.consumers.delete(consumer.id);
-      this._io.to(consumer_peer.user._id).emit("consumer closed", {
+      consumer_peer.socket.emit("consumer closed", {
         consumer_id: consumer.id,
         peer_id: producer_peer.user._id
       });
     });
 
     consumer.on("producerpause", () => {
-      this._io.to(consumer_peer.user._id).emit("consumer paused", {
+      consumer_peer.socket.emit("consumer paused", {
         consumer_id: consumer.id,
         peer_id: producer_peer.user._id
       });
     });
 
     consumer.on("producerresume", () => {
-      this._io.to(consumer_peer.user._id).emit("consumer resumed", {
+      consumer_peer.socket.emit("consumer resumed", {
         consumer_id: consumer.id,
         peer_id: producer_peer.user._id
       });
     });
 
     consumer.on("score", (score) => {
-      this._io.to(consumer_peer.user._id).emit("consumer score", {
+      consumer_peer.socket.emit("consumer score", {
         consumer_id: consumer.id,
         peer_id: producer_peer.user._id,
         score
       });
     });
 
-    this._io.to(consumer_peer.user._id).emit("new consumer", {
+    consumer_peer.socket.emit("new consumer", {
       peer_id: producer_peer.user._id,
       producer_id: producer.id,
       id: consumer.id,
