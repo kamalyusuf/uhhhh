@@ -1,5 +1,4 @@
 import { logger } from "../lib/logger";
-import { env } from "../lib/env";
 import { Server } from "http";
 import { Server as SocketServer } from "socket.io";
 import { ServerEvent, TypedIO, Event, ClientEvent } from "./types";
@@ -12,6 +11,7 @@ import { Peer } from "../mediasoup/peer";
 import { z } from "zod";
 import { User } from "types";
 import { onDisconnect } from "./events/disconnect";
+import * as Sentry from "@sentry/node";
 
 const schema = z.object({
   _id: z.string(),
@@ -40,7 +40,11 @@ class SocketIO {
   init(server: Server) {
     this._io = new SocketServer(server, {
       cors: {
-        origin: [env.WEB_URL],
+        origin: [
+          "http://localhost:3000",
+          "https://www.uhhhh.site",
+          "https://uhhhh.site"
+        ],
         credentials: true
       },
       serveClient: false,
@@ -138,6 +142,15 @@ class SocketIO {
             });
 
             socket.emit("event error", new EventError(event.on, e));
+
+            Sentry.captureException(e, (scope) => {
+              scope.setExtras({
+                ctx: "io",
+                peer: { user: peer.user, active_room_id: peer.activeRoomId },
+                event: event.on
+              });
+              return scope;
+            });
           }
         });
       }
