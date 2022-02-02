@@ -25,7 +25,6 @@ const handler: Event<"join"> = {
     for (const p of peers) {
       for (const producer of p.producers.values()) {
         await room.createConsumer({
-          io,
           consumer_peer: peer,
           producer_peer: p,
           producer

@@ -1,7 +1,6 @@
 import { RoomRepository, roomRepo } from "./room.repository";
 import { Types } from "mongoose";
 import { NotFoundError } from "@kamalyb/errors";
-import { io } from "../../socket/io";
 import { env } from "../../lib/env";
 
 export class RoomService {
@@ -35,19 +34,21 @@ export class RoomService {
     return room;
   }
 
-  async _delete(_id: Types.ObjectId) {
+  async _delete(_id: Types.ObjectId): Promise<boolean> {
     let room;
 
     try {
       room = await this.findById(_id);
-    } catch (e) {}
+    } catch (e) {
+      return false;
+    }
 
     if (!room || (env.isDevelopment && room?.name === "akatsuki")) {
-      return;
+      return false;
     }
 
     await room.remove();
-    io.get().emit("delete room", { room_id: _id.toString() });
+    return true;
   }
 }
 

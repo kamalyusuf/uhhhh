@@ -20,23 +20,33 @@ export class MediasoupRoom extends EventEmitter {
   public id: string;
   public peers: Map<string, Peer>;
   public router: Router;
+  private _io: TypedIO;
 
-  private constructor({ id, router }: { id: string; router: Router }) {
+  private constructor({
+    id,
+    router,
+    io
+  }: {
+    id: string;
+    router: Router;
+    io: TypedIO;
+  }) {
     super();
     this.setMaxListeners(Infinity);
 
     this.id = id;
     this.router = router;
+    this._io = io;
 
     this.peers = new Map<string, Peer>();
   }
 
-  static async create({ id }: { id: string }) {
+  static async create({ id, io }: { id: string; io: TypedIO }) {
     const router = await workers.next().createRouter({
       mediaCodecs: config.mediasoup.router.media_codecs
     });
 
-    const room = new MediasoupRoom({ id, router });
+    const room = new MediasoupRoom({ id, router, io });
     this.rooms.set(room.id, room);
     return room;
   }
@@ -50,13 +60,16 @@ export class MediasoupRoom extends EventEmitter {
     return room;
   }
 
-  static async findOrCreate(room_id: string): Promise<MediasoupRoom> {
+  static async findOrCreate(
+    room_id: string,
+    io: TypedIO
+  ): Promise<MediasoupRoom> {
     const room = this.rooms.get(room_id);
     if (room) {
       return room;
     }
 
-    return this.create({ id: room_id });
+    return this.create({ id: room_id, io });
   }
 
   static remove(room_id: string) {
@@ -90,12 +103,10 @@ export class MediasoupRoom extends EventEmitter {
   }
 
   async createConsumer({
-    io,
     consumer_peer,
     producer_peer,
     producer
   }: {
-    io: TypedIO;
     consumer_peer: Peer;
     producer_peer: Peer;
     producer: Producer;
@@ -163,35 +174,35 @@ export class MediasoupRoom extends EventEmitter {
 
     consumer.on("producerclose", () => {
       consumer_peer.consumers.delete(consumer.id);
-      io.to(consumer_peer.user._id).emit("consumer closed", {
+      this._io.to(consumer_peer.user._id).emit("consumer closed", {
         consumer_id: consumer.id,
         peer_id: producer_peer.user._id
       });
     });
 
     consumer.on("producerpause", () => {
-      io.to(consumer_peer.user._id).emit("consumer paused", {
+      this._io.to(consumer_peer.user._id).emit("consumer paused", {
         consumer_id: consumer.id,
         peer_id: producer_peer.user._id
       });
     });
 
     consumer.on("producerresume", () => {
-      io.to(consumer_peer.user._id).emit("consumer resumed", {
+      this._io.to(consumer_peer.user._id).emit("consumer resumed", {
         consumer_id: consumer.id,
         peer_id: producer_peer.user._id
       });
     });
 
     consumer.on("score", (score) => {
-      io.to(consumer_peer.user._id).emit("consumer score", {
+      this._io.to(consumer_peer.user._id).emit("consumer score", {
         consumer_id: consumer.id,
         peer_id: producer_peer.user._id,
         score
       });
     });
 
-    io.to(consumer_peer.user._id).emit("new consumer", {
+    this._io.to(consumer_peer.user._id).emit("new consumer", {
       peer_id: producer_peer.user._id,
       producer_id: producer.id,
       id: consumer.id,
@@ -219,7 +230,10 @@ export class MediasoupRoom extends EventEmitter {
 
     if (this._peers().length === 0) {
       this.router.close();
-      await roomService._delete(new Types.ObjectId(this.id));
+      const deleted = await roomService._delete(new Types.ObjectId(this.id));
+      if (deleted) {
+        this._io.emit("delete room", { room_id: this.id });
+      }
       MediasoupRoom.remove(this.id);
     }
   }

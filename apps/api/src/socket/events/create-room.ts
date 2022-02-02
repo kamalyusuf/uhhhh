@@ -6,7 +6,7 @@ const handler: Event<"create room"> = {
   on: "create room",
   invoke: async ({ payload, cb, io }) => {
     const room = await roomService.create(payload);
-    await MediasoupRoom.create({ id: room._id.toString() });
+    await MediasoupRoom.create({ id: room._id.toString(), io });
 
     const r = {
       _id: room._id.toString(),

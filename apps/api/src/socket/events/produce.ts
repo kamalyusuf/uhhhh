@@ -42,7 +42,6 @@ const handler: Event<"produce"> = {
       }
 
       await room.createConsumer({
-        io,
         consumer_peer: p,
         producer_peer: peer,
         producer: producer
