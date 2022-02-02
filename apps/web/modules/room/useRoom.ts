@@ -68,7 +68,7 @@ export const useRoom = (room_id: string) => {
 
       {
         const stream = await navigator.mediaDevices.getUserMedia({
-          audio: true
+          audio: micStore.id ? { deviceId: micStore.id } : true
         });
         const track = stream.getAudioTracks()[0];
 
@@ -211,7 +211,9 @@ export const useRoom = (room_id: string) => {
         return;
       }
 
-      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const stream = await navigator.mediaDevices.getUserMedia({
+        audio: micStore.id ? { deviceId: micStore.id } : true
+      });
       const track = stream.getAudioTracks()[0];
 
       micStore.setStream(stream);
