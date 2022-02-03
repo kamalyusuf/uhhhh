@@ -1,0 +1,11 @@
+version: "3"
+
+services:
+  api:
+    container_name: api
+    restart: always
+    build: .
+    ports:
+      - "2300:2300"
+    env_file:
+      - .env

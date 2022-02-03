@@ -4,10 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "build": "rimraf ./dist && tsc",
+    "build2": "rimraf ./dist && tsc",
+    "build": "rimraf ./dist && tsup src/**/*.ts --format esm,cjs --dts --no-splitting",
     "dev": "kill-port 2300 && ts-node-dev --respawn --transpile-only --rs -r dotenv/config src/index.ts",
     "dpdm": "dpdm --tree false --warning false src",
-    "madge": "madge --circular ."
+    "madge": "madge --circular .",
+    "start": "node -r dotenv/config dist/index.js"
   },
   "keywords": [],
   "author": "",
@@ -46,6 +48,7 @@
     "@types/validator": "^13.7.0",
     "ts-node": "^10.4.0",
     "ts-node-dev": "^1.1.6",
-    "tsconfig": "*"
+    "tsconfig": "*",
+    "tsup": "^5.11.13"
   }
 }

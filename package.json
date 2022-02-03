@@ -11,6 +11,8 @@
     "dev": "turbo run dev --parallel --no-cache",
     "api:dev": "turbo run dev --scope=api --scope=types --no-deps --no-cache",
     "api:build": "turbo run build --scope=api",
+    "api:build2": "turbo run build2 --scope=api",
+    "api:start": "turbo run start --scope=api",
     "web:dev": "turbo run dev --scope=web --scope=types --no-deps --no-cache",
     "web:build": "turbo run build --scope=web",
     "web:start": "turbo run start --scope=web"
@@ -27,6 +29,15 @@
     "baseBranch": "origin/main",
     "pipeline": {
       "build": {
+        "dependsOn": [
+          "^build"
+        ],
+        "outputs": [
+          "dist/**",
+          ".next/**"
+        ]
+      },
+      "build2": {
         "dependsOn": [
           "^build"
         ],
