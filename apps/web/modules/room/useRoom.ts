@@ -38,11 +38,11 @@ export const useRoom = (room_id: string) => {
 
   const join = useCallback(async () => {
     try {
-      roomStore.setState("connecting");
-
       if (roomStore.state === "connected") {
         await leave();
       }
+
+      roomStore.setState("connecting");
 
       if (producerStore.producer) {
         producerStore.reset();
