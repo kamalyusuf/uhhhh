@@ -37,10 +37,6 @@ const handler: Event<"produce"> = {
     const peers = room._peers().filter((p) => p.user._id !== peer.user._id);
 
     for (const p of peers) {
-      if (!room.hasPeer(p.user._id)) {
-        continue;
-      }
-
       await room.createConsumer({
         consumer_peer: p,
         producer_peer: peer,
