@@ -57,7 +57,7 @@ class SocketIO {
     const files = fs.readdirSync(dir);
 
     for (const file of files) {
-      if (file === "disconnect.ts") {
+      if (file === "disconnect.ts" || file === "disconnect.js") {
         continue;
       }
 

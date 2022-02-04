@@ -37,7 +37,7 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
         rememberUpgrade: true,
         path: "/ws",
         autoConnect: true,
-        reconnectionAttempts: 5,
+        reconnectionAttempts: 2,
         query: {
           user: JSON.stringify(me)
         }

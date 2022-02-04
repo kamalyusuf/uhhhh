@@ -1,4 +1,5 @@
 import "colors";
+import "./lib/misc";
 import { Server } from "http";
 import { _app } from "./app";
 import { workers } from "./mediasoup/workers";

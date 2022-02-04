@@ -7,6 +7,8 @@ COPY . .
 RUN turbo prune --scope=api --docker
 
 FROM ubuntu:20.04 AS installer
+WORKDIR /app
+
 RUN \
     apt-get update && \
     apt-get install -y build-essential
@@ -25,7 +27,6 @@ RUN \
 
 RUN npm install -g yarn
 
-WORKDIR /app
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/yarn.lock ./yarn.lock
 RUN yarn install

@@ -1,6 +1,7 @@
 import * as mediasoup from "mediasoup";
 import { Worker } from "mediasoup/node/lib/types";
 import os from "os";
+import { env } from "../lib/env";
 
 class MediasoupWorkers {
   private workers: Worker[];
@@ -28,8 +29,8 @@ class MediasoupWorkers {
           "svc",
           "sctp"
         ],
-        rtcMinPort: 10000,
-        rtcMaxPort: 10100
+        rtcMinPort: env.MEDIASOUP_MIN_PORT,
+        rtcMaxPort: env.MEDIASOUP_MAX_PORT
       });
 
       worker.on("died", () => {
