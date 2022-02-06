@@ -14,6 +14,7 @@ export const useSocketQuery = <T extends ServerEvent>(
   data: Parameters<ClientToServerEvents[T]>[0],
   options: Omit<
     UseQueryOptions<
+      // @ts-ignore
       Parameters<Parameters<ClientToServerEvents[T]>[1]>[0],
       SocketError<T>
     >,
@@ -23,6 +24,7 @@ export const useSocketQuery = <T extends ServerEvent>(
   const { socket } = useSocket();
 
   return useQuery<
+    // @ts-ignore
     Parameters<Parameters<ClientToServerEvents[T]>[1]>[0],
     SocketError<T>
   >(
