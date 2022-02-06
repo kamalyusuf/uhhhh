@@ -9,12 +9,12 @@ const handler: Event<"produce"> = {
     payload: { room_id, transport_id, kind, rtp_parameters, app_data },
     cb
   }) => {
-    if (!peer.activeRoomId) {
+    if (!peer.active_room_id) {
       throw new Error("peer not yet joined");
     }
 
     const room = MediasoupRoom.findById(room_id);
-    if (!room.hasPeer(peer.user._id) || peer.activeRoomId !== room.id) {
+    if (!room.hasPeer(peer.user._id) || peer.active_room_id !== room.id) {
       throw new Error("peer not yet joined");
     }
 

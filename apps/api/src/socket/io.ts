@@ -146,7 +146,7 @@ class SocketIO {
             Sentry.captureException(e, (scope) => {
               scope.setExtras({
                 ctx: "io",
-                peer: { user: peer.user, active_room_id: peer.activeRoomId },
+                peer: { user: peer.user, active_room_id: peer.active_room_id },
                 event: event.on
               });
               return scope;

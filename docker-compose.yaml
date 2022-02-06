@@ -17,3 +17,9 @@ services:
       - WEB_URL=http://localhost:3000
     env_file:
       - .env
+
+# -- .env --
+# MONGO_URL=
+# NODE_ENV=
+# ANNOUNCED_IP=
+# SENTRY_DSN=

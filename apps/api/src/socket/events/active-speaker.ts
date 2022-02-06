@@ -6,7 +6,7 @@ const handler: Event<"active speaker"> = {
   on: "active speaker",
   // @ts-ignore
   invoke: async ({ peer, payload }) => {
-    if (!peer.activeRoomId) {
+    if (!peer.active_room_id) {
       logger.log({
         level: "warn",
         dev: true,
@@ -16,7 +16,7 @@ const handler: Event<"active speaker"> = {
       return;
     }
 
-    const room = MediasoupRoom.findById(peer.activeRoomId);
+    const room = MediasoupRoom.findById(peer.active_room_id);
     if (!room.hasPeer(peer.user._id)) {
       throw new Error("peer not a member of room");
     }

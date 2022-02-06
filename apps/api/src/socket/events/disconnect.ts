@@ -12,7 +12,7 @@ export const onDisconnect =
         .magenta
     });
 
-    if (!peer.activeRoomId) {
+    if (!peer.active_room_id) {
       logger.log({
         level: "warn",
         dev: true,
@@ -22,7 +22,7 @@ export const onDisconnect =
       return;
     }
 
-    const rid = peer.activeRoomId;
+    const rid = peer.active_room_id;
     const room = MediasoupRoom.findById(rid);
 
     await room.leave(peer);

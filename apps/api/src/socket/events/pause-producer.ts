@@ -3,7 +3,7 @@ import { Event } from "../types";
 const handler: Event<"pause producer"> = {
   on: "pause producer",
   invoke: async ({ peer, payload, cb }) => {
-    if (!peer.activeRoomId) {
+    if (!peer.active_room_id) {
       throw new Error("peer not a member of any room");
     }
 

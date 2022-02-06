@@ -5,7 +5,7 @@ const handler: Event<"join"> = {
   on: "join",
   invoke: async ({ io, peer, payload, socket, cb }) => {
     const room = MediasoupRoom.findById(payload.room_id);
-    if (peer.activeRoomId) {
+    if (peer.active_room_id) {
       throw new Error("can't be in multiple rooms at once");
     }
 
@@ -13,11 +13,11 @@ const handler: Event<"join"> = {
       throw new Error("peer already joined");
     }
 
-    peer.rtpCapabilities = payload.rtp_capabilities;
+    peer.rtp_capabilities = payload.rtp_capabilities;
     room.join(peer);
 
     socket.join(room.id);
-    peer.activeRoomId = room.id;
+    peer.active_room_id = room.id;
 
     const peers = room._peers().filter((p) => p.user._id !== peer.user._id);
 

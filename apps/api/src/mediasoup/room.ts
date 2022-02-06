@@ -130,7 +130,7 @@ export class MediasoupRoom extends EventEmitter {
     producer_peer: Peer;
     producer: Producer;
   }) {
-    if (!consumer_peer.rtpCapabilities) {
+    if (!consumer_peer.rtp_capabilities) {
       logger.log({
         level: "warn",
         dev: true,
@@ -143,7 +143,7 @@ export class MediasoupRoom extends EventEmitter {
     if (
       !this.router.canConsume({
         producerId: producer.id,
-        rtpCapabilities: consumer_peer.rtpCapabilities
+        rtpCapabilities: consumer_peer.rtp_capabilities
       })
     ) {
       logger.log({
@@ -172,7 +172,7 @@ export class MediasoupRoom extends EventEmitter {
     try {
       consumer = await transport.consume({
         producerId: producer.id,
-        rtpCapabilities: consumer_peer.rtpCapabilities,
+        rtpCapabilities: consumer_peer.rtp_capabilities,
         paused: true
       });
     } catch (e: any) {
@@ -237,9 +237,9 @@ export class MediasoupRoom extends EventEmitter {
 
   async leave(peer: Peer) {
     if (
-      !peer.activeRoomId ||
+      !peer.active_room_id ||
       !this.peers.has(peer.user._id) ||
-      peer.activeRoomId !== this.id
+      peer.active_room_id !== this.id
     ) {
       return;
     }

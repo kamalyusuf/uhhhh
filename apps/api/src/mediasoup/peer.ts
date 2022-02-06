@@ -14,8 +14,8 @@ export class Peer {
   // and peer.user because user corresponds with the client socket
   public user: User;
   public socket: TypedSocket;
-  public activeRoomId?: string;
-  public rtpCapabilities?: RtpCapabilities;
+  public active_room_id?: string;
+  public rtp_capabilities?: RtpCapabilities;
   public producers: Map<string, Producer>;
   public consumers: Map<string, Consumer>;
   public transports: Map<string, Transport>;
@@ -70,7 +70,7 @@ export class Peer {
     this.closeTransports();
     this.closeConsumers();
 
-    this.activeRoomId = undefined;
-    this.rtpCapabilities = undefined;
+    this.active_room_id = undefined;
+    this.rtp_capabilities = undefined;
   }
 }

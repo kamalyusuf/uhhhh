@@ -5,7 +5,7 @@ import { nanoid } from "nanoid";
 const handler: Event<"chat message"> = {
   on: "chat message",
   invoke: async ({ peer, payload }) => {
-    if (!peer.activeRoomId) {
+    if (!peer.active_room_id) {
       throw new Error("peer not a member of any room");
     }
 
@@ -18,7 +18,7 @@ const handler: Event<"chat message"> = {
 
     return {
       emit: "chat message",
-      to: [peer.activeRoomId],
+      to: [peer.active_room_id],
       send: {
         message
       }
