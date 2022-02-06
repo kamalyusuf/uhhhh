@@ -1,9 +1,6 @@
-**/node_modules
+node_modules
 dist
 .env
-.env.prod
-.next
-.env.local
+apps/api/.env
 .idea
-.vscode
 .turbo
