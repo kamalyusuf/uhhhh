@@ -1,23 +1,29 @@
 import { roomService } from "../../modules/room/room.service";
 import { Event } from "../types";
 import { MediasoupRoom } from "../../mediasoup/room";
+import { RoomVisibility } from "types";
 
 const handler: Event<"create room"> = {
   on: "create room",
-  invoke: async ({ payload, cb, io }) => {
-    const room = await roomService.create(payload);
-    const msr = await MediasoupRoom.create({ id: room._id.toString(), io });
+  invoke: async ({ payload, cb, io, peer }) => {
+    const room = await roomService.create({ ...payload, creator: peer.user });
+    const msr = await MediasoupRoom.create({
+      id: room._id.toString(),
+      io,
+      doc: room
+    });
 
     const r = {
-      _id: room._id.toString(),
-      name: room.name,
-      description: room.description,
+      ...room.toJSON(),
       created_at: room.created_at.toISOString(),
       updated_at: room.updated_at.toISOString(),
       members_count: msr.count()
     };
 
-    io.emit("create room", { room: r });
+    if (room.visibility === RoomVisibility.PUBLIC) {
+      io.emit("create room", { room: r });
+    }
+
     cb({
       room: r
     });

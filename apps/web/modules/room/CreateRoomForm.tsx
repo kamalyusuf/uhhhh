@@ -1,8 +1,9 @@
-import { Button, Group, TextInput, Text } from "@mantine/core";
+import { Button, Group, TextInput, Text, Checkbox } from "@mantine/core";
 import { Field, FieldProps, Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import { useSocket } from "../../hooks/useSocket";
 import { request } from "../../lib/request";
+import { RoomVisibility } from "types";
 
 interface Props {
   onCancel: () => void;
@@ -14,12 +15,16 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
 
   return (
     <Formik
-      initialValues={{ name: "", description: "" }}
-      onSubmit={async ({ name, description }) => {
+      initialValues={{ name: "", description: "", checked: false }}
+      onSubmit={async ({ name, description, checked }) => {
         const { room } = await request({
           socket,
           event: "create room",
-          data: { name, description }
+          data: {
+            name,
+            description,
+            visibility: checked ? RoomVisibility.PRIVATE : RoomVisibility.PUBLIC
+          }
         });
 
         onCancel();
@@ -52,6 +57,12 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
                   required
                   {...field}
                 />
+              )}
+            </Field>
+
+            <Field name="checked" type="checkbox">
+              {({ field }: FieldProps) => (
+                <Checkbox label="private" size="sm" {...field} />
               )}
             </Field>
             <Group position="right" grow style={{ marginTop: 10 }}>

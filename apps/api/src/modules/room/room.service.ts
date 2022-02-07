@@ -2,20 +2,37 @@ import { RoomRepository, roomRepo } from "./room.repository";
 import { Types } from "mongoose";
 import { NotFoundError } from "@kamalyb/errors";
 import { env } from "../../lib/env";
+import { RoomVisibility, User } from "types";
 
 export class RoomService {
   constructor(private readonly roomRepo: RoomRepository) {}
 
-  async create({ name, description }: { name: string; description: string }) {
+  async create({
+    name,
+    description,
+    visibility,
+    creator
+  }: {
+    name: string;
+    description: string;
+    visibility: RoomVisibility;
+    creator: User;
+  }) {
     return this.roomRepo.createOne({
       name,
-      description
+      description,
+      visibility,
+      creator
     });
   }
 
   async find() {
     return this.roomRepo.find(
-      {},
+      {
+        visibility: {
+          $eq: RoomVisibility.PUBLIC
+        }
+      },
       {
         sort: {
           created_at: -1
@@ -48,6 +65,7 @@ export class RoomService {
     }
 
     await room.remove();
+
     return true;
   }
 }

@@ -4,13 +4,14 @@ import { useEffect } from "react";
 
 export const NotAuthenticated = ({ children }: { children: JSX.Element }) => {
   const { me } = useMeStore();
-  const { replace } = useRouter();
+  const { replace, query } = useRouter();
 
   useEffect(() => {
     if (me) {
-      replace("/rooms");
+      const cb = new URLSearchParams(query as any).get("cb");
+      replace(cb ? cb : "/rooms");
     }
-  }, [replace, me]);
+  }, [replace, me, query]);
 
   if (!me) {
     return <>{children}</>;
