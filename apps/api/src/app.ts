@@ -32,11 +32,7 @@ class App {
     this._app.use(express.json());
     this._app.use(
       cors({
-        origin: [
-          "http://localhost:3000",
-          "https://www.uhhhh.site",
-          "https://uhhhh.site"
-        ],
+        origin: env.WEB_URL,
         credentials: true
       })
     );
