@@ -12,6 +12,8 @@ import { TypedIO } from "../socket/types";
 import { logger } from "../lib/logger";
 import { roomService } from "../modules/room/room.service";
 import { Types } from "mongoose";
+import { RoomVisibility } from "types";
+import { RoomDoc } from "../modules/room/room.model";
 
 export class MediasoupRoom extends EventEmitter {
   static rooms: Map<string, MediasoupRoom> = new Map();
@@ -20,15 +22,18 @@ export class MediasoupRoom extends EventEmitter {
   public peers: Map<string, Peer>;
   public router: Router;
   private _io: TypedIO;
+  private _doc: RoomDoc;
 
   private constructor({
     id,
     router,
-    io
+    io,
+    doc
   }: {
     id: string;
     router: Router;
     io: TypedIO;
+    doc: RoomDoc;
   }) {
     super();
     this.setMaxListeners(Infinity);
@@ -36,11 +41,20 @@ export class MediasoupRoom extends EventEmitter {
     this.id = id;
     this.router = router;
     this._io = io;
+    this._doc = doc;
 
     this.peers = new Map<string, Peer>();
   }
 
-  static async create({ id, io }: { id: string; io: TypedIO }) {
+  static async create({
+    id,
+    io,
+    doc
+  }: {
+    id: string;
+    io: TypedIO;
+    doc: RoomDoc;
+  }) {
     const router = await workers.next().createRouter({
       mediaCodecs: [
         {
@@ -60,7 +74,7 @@ export class MediasoupRoom extends EventEmitter {
       ]
     });
 
-    const room = new MediasoupRoom({ id, router, io });
+    const room = new MediasoupRoom({ id, router, io, doc });
     this.rooms.set(room.id, room);
     return room;
   }
@@ -76,14 +90,15 @@ export class MediasoupRoom extends EventEmitter {
 
   static async findOrCreate(
     room_id: string,
-    io: TypedIO
+    io: TypedIO,
+    doc: RoomDoc
   ): Promise<MediasoupRoom> {
     const room = this.rooms.get(room_id);
     if (room) {
       return room;
     }
 
-    return this.create({ id: room_id, io });
+    return this.create({ id: room_id, io, doc });
   }
 
   static remove(room_id: string) {
@@ -103,10 +118,12 @@ export class MediasoupRoom extends EventEmitter {
 
     this.peers.set(peer.user._id, peer);
 
-    this._io.emit("update room members count", {
-      room_id: this.id,
-      members_count: this.count()
-    });
+    if (this._doc.visibility === RoomVisibility.PUBLIC) {
+      this._io.emit("update room members count", {
+        room_id: this.id,
+        members_count: this.count()
+      });
+    }
   }
 
   users() {
@@ -247,15 +264,17 @@ export class MediasoupRoom extends EventEmitter {
     peer.reset();
     this.peers.delete(peer.user._id);
 
-    this._io.emit("update room members count", {
-      room_id: this.id,
-      members_count: this.count()
-    });
+    if (this._doc.visibility === RoomVisibility.PUBLIC) {
+      this._io.emit("update room members count", {
+        room_id: this.id,
+        members_count: this.count()
+      });
+    }
 
     if (this._peers().length === 0) {
       this.router.close();
       const deleted = await roomService._delete(new Types.ObjectId(this.id));
-      if (deleted) {
+      if (deleted && this._doc.visibility === RoomVisibility.PUBLIC) {
         this._io.emit("delete room", { room_id: this.id });
       }
       MediasoupRoom.remove(this.id);

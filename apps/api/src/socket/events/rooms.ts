@@ -20,7 +20,8 @@ const handler: Event<"rooms"> = {
           description: room.description,
           created_at: room.created_at.toISOString(),
           updated_at: room.updated_at.toISOString(),
-          members_count: r?.count() ?? 0
+          members_count: r?.count() ?? 0,
+          visibility: room.visibility
         };
       })
     });

@@ -17,6 +17,9 @@ import { Room } from "types";
 import { usePeerStore } from "../../store/peer";
 import { useMeStore } from "../../store/me";
 import { useRoomStore } from "../../store/room";
+import { useClipboard } from "@mantine/hooks";
+import { AiOutlineShareAlt } from "react-icons/ai";
+import { IoExitOutline } from "react-icons/io5";
 
 interface Props {
   room: Room;
@@ -32,6 +35,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
   const peerStore = usePeerStore();
   const { me } = useMeStore();
   const roomStore = useRoomStore();
+  const clipboard = useClipboard({ timeout: 1500 });
 
   const leaving = roomStore.state === "disconnecting";
 
@@ -70,22 +74,43 @@ export const RoomPanel = ({ room, actions }: Props) => {
 
       <Group position="apart" style={{ width: "100%" }}>
         <ToggleMuteButton mute={actions.mute} unmute={actions.unmute} />
-        <Button
-          size="xs"
-          radius="xl"
-          variant="outline"
-          color="red"
-          sx={(theme) => ({
-            "&:hover": {
-              backgroundColor: theme.colors.dark[8]
-            }
-          })}
-          onClick={leave}
-          disabled={leaving}
-          loading={leaving}
-        >
-          leave
-        </Button>
+        <Group spacing={20}>
+          <Button
+            size="xs"
+            radius="xl"
+            variant="outline"
+            color="indigo"
+            sx={(theme) => ({
+              "&:hover": {
+                backgroundColor: theme.colors.dark[8]
+              }
+            })}
+            leftIcon={<AiOutlineShareAlt />}
+            onClick={() => {
+              clipboard.copy(window.location);
+            }}
+          >
+            {clipboard.copied ? "copied" : "share"}
+          </Button>
+
+          <Button
+            size="xs"
+            radius="xl"
+            variant="outline"
+            color="red"
+            sx={(theme) => ({
+              "&:hover": {
+                backgroundColor: theme.colors.dark[8]
+              }
+            })}
+            onClick={leave}
+            disabled={leaving}
+            loading={leaving}
+            leftIcon={<IoExitOutline />}
+          >
+            leave
+          </Button>
+        </Group>
       </Group>
 
       <Divider variant="solid" color="indigo" style={{ width: "100%" }} />

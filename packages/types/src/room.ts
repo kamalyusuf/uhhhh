@@ -7,6 +7,7 @@ export interface Room {
   created_at: string;
   updated_at: string;
   members_count: number;
+  visibility: RoomVisibility;
 }
 
 export interface ChatMessage {
@@ -14,4 +15,9 @@ export interface ChatMessage {
   content: string;
   creator: User;
   created_at: string;
+}
+
+export enum RoomVisibility {
+  PRIVATE = "private",
+  PUBLIC = "public"
 }

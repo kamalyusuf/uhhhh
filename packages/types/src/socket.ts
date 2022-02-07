@@ -1,4 +1,4 @@
-import { Room, ChatMessage } from "./room";
+import { Room, ChatMessage, RoomVisibility } from "./room";
 import { User } from "./user";
 
 type Cb<T> = (t: T) => void;
@@ -152,7 +152,7 @@ export interface ClientToServerEvents<
   rooms: (t: undefined, cb: Cb<{ rooms: Room[] }>) => void;
 
   "create room": (
-    t: { name: string; description: string },
+    t: { name: string; description: string; visibility: RoomVisibility },
     cb: Cb<{ room: Room }>
   ) => void;
 
