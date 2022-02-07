@@ -8,7 +8,7 @@ export const Authenticate = ({ children }: { children: JSX.Element }) => {
 
   useEffect(() => {
     if (!me) {
-      replace(`/`);
+      replace(`/?cb=${encodeURIComponent(window.location.pathname)}`);
     }
   }, [replace, me]);
 
