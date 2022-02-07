@@ -1,0 +1,23 @@
+name: deploy-api
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/deploy-api.yaml"
+      - "apps/api/src/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: dokku deploy
+        uses: dokku/github-action@master
+        with:
+          git_remote_url: ${{ secrets.SSH_HOST }}
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
