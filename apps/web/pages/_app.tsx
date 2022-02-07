@@ -11,7 +11,7 @@ import { styles } from "../mantine/styles";
 import { theme } from "../mantine/theme";
 import { SocketProvider } from "../modules/socket/SocketProvider";
 import { PageComponent } from "../types";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { queryClient } from "../lib/query-client";
 import { QueryClientProvider, Hydrate } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
@@ -32,6 +32,15 @@ Router.events.on("routeChangeError", () => NProgress.done());
 const MyApp = ({ Component: C, pageProps }: AppProps) => {
   const Component = C as PageComponent;
   const [client] = useState(() => queryClient());
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return null;
+  }
 
   return (
     <QueryClientProvider client={client}>
