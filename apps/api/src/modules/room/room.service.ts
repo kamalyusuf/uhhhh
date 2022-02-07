@@ -2,7 +2,7 @@ import { RoomRepository, roomRepo } from "./room.repository";
 import { Types } from "mongoose";
 import { NotFoundError } from "@kamalyb/errors";
 import { env } from "../../lib/env";
-import { RoomVisibility } from "types";
+import { RoomVisibility, User } from "types";
 
 export class RoomService {
   constructor(private readonly roomRepo: RoomRepository) {}
@@ -10,16 +10,19 @@ export class RoomService {
   async create({
     name,
     description,
-    visibility
+    visibility,
+    creator
   }: {
     name: string;
     description: string;
     visibility: RoomVisibility;
+    creator: User;
   }) {
     return this.roomRepo.createOne({
       name,
       description,
-      visibility
+      visibility,
+      creator
     });
   }
 

@@ -40,6 +40,9 @@ export const RoomCard = ({ room }: Props) => {
               {room.members_count}
             </Text>
           </Group>
+          <Text color="indigo" size="sm" style={{ fontStyle: "italic" }}>
+            created by: {room.creator.display_name}
+          </Text>
         </Group>
       </Group>
       <Button

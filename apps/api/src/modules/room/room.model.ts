@@ -32,6 +32,16 @@ const RoomSchema = createSchema(
       required: [true, "room visibility is required"] as any,
       enum: visibility,
       index: true
+    }),
+    creator: Type.object({
+      required: [true, "room creator is required"] as any
+    }).of({
+      _id: Type.string({
+        required: [true, "room creator's id is required"] as any
+      }),
+      display_name: Type.string({
+        required: [true, "room creator's display name is required"] as any
+      })
     })
   },
   createSchemaOptions({ collection: "rooms" })

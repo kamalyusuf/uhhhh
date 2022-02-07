@@ -8,6 +8,7 @@ export interface Room {
   updated_at: string;
   members_count: number;
   visibility: RoomVisibility;
+  creator: User;
 }
 
 export interface ChatMessage {
