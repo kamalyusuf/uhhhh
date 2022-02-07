@@ -4,6 +4,18 @@ import { MantineThemeOverride } from "@mantine/core";
 // red = #DC2626
 // dark = #25262B
 
+/**
+ *
+ * @DEFAULT
+ */
+// breakpoints: {
+//   xs: 500,
+//     sm: 800,
+//     md: 1000,
+//     lg: 1275,
+//     xl: 1800,
+// },
+
 export const theme: MantineThemeOverride = {
   primaryColor: "indigo",
   /**

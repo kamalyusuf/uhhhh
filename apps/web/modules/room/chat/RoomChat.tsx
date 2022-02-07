@@ -49,7 +49,8 @@ export const RoomChat = () => {
         borderColor: theme.colors.indigo[6],
         height: "100%",
         flex: 0.6,
-        padding: 7
+        padding: 7,
+        minWidth: 350
       })}
     >
       <Group
