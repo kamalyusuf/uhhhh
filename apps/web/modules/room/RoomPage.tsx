@@ -18,6 +18,7 @@ import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../hooks/useSocket";
 import hark from "hark";
 import { useMicStore } from "../../store/mic";
+import { useMediaQuery } from "@mantine/hooks";
 
 export const RoomPage: PageComponent = () => {
   const router = useRouter();
@@ -39,6 +40,7 @@ export const RoomPage: PageComponent = () => {
   const roomStore = useRoomStore();
   const { state: socketState, socket } = useSocket();
   const { stream } = useMicStore();
+  const matches = useMediaQuery("(max-width: 768px)");
 
   useEffect(() => {
     setMounted(true);
@@ -142,7 +144,7 @@ export const RoomPage: PageComponent = () => {
         <Container style={{ width: "100%" }}>
           <Group style={{ height: "97%" }} align="start">
             <RoomPanel room={room} actions={{ leave, mute, unmute }} />
-            <RoomChat />
+            {!matches && <RoomChat />}
           </Group>
         </Container>
       </Layout>
