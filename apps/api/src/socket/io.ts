@@ -12,6 +12,7 @@ import { z } from "zod";
 import { User } from "types";
 import { onDisconnect } from "./events/disconnect";
 import * as Sentry from "@sentry/node";
+import { env } from "../lib/env";
 
 const schema = z.object({
   _id: z.string(),
@@ -40,11 +41,7 @@ class SocketIO {
   init(server: Server) {
     this._io = new SocketServer(server, {
       cors: {
-        origin: [
-          "http://localhost:3000",
-          "https://www.uhhhh.site",
-          "https://uhhhh.site"
-        ],
+        origin: env.WEB_URL,
         credentials: true
       },
       serveClient: false,
