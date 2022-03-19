@@ -12,7 +12,7 @@ import { TypedIO } from "../socket/types";
 import { logger } from "../lib/logger";
 import { roomService } from "../modules/room/room.service";
 import { Types } from "mongoose";
-import { RoomVisibility } from "types";
+import { RoomVisibility, RoomSpan } from "types";
 import { RoomDoc } from "../modules/room/room.model";
 
 export class MediasoupRoom extends EventEmitter {
@@ -273,10 +273,13 @@ export class MediasoupRoom extends EventEmitter {
 
     if (this._peers().length === 0) {
       this.router.close();
+
       const deleted = await roomService._delete(new Types.ObjectId(this.id));
+
       if (deleted && this._doc.visibility === RoomVisibility.PUBLIC) {
         this._io.emit("delete room", { room_id: this.id });
       }
+
       MediasoupRoom.remove(this.id);
     }
   }

@@ -1,6 +1,6 @@
-import { Group, Center, Loader } from "@mantine/core";
+import { Group, Center, Loader, TextInput, Button, Paper } from "@mantine/core";
 import { Layout } from "../../components/Layout";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import { Container } from "../../components/Container";
 import { RoomChat } from "./chat/RoomChat";
@@ -9,7 +9,7 @@ import { PageComponent } from "../../types";
 import { useQuery } from "react-query";
 import { api } from "../../lib/api";
 import { isServer } from "../../utils/is-server";
-import { Room, ApiError } from "types";
+import { Room, ApiError, RoomStatus } from "types";
 import { AxiosError } from "axios";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { parseApiError } from "../../utils/error";
@@ -19,6 +19,7 @@ import { useSocket } from "../../hooks/useSocket";
 import hark from "hark";
 import { useMicStore } from "../../store/mic";
 import { useMediaQuery } from "@mantine/hooks";
+import { request } from "../../lib/request";
 
 export const RoomPage: PageComponent = () => {
   const router = useRouter();
@@ -41,16 +42,22 @@ export const RoomPage: PageComponent = () => {
   const { state: socketState, socket } = useSocket();
   const { stream } = useMicStore();
   const matches = useMediaQuery("(max-width: 768px)");
+  const locked = useMemo(
+    () => room?.status === RoomStatus.PROTECTED,
+    [room?.status]
+  );
+  const [ok, setOk] = useState(false);
+  const [password, setPassword] = useState("");
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
   useEffect(() => {
-    if (mounted && room && socketState === "connected") {
+    if (ok && socketState === "connected") {
       join();
     }
-  }, [mounted, room, socketState]);
+  }, [socketState, ok]);
 
   useEffect(() => {
     if (!stream) return;
@@ -72,6 +79,48 @@ export const RoomPage: PageComponent = () => {
 
   if (!mounted) {
     return null;
+  }
+
+  if (mounted && locked && !ok) {
+    return (
+      <Layout title={`uhhhh | ${room?.name}`}>
+        <Container>
+          <Paper
+            padding={"xl"}
+            shadow={"sm"}
+            radius="md"
+            style={{ width: 350 }}
+          >
+            <Group direction="column" grow>
+              <TextInput
+                label="password"
+                placeholder="password"
+                required
+                value={password}
+                onChange={(e) => setPassword(e.currentTarget.value)}
+              />
+
+              <Button
+                onClick={async () => {
+                  const { ok: success } = await request({
+                    socket,
+                    event: "room login",
+                    data: {
+                      room_id: room._id,
+                      password
+                    }
+                  });
+
+                  setOk(success);
+                }}
+              >
+                join
+              </Button>
+            </Group>
+          </Paper>
+        </Container>
+      </Layout>
+    );
   }
 
   if (isLoading || roomStore.state === "connecting") {

@@ -22,7 +22,8 @@ const handler: Event<"rooms"> = {
           updated_at: room.updated_at.toISOString(),
           members_count: r?.count() ?? 0,
           visibility: room.visibility,
-          creator: room.creator
+          creator: room.creator,
+          status: room.status
         };
       })
     });

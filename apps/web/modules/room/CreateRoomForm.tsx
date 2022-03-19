@@ -3,7 +3,8 @@ import { Field, FieldProps, Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import { useSocket } from "../../hooks/useSocket";
 import { request } from "../../lib/request";
-import { RoomVisibility } from "types";
+import { RoomVisibility, RoomStatus } from "types";
+import React from "react";
 
 interface Props {
   onCancel: () => void;
@@ -15,15 +16,30 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
 
   return (
     <Formik
-      initialValues={{ name: "", description: "", checked: false }}
-      onSubmit={async ({ name, description, checked }) => {
+      initialValues={{
+        name: "",
+        description: "",
+        private: false,
+        require_password: false,
+        password: ""
+      }}
+      onSubmit={async (values) => {
         const { room } = await request({
           socket,
           event: "create room",
           data: {
-            name,
-            description,
-            visibility: checked ? RoomVisibility.PRIVATE : RoomVisibility.PUBLIC
+            name: values.name,
+            description: values.description,
+            visibility: values.private
+              ? RoomVisibility.PRIVATE
+              : RoomVisibility.PUBLIC,
+            status: values.require_password
+              ? RoomStatus.PROTECTED
+              : RoomStatus.UNPROTECTED,
+            password:
+              values.require_password && values.password
+                ? values.password
+                : undefined
           }
         });
 
@@ -60,11 +76,35 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
               )}
             </Field>
 
-            <Field name="checked" type="checkbox">
+            <Field name="private" type="checkbox">
               {({ field }: FieldProps) => (
                 <Checkbox label="private" size="sm" {...field} />
               )}
             </Field>
+
+            <Field name="require_password" type="checkbox">
+              {({ field }: FieldProps) => (
+                <Checkbox label="require password" size="sm" {...field} />
+              )}
+            </Field>
+
+            {values.require_password && (
+              <Field name="password">
+                {({ field }: FieldProps) => (
+                  <TextInput
+                    label="password"
+                    placeholder="room password"
+                    {...field}
+                  />
+                )}
+              </Field>
+            )}
+            {/*<Divider*/}
+            {/*  size="xs"*/}
+            {/*  color="indigo"*/}
+            {/*  label="settings"*/}
+            {/*  labelPosition="center"*/}
+            {/*/>*/}
             <Group position="right" grow style={{ marginTop: 10 }}>
               <Button
                 type="submit"
