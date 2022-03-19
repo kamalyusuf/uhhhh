@@ -54,10 +54,10 @@ export const RoomPage: PageComponent = () => {
   }, []);
 
   useEffect(() => {
-    if (ok && socketState === "connected") {
+    if (((locked && ok) || !locked) && socketState === "connected") {
       join();
     }
-  }, [socketState, ok]);
+  }, [socketState, ok, locked]);
 
   useEffect(() => {
     if (!stream) return;
