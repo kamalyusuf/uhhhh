@@ -20,6 +20,7 @@
     "@lifeomic/attempt": "^3.0.2",
     "@sentry/node": "^6.17.4",
     "@sentry/tracing": "^6.17.4",
+    "argon2": "^0.28.5",
     "colors": "^1.4.0",
     "consola": "^2.15.3",
     "cors": "^2.8.5",

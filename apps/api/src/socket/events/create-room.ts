@@ -1,12 +1,26 @@
 import { roomService } from "../../modules/room/room.service";
 import { Event } from "../types";
 import { MediasoupRoom } from "../../mediasoup/room";
-import { RoomVisibility } from "types";
+import { RoomVisibility, RoomSpan } from "types";
 
 const handler: Event<"create room"> = {
   on: "create room",
   invoke: async ({ payload, cb, io, peer }) => {
-    const room = await roomService.create({ ...payload, creator: peer.user });
+    let name = payload.name;
+    let span;
+
+    if (name.trim().startsWith("**")) {
+      name = name.split("**")[1];
+      span = RoomSpan.PERMANENT;
+    }
+
+    const room = await roomService.create({
+      ...payload,
+      name,
+      span,
+      creator: peer.user
+    });
+
     const msr = await MediasoupRoom.create({
       id: room._id.toString(),
       io,

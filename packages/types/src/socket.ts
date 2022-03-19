@@ -1,4 +1,4 @@
-import { Room, ChatMessage, RoomVisibility } from "./room";
+import { Room, ChatMessage, RoomVisibility, RoomStatus } from "./room";
 import { User } from "./user";
 
 type Cb<T> = (t: T) => void;
@@ -95,6 +95,8 @@ export interface ServerToClientEvents<
     room_id: string;
     members_count: number;
   }) => void;
+
+  "room login": (t: { ok: boolean }) => void;
 }
 
 export interface ClientToServerEvents<
@@ -152,7 +154,13 @@ export interface ClientToServerEvents<
   rooms: (t: undefined, cb: Cb<{ rooms: Room[] }>) => void;
 
   "create room": (
-    t: { name: string; description: string; visibility: RoomVisibility },
+    t: {
+      name: string;
+      description: string;
+      visibility: RoomVisibility;
+      password?: string;
+      status: RoomStatus;
+    },
     cb: Cb<{ room: Room }>
   ) => void;
 
@@ -171,6 +179,11 @@ export interface ClientToServerEvents<
   "chat message": (t: { content: string }, cb: void) => void;
 
   "update display name": (t: { new_display_name: string }, cb: void) => void;
+
+  "room login": (
+    t: { room_id: string; password: string },
+    cb: Cb<{ ok: boolean }>
+  ) => void;
 }
 
 export interface InterServerEvents {

@@ -9,6 +9,7 @@ export interface Room {
   members_count: number;
   visibility: RoomVisibility;
   creator: User;
+  status: RoomStatus;
 }
 
 export interface ChatMessage {
@@ -21,4 +22,14 @@ export interface ChatMessage {
 export enum RoomVisibility {
   PRIVATE = "private",
   PUBLIC = "public"
+}
+
+export enum RoomSpan {
+  TEMPORARY = "temporary",
+  PERMANENT = "permanent"
+}
+
+export enum RoomStatus {
+  PROTECTED = "protected",
+  UNPROTECTED = "unprotected"
 }

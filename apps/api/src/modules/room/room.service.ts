@@ -2,7 +2,8 @@ import { RoomRepository, roomRepo } from "./room.repository";
 import { Types } from "mongoose";
 import { NotFoundError } from "@kamalyb/errors";
 import { env } from "../../lib/env";
-import { RoomVisibility, User } from "types";
+import { RoomVisibility, User, RoomSpan, RoomStatus } from "types";
+import argon2 from "argon2";
 
 export class RoomService {
   constructor(private readonly roomRepo: RoomRepository) {}
@@ -11,18 +12,27 @@ export class RoomService {
     name,
     description,
     visibility,
-    creator
+    creator,
+    span,
+    password,
+    status
   }: {
     name: string;
     description: string;
     visibility: RoomVisibility;
     creator: User;
+    span?: RoomSpan;
+    password?: string;
+    status: RoomStatus;
   }) {
     return this.roomRepo.createOne({
       name,
       description,
       visibility,
-      creator
+      creator,
+      span,
+      status,
+      password: password ? await argon2.hash(password) : undefined
     });
   }
 
@@ -60,7 +70,11 @@ export class RoomService {
       return false;
     }
 
-    if (!room || (env.isDevelopment && room?.name === "akatsuki")) {
+    if (
+      !room ||
+      (env.isDevelopment && room?.name === "akatsuki") ||
+      room?.span === RoomSpan.PERMANENT
+    ) {
       return false;
     }
 
