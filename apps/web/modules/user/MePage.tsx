@@ -38,12 +38,7 @@ export const MePage: PageComponent = () => {
       <Layout title={`uhhhh | ${me.display_name ?? "user"}`}>
         <Box>
           <Center>
-            <Paper
-              padding={"xl"}
-              shadow={"sm"}
-              radius="md"
-              style={{ width: 350 }}
-            >
+            <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>
               <Group direction="column" grow spacing={10}>
                 <Group direction="column" grow>
                   <TextInput
