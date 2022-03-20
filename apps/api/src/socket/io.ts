@@ -6,7 +6,7 @@ import fs from "fs";
 import path from "path";
 import { EventError } from "../lib/socket-error";
 import { Request } from "express";
-import { NotAuthorizedError, BadRequestError } from "@kamalyb/errors";
+import { NotAuthorizedError, CustomError } from "@kamalyb/errors";
 import { Peer } from "../mediasoup/peer";
 import { z } from "zod";
 import { User } from "types";
@@ -140,18 +140,19 @@ class SocketIO {
 
             socket.emit("event error", new EventError(event.on, e));
 
-            if (e instanceof BadRequestError) {
-              return;
-            }
-
-            Sentry.captureException(e, (scope) => {
-              scope.setExtras({
-                ctx: "io",
-                peer: { user: peer.user, active_room_id: peer.active_room_id },
-                event: event.on
+            if (!(e instanceof CustomError)) {
+              Sentry.captureException(e, (scope) => {
+                scope.setExtras({
+                  ctx: "io",
+                  peer: {
+                    user: peer.user,
+                    active_room_id: peer.active_room_id
+                  },
+                  event: event.on
+                });
+                return scope;
               });
-              return scope;
-            });
+            }
           }
         });
       }
