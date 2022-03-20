@@ -23,12 +23,7 @@ const HomePage: PageComponent = () => {
       <Layout spacing={50} title="uhhhh">
         <Box>
           <Center>
-            <Paper
-              padding={"xl"}
-              shadow={"sm"}
-              radius="md"
-              style={{ width: 350 }}
-            >
+            <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>
               <Group direction="column" grow>
                 <TextInput
                   placeholder="display name"

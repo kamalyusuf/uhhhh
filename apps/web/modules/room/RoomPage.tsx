@@ -85,12 +85,7 @@ export const RoomPage: PageComponent = () => {
     return (
       <Layout title={`uhhhh | ${room?.name}`}>
         <Container>
-          <Paper
-            padding={"xl"}
-            shadow={"sm"}
-            radius="md"
-            style={{ width: 350 }}
-          >
+          <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>
             <Group direction="column" grow>
               <TextInput
                 label="password"
