@@ -1,4 +1,12 @@
-import { Group, Center, Loader, TextInput, Button, Paper } from "@mantine/core";
+import {
+  Group,
+  Center,
+  Loader,
+  TextInput,
+  Button,
+  Paper,
+  PasswordInput
+} from "@mantine/core";
 import { Layout } from "../../components/Layout";
 import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
@@ -86,32 +94,34 @@ export const RoomPage: PageComponent = () => {
       <Layout title={`uhhhh | ${room?.name}`}>
         <Container>
           <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>
-            <Group direction="column" grow>
-              <TextInput
-                label="password"
-                placeholder="password"
-                required
-                value={password}
-                onChange={(e) => setPassword(e.currentTarget.value)}
-              />
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
 
-              <Button
-                onClick={async () => {
-                  const { ok: success } = await request({
-                    socket,
-                    event: "room login",
-                    data: {
-                      room_id: room._id,
-                      password
-                    }
-                  });
+                const { ok: success } = await request({
+                  socket,
+                  event: "room login",
+                  data: {
+                    room_id: room._id,
+                    password
+                  }
+                });
 
-                  setOk(success);
-                }}
-              >
-                join
-              </Button>
-            </Group>
+                setOk(success);
+              }}
+            >
+              <Group direction="column" grow>
+                <PasswordInput
+                  label="password"
+                  placeholder="password"
+                  required
+                  value={password}
+                  onChange={(e) => setPassword(e.currentTarget.value)}
+                />
+
+                <Button type="submit">join</Button>
+              </Group>
+            </form>
           </Paper>
         </Container>
       </Layout>
