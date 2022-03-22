@@ -20,7 +20,7 @@ export const styles = {
       }
     },
     required: {
-      color: theme.primaryColor
+      color: theme.colors.red[6]
     }
   }),
   Menu: (theme: MantineTheme) => ({
