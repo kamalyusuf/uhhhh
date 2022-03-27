@@ -2,6 +2,7 @@ import { roomService } from "../../modules/room/room.service";
 import { Event } from "../types";
 import { MediasoupRoom } from "../../mediasoup/room";
 import { RoomVisibility, RoomSpan } from "types";
+import { BadRequestError } from "@kamalyb/errors";
 
 const handler: Event<"create room"> = {
   on: "create room",
@@ -10,7 +11,15 @@ const handler: Event<"create room"> = {
     let span;
 
     if (name.trim().startsWith("**")) {
-      name = name.split("**")[1];
+      [name] = name
+        .split("**")
+        .map((n) => n.trim())
+        .filter(Boolean);
+
+      if (!name) {
+        throw new BadRequestError("room name is required");
+      }
+
       span = RoomSpan.PERMANENT;
     }
 
