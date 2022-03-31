@@ -28,6 +28,9 @@ import hark from "hark";
 import { useMicStore } from "../../store/mic";
 import { useMediaQuery } from "@mantine/hooks";
 import { request } from "../../lib/request";
+import splitbee from "@splitbee/web";
+import { useMeStore } from "../../store/me";
+import { usePeerStore } from "../../store/peer";
 
 export const RoomPage: PageComponent = () => {
   const router = useRouter();
@@ -56,6 +59,8 @@ export const RoomPage: PageComponent = () => {
   );
   const [ok, setOk] = useState(false);
   const [password, setPassword] = useState("");
+  const me = useMeStore().me;
+  const peers = usePeerStore().peers;
 
   useEffect(() => {
     setMounted(true);
@@ -84,6 +89,19 @@ export const RoomPage: PageComponent = () => {
       harker.stop();
     };
   }, [stream]);
+
+  useEffect(() => {
+    if (roomStore.state === "connected") {
+      splitbee.track("join room", {
+        ...room,
+        creator: undefined,
+        user_display_name: me.display_name,
+        room_participants: Object.values(peers)
+          .map((peer) => peer.display_name)
+          .join(", ")
+      });
+    }
+  }, [roomStore.state]);
 
   if (!mounted) {
     return null;
