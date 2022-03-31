@@ -13,6 +13,7 @@
     "@mantine/hooks": "^4.0.7",
     "@mantine/next": "^4.0.7",
     "@ngneat/falso": "^3.0.0",
+    "@splitbee/web": "^0.3.0",
     "axios": "^0.26.1",
     "formik": "^2.2.9",
     "hark": "^1.2.3",

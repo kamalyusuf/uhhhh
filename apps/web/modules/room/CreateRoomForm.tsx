@@ -5,6 +5,7 @@ import { useSocket } from "../../hooks/useSocket";
 import { request } from "../../lib/request";
 import { RoomVisibility, RoomStatus } from "types";
 import React from "react";
+import splitbee from "@splitbee/web";
 
 interface Props {
   onCancel: () => void;
@@ -41,6 +42,12 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
                 ? values.password
                 : undefined
           }
+        });
+
+        splitbee.track("create room", {
+          ...room,
+          room_creator_name: room.creator.display_name,
+          creator: undefined
         });
 
         onCancel();
