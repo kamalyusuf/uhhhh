@@ -2,7 +2,6 @@ import "../styles/globals.css";
 import { GlobalStyles, MantineProvider, NormalizeCSS } from "@mantine/core";
 import { AppProps } from "next/app";
 import Head from "next/head";
-import Script from "next/script";
 import Router from "next/router";
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
@@ -51,7 +50,7 @@ const MyApp = ({ Component: C, pageProps }: AppProps) => {
             name="viewport"
             content="minimum-scale=1, initial-scale=1, width=device-width"
           />
-          <Script async src="https://cdn.splitbee.io/sb.js" />
+          <script async src="https://cdn.splitbee.io/sb.js"></script>
         </Head>
 
         <MantineProvider styles={styles} theme={theme}>
