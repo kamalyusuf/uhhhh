@@ -18,9 +18,7 @@ export const ip = () => {
     }
 
     for (const iface of faces) {
-      if (iface.family !== "IPv4" || iface.internal !== false) {
-        continue;
-      }
+      if (iface.family !== "IPv4" || iface.internal !== false) continue;
 
       localIp = iface.address;
 

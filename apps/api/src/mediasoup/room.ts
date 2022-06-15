@@ -10,7 +10,6 @@ import { workers } from "./workers";
 import { NotFoundError } from "@kamalyb/errors";
 import { TypedIO } from "../socket/types";
 import { logger } from "../lib/logger";
-import { roomService } from "../modules/room/room.service";
 import { Types } from "mongoose";
 import { RoomVisibility, RoomSpan } from "types";
 import { RoomDoc } from "../modules/room/room.model";
@@ -75,15 +74,16 @@ export class MediasoupRoom extends EventEmitter {
     });
 
     const room = new MediasoupRoom({ id, router, io, doc });
+
     this.rooms.set(room.id, room);
+
     return room;
   }
 
   static findById(room_id: string) {
     const room = this.rooms.get(room_id);
-    if (!room) {
-      throw new NotFoundError("no mediasoup room found");
-    }
+
+    if (!room) throw new NotFoundError("no mediasoup room found");
 
     return room;
   }
@@ -94,17 +94,13 @@ export class MediasoupRoom extends EventEmitter {
     doc: RoomDoc
   ): Promise<MediasoupRoom> {
     const room = this.rooms.get(room_id);
-    if (room) {
-      return room;
-    }
+    if (room) return room;
 
     return this.create({ id: room_id, io, doc });
   }
 
   static remove(room_id: string) {
-    if (this.rooms.has(room_id)) {
-      this.rooms.delete(room_id);
-    }
+    if (this.rooms.has(room_id)) this.rooms.delete(room_id);
   }
 
   get rtpCapabilities(): RtpCapabilities {
@@ -112,9 +108,7 @@ export class MediasoupRoom extends EventEmitter {
   }
 
   join(peer: Peer) {
-    if (this.peers.has(peer.user._id)) {
-      throw new Error("peer already joined");
-    }
+    if (this.peers.has(peer.user._id)) throw new Error("peer already joined");
 
     this.peers.set(peer.user._id, peer);
 
@@ -257,9 +251,8 @@ export class MediasoupRoom extends EventEmitter {
       !peer.active_room_id ||
       !this.peers.has(peer.user._id) ||
       peer.active_room_id !== this.id
-    ) {
+    )
       return;
-    }
 
     peer.reset();
     this.peers.delete(peer.user._id);
@@ -274,11 +267,10 @@ export class MediasoupRoom extends EventEmitter {
     if (this._peers().length === 0) {
       this.router.close();
 
-      const deleted = await roomService._delete(new Types.ObjectId(this.id));
+      const deleted = await deps.room._delete(new Types.ObjectId(this.id));
 
-      if (deleted && this._doc.visibility === RoomVisibility.PUBLIC) {
+      if (deleted && this._doc.visibility === RoomVisibility.PUBLIC)
         this._io.emit("delete room", { room_id: this.id });
-      }
 
       MediasoupRoom.remove(this.id);
     }

@@ -13,7 +13,7 @@ export class RoomService {
     description,
     visibility,
     creator,
-    span,
+    span = RoomSpan.TEMPORARY,
     password,
     status
   }: {
@@ -54,9 +54,8 @@ export class RoomService {
 
   async findById(_id: Types.ObjectId) {
     const room = await this.roomRepo.findById(_id);
-    if (!room) {
-      throw new NotFoundError("no room found");
-    }
+
+    if (!room) throw new NotFoundError("no room found");
 
     return room;
   }
@@ -74,14 +73,11 @@ export class RoomService {
       !room ||
       (env.isDevelopment && room?.name === "akatsuki") ||
       room?.span === RoomSpan.PERMANENT
-    ) {
+    )
       return false;
-    }
 
     await room.remove();
 
     return true;
   }
 }
-
-export const roomService = new RoomService(roomRepo);

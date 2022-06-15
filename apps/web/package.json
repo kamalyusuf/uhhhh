@@ -12,7 +12,6 @@
     "@mantine/core": "^4.2.9",
     "@mantine/hooks": "^4.2.9",
     "@mantine/next": "^4.2.9",
-    "@ngneat/falso": "^5.7.0",
     "@splitbee/web": "^0.3.0",
     "axios": "^0.27.2",
     "formik": "^2.2.9",
@@ -29,7 +28,6 @@
     "react-virtuoso": "^2.13.2",
     "socket.io-client": "^4.5.1",
     "types": "*",
-    "zod": "^3.17.3",
     "zustand": "^4.0.0-rc.1"
   },
   "devDependencies": {

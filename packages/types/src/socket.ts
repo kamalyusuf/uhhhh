@@ -1,9 +1,20 @@
 import { Room, ChatMessage, RoomVisibility, RoomStatus } from "./room";
 import { User } from "./user";
+import { ErrorProps } from "./error";
 
 type Cb<T> = (t: T) => void;
 
+type VCb = () => void;
+
 export type Direction = "send" | "receive";
+
+export type EventError = {
+  event?: Exclude<
+    keyof ServerToClientEvents<{}, {}, {}, {}, {}>,
+    "event error"
+  >;
+  errors: Omit<ErrorProps, "location">[];
+};
 
 export interface ServerToClientEvents<
   RtpCapabilities,
@@ -22,21 +33,7 @@ export interface ServerToClientEvents<
 
   join: (t: { peers: User[] }) => void;
 
-  test: (t: any) => void;
-
-  "event error": (t: {
-    message: string;
-    event: Exclude<
-      keyof ServerToClientEvents<
-        RtpCapabilities,
-        OutgoingTransport,
-        MediaKind,
-        RtpParameters,
-        ConsumerType
-      >,
-      "error" | "event error"
-    >;
-  }) => void;
+  "event error": (t: EventError) => void;
 
   error: (t: { message: string }) => void;
 
@@ -60,7 +57,7 @@ export interface ServerToClientEvents<
     rtp_parameters: RtpParameters;
     type: ConsumerType;
     producer_paused: boolean;
-    app_data: Record<string, string>;
+    app_data: Record<string, unknown>;
   }) => void;
 
   "consumer closed": (t: { consumer_id: string; peer_id: string }) => void;
@@ -75,7 +72,7 @@ export interface ServerToClientEvents<
     peer_id: string;
   }) => void;
 
-  "consumer layers changed": (t: any) => void;
+  "consumer layers changed": () => void;
 
   leave: () => void;
 
@@ -127,7 +124,7 @@ export interface ClientToServerEvents<
       transport_id: string;
       dtls_parameters: DtlsParameters;
     },
-    cb: () => void
+    cb: VCb
   ) => void;
 
   produce: (
@@ -149,9 +146,7 @@ export interface ClientToServerEvents<
     cb: Cb<{ peers: User[] }>
   ) => void;
 
-  test: (t: any, cb: Cb<any>) => void;
-
-  rooms: (t: undefined, cb: Cb<{ rooms: Room[] }>) => void;
+  rooms: (cb: Cb<{ rooms: Room[] }>) => void;
 
   "create room": (
     t: {
@@ -164,21 +159,21 @@ export interface ClientToServerEvents<
     cb: Cb<{ room: Room }>
   ) => void;
 
-  "close producer": (t: { producer_id: string }, cb: Cb<undefined>) => void;
+  "close producer": (t: { producer_id: string }, cb: VCb) => void;
 
-  "pause producer": (t: { producer_id: string }, cb: Cb<undefined>) => void;
+  "pause producer": (t: { producer_id: string }, cb: VCb) => void;
 
-  "resume producer": (t: { producer_id: string }, cb: Cb<undefined>) => void;
+  "resume producer": (t: { producer_id: string }, cb: VCb) => void;
 
-  leave: (t: undefined, cb: Cb<undefined>) => void;
+  leave: (cb: VCb) => void;
 
-  "active speaker": (t: { speaking: boolean }, cb: void) => void;
+  "active speaker": (t: { speaking: boolean }) => void;
 
-  "consumer consumed": (t: { consumer_id: string }, cb: void) => void;
+  "consumer consumed": (t: { consumer_id: string }) => void;
 
-  "chat message": (t: { content: string }, cb: void) => void;
+  "chat message": (t: { content: string }) => void;
 
-  "update display name": (t: { new_display_name: string }, cb: void) => void;
+  "update display name": (t: { new_display_name: string }) => void;
 
   "room login": (
     t: { room_id: string; password: string },
