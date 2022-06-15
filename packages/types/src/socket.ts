@@ -35,7 +35,7 @@ export interface ServerToClientEvents<
 
   "event error": (t: EventError) => void;
 
-  error: (t: { message: string }) => void;
+  error: (t: { errors: EventError["errors"] }) => void;
 
   rooms: (t: { rooms: Room[] }) => void;
 
@@ -154,7 +154,6 @@ export interface ClientToServerEvents<
       description: string;
       visibility: RoomVisibility;
       password?: string;
-      status: RoomStatus;
     },
     cb: Cb<{ room: Room }>
   ) => void;

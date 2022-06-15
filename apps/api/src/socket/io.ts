@@ -12,7 +12,7 @@ import { User, EventError } from "types";
 import { onDisconnect } from "./events/disconnect";
 import * as Sentry from "@sentry/node";
 import { env } from "../lib/env";
-import Joi, { ValidationErrorItem } from "joi";
+import Joi from "joi";
 import { validatePayloadAndCb } from "../utils/socket";
 
 const schema = Joi.object<User, true>({
@@ -20,7 +20,7 @@ const schema = Joi.object<User, true>({
   display_name: Joi.string()
 });
 
-const exclude: string[] = ["disconnect.ts", "disconnect.js"];
+const exclude: string[] = ["disconnect", "chat-message"];
 
 class SocketIO {
   private _io?: TypedIO;
@@ -48,7 +48,7 @@ class SocketIO {
     const files = fs.readdirSync(dir);
 
     for (const file of files) {
-      if (exclude.includes(file)) continue;
+      if (exclude.some((ex) => file.startsWith(ex))) continue;
 
       const handler = require(`./events/${file}`).default as Event<ServerEvent>;
 

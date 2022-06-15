@@ -19,10 +19,10 @@ const useForceScrollToBottom = (messages: Message[]) => {
       if (
         lastMessage.creator._id === me._id &&
         lastFocusedOwnMessage.current !== lastMessage._id
-      ) {
+      )
         return true;
-      }
     }
+
     return false;
   };
 

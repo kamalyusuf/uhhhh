@@ -18,9 +18,7 @@ api.interceptors.response.use(
 
     const messages = parseApiError(error);
 
-    if (messages.length === 0) {
-      messages.push("something went wrong");
-    }
+    if (messages.length === 0) messages.push("something went wrong");
 
     messages.forEach((message) => toast.error(message));
 

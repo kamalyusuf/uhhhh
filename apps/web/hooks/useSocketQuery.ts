@@ -2,43 +2,37 @@ import { useQuery, UseQueryOptions } from "react-query";
 import { ServerEvent, ClientToServerEvents } from "../modules/socket/types";
 import { useSocket } from "./useSocket";
 import { request } from "../lib/request";
-import { isServer } from "../utils/is-server";
+import { EventError } from "types";
 
-interface SocketError<T extends ServerEvent> {
-  message: string;
-  event: T;
-}
+type Fn = (...args: any) => any;
 
-export const useSocketQuery = <T extends ServerEvent>(
-  event: T | [T, string],
-  data: Parameters<ClientToServerEvents[T]>[0],
-  options: Omit<
-    UseQueryOptions<
-      // @ts-ignore
-      Parameters<Parameters<ClientToServerEvents[T]>[1]>[0],
-      SocketError<T>
-    >,
-    "enabled"
-  > & { e?: boolean } = {}
+type P<E extends ServerEvent> = Parameters<ClientToServerEvents[E]>;
+
+type Return<K extends ServerEvent> = P<K>[0] extends Fn
+  ? Parameters<P<K>[0]>[0]
+  : P<K>[1] extends Fn
+  ? Parameters<P<K>[1]>[0]
+  : void;
+
+export const useSocketQuery = <K extends ServerEvent>(
+  event: K | [K, ...string[]],
+  payload: P<K>[0] extends undefined | Fn ? undefined : P<K>[0],
+  options: Omit<UseQueryOptions<Return<K>>, "enabled"> & { e?: boolean } = {}
 ) => {
   const { socket } = useSocket();
 
-  return useQuery<
-    // @ts-ignore
-    Parameters<Parameters<ClientToServerEvents[T]>[1]>[0],
-    SocketError<T>
-  >(
+  return useQuery<Return<K>, EventError>(
     event,
     () =>
       request({
         socket,
         event: typeof event === "string" ? event : event[0],
-        data
+        payload
       }),
     {
       enabled:
         !!socket &&
-        !isServer() &&
+        typeof window !== "undefined" &&
         (typeof options.e === "undefined" ? true : options.e),
       ...options
     }

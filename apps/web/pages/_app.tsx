@@ -1,6 +1,6 @@
 import "../styles/globals.css";
 import "nprogress/nprogress.css";
-import { GlobalStyles, MantineProvider, NormalizeCSS } from "@mantine/core";
+import { MantineProvider } from "@mantine/core";
 import { AppProps } from "next/app";
 import Head from "next/head";
 import Router from "next/router";
@@ -21,9 +21,7 @@ import { Authenticate } from "../modules/auth/Authenticate";
 import { SocketHandler } from "../modules/socket/SocketHandler";
 import { useMeStore } from "../store/me";
 
-if (!process.env.NEXT_PUBLIC_API_URL) {
-  throw new Error("where API_URL at?");
-}
+if (!process.env.NEXT_PUBLIC_API_URL) throw new Error("where API_URL at?");
 
 Router.events.on("routeChangeStart", () => {
   NProgress.start();
@@ -39,6 +37,7 @@ const MyApp = ({ Component: C, pageProps }: AppProps) => {
 
   useEffect(() => {
     setMounted(true);
+
     splitbee.init();
     splitbee.enableCookie();
   }, []);
@@ -53,9 +52,7 @@ const MyApp = ({ Component: C, pageProps }: AppProps) => {
     };
   }, [me]);
 
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
 
   return (
     <QueryClientProvider client={client}>
@@ -68,10 +65,13 @@ const MyApp = ({ Component: C, pageProps }: AppProps) => {
           <script async src="https://cdn.splitbee.io/sb.js"></script>
         </Head>
 
-        <MantineProvider styles={styles} theme={theme}>
+        <MantineProvider
+          withGlobalStyles
+          withNormalizeCSS
+          styles={styles}
+          theme={theme}
+        >
           <SocketProvider connect={Component.ws}>
-            <NormalizeCSS />
-            <GlobalStyles />
             {Component.authenticate === "yes" ? (
               <Authenticate>
                 <Component {...pageProps} />

@@ -48,9 +48,7 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
   }, [socket, me]);
 
   useEffect(() => {
-    if (!socket) {
-      return;
-    }
+    if (!socket) return;
 
     socket.on("connect", () => {
       setState("connected");
@@ -58,10 +56,6 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
 
     socket.on("connect_error", (error) => {
       setState("error");
-      toast.error(error.message);
-    });
-
-    socket.on("error", (error) => {
       toast.error(error.message);
     });
 

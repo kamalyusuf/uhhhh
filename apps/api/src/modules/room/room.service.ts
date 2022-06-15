@@ -1,4 +1,4 @@
-import { RoomRepository, roomRepo } from "./room.repository";
+import { RoomRepository } from "./room.repository";
 import { Types } from "mongoose";
 import { NotFoundError } from "@kamalyb/errors";
 import { env } from "../../lib/env";
@@ -14,8 +14,7 @@ export class RoomService {
     visibility,
     creator,
     span = RoomSpan.TEMPORARY,
-    password,
-    status
+    password
   }: {
     name: string;
     description: string;
@@ -23,7 +22,6 @@ export class RoomService {
     creator: User;
     span?: RoomSpan;
     password?: string;
-    status: RoomStatus;
   }) {
     return this.roomRepo.createOne({
       name,
@@ -31,7 +29,7 @@ export class RoomService {
       visibility,
       creator,
       span,
-      status,
+      status: password ? RoomStatus.PROTECTED : RoomStatus.UNPROTECTED,
       password: password ? await argon2.hash(password) : undefined
     });
   }

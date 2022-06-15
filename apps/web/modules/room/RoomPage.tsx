@@ -2,7 +2,6 @@ import {
   Group,
   Center,
   Loader,
-  TextInput,
   Button,
   Paper,
   PasswordInput
@@ -16,7 +15,6 @@ import { RoomPanel } from "./RoomPanel";
 import { PageComponent } from "../../types";
 import { useQuery } from "react-query";
 import { api } from "../../lib/api";
-import { isServer } from "../../utils/is-server";
 import { Room, ApiError, RoomStatus } from "types";
 import { AxiosError } from "axios";
 import { ErrorAlert } from "../../components/ErrorAlert";
@@ -44,7 +42,7 @@ export const RoomPage: PageComponent = () => {
     ["room", _id],
     async () => (await api.get(`/rooms/${_id}`)).data,
     {
-      enabled: !isServer() && mounted && !!_id,
+      enabled: typeof window !== "undefined" && mounted && !!_id,
       refetchOnMount: "always"
     }
   );
@@ -67,9 +65,7 @@ export const RoomPage: PageComponent = () => {
   }, []);
 
   useEffect(() => {
-    if (((locked && ok) || !locked) && socketState === "connected") {
-      join();
-    }
+    if (((locked && ok) || !locked) && socketState === "connected") join();
   }, [socketState, ok, locked]);
 
   useEffect(() => {
@@ -91,7 +87,7 @@ export const RoomPage: PageComponent = () => {
   }, [stream]);
 
   useEffect(() => {
-    if (roomStore.state === "connected") {
+    if (roomStore.state === "connected")
       splitbee.track("join room", {
         ...room,
         creator: undefined,
@@ -100,12 +96,9 @@ export const RoomPage: PageComponent = () => {
           .map((peer) => peer.display_name)
           .join(", ")
       });
-    }
   }, [roomStore.state]);
 
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
 
   if (mounted && locked && !ok) {
     return (
@@ -119,7 +112,7 @@ export const RoomPage: PageComponent = () => {
                 const { ok: success } = await request({
                   socket,
                   event: "room login",
-                  data: {
+                  payload: {
                     room_id: room._id,
                     password
                   }
@@ -146,7 +139,7 @@ export const RoomPage: PageComponent = () => {
     );
   }
 
-  if (isLoading || roomStore.state === "connecting") {
+  if (isLoading || roomStore.state === "connecting")
     return (
       <Layout title={`uhhhh | ${room?.name}`}>
         <Container>
@@ -158,9 +151,8 @@ export const RoomPage: PageComponent = () => {
         </Container>
       </Layout>
     );
-  }
 
-  if (error) {
+  if (error)
     return (
       <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
         <ErrorAlert
@@ -169,17 +161,15 @@ export const RoomPage: PageComponent = () => {
         />
       </Layout>
     );
-  }
 
-  if (!room) {
+  if (!room)
     return (
       <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
         <></>
       </Layout>
     );
-  }
 
-  if (socketState === "error") {
+  if (socketState === "error")
     return (
       <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
         <ErrorAlert
@@ -188,7 +178,6 @@ export const RoomPage: PageComponent = () => {
         />
       </Layout>
     );
-  }
 
   if (roomStore.state === "error") {
     const isDeviceError = roomStore.error_message === "already loaded";
@@ -210,7 +199,7 @@ export const RoomPage: PageComponent = () => {
     );
   }
 
-  if (roomStore.state === "connected") {
+  if (roomStore.state === "connected")
     return (
       <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
         <Container style={{ width: "100%" }}>
@@ -221,7 +210,6 @@ export const RoomPage: PageComponent = () => {
         </Container>
       </Layout>
     );
-  }
 
   return null;
 };

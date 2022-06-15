@@ -5,6 +5,7 @@ type Arg = "payload" | "callback";
 const overload = `
   (payload: object, cb: Function); 
   (payload: object); 
+  (payload: undefined, cb: Function)
   (cb: Function); 
   ();
 `;
@@ -14,12 +15,12 @@ const error = new Error(
 );
 
 export const isObjectOrThrow = (t: any, arg: Arg) => {
-  if (typeof t !== "object" || Array.isArray(t) || t instanceof Date)
+  if ((t && typeof t !== "object") || Array.isArray(t) || t instanceof Date)
     throw new Error(`expected ${arg} to be an object`);
 };
 
 export const isFunctionOrThrow = (t: any, arg: Arg) => {
-  if (typeof t !== "function")
+  if (t && typeof t !== "function")
     throw new Error(`expected ${arg} to be a function`);
 };
 
@@ -55,6 +56,11 @@ export const validatePayloadAndCb = (
   } else if (!payload && !cb) {
     data = undefined;
     callbackFn = undefined;
+  } else if (!payload && cb) {
+    isFunctionOrThrow(cb, "callback");
+
+    data = undefined;
+    callbackFn = cb;
   } else throw error;
 
   return { payload: data, cb: callbackFn };

@@ -2,11 +2,11 @@ import create from "zustand";
 import { combine, devtools } from "zustand/middleware";
 import { nanoid } from "nanoid";
 import { User } from "types";
-import { z } from "zod";
+import Joi from "joi";
 
-const schema = z.object({
-  _id: z.string(),
-  display_name: z.string()
+const schema = Joi.object<User, true>({
+  _id: Joi.string(),
+  display_name: Joi.string()
 });
 
 const initial = (): User | null => {
@@ -21,52 +21,51 @@ const initial = (): User | null => {
       me = JSON.parse(who);
     } catch (e) {}
 
-    if (!me) {
-      return null;
-    }
+    if (!me) return null;
 
-    const { success } = schema.safeParse(me);
-    if (success) {
-      return me as User;
-    } else {
-      return null;
-    }
+    const { error } = schema.validate(me);
+
+    if (error) return null;
+    else return me as User;
   } else {
     return null;
   }
 };
 
-const store = combine(
-  {
-    me: initial() as User | null
-  },
-  (set) => ({
-    load: (display_name: string, remember: boolean) =>
-      set((state) => {
-        const me = { _id: nanoid(24), display_name };
+export const useMeStore = create(
+  devtools(
+    combine(
+      {
+        me: initial() as User | null
+      },
+      (set) => ({
+        load: (display_name: string, remember: boolean) =>
+          set((state) => {
+            const me = { _id: nanoid(24), display_name };
 
-        if (remember) {
-          localStorage.setItem("remember me", JSON.stringify(true));
-          localStorage.setItem("me", JSON.stringify(me));
-        }
+            if (remember) {
+              localStorage.setItem("remember me", JSON.stringify(true));
+              localStorage.setItem("me", JSON.stringify(me));
+            }
 
-        return { me };
-      }),
-    update: (display_name: string, remember: boolean) =>
-      set((state) => {
-        const me = { _id: state.me._id, display_name };
+            return { me };
+          }),
+        update: (display_name: string, remember: boolean) =>
+          set((state) => {
+            const me = { _id: state.me._id, display_name };
 
-        localStorage.setItem("remember me", JSON.stringify(remember));
+            localStorage.setItem("remember me", JSON.stringify(remember));
 
-        if (remember) {
-          localStorage.setItem("me", JSON.stringify(me));
-        } else {
-          localStorage.removeItem("me");
-        }
+            if (remember) {
+              localStorage.setItem("me", JSON.stringify(me));
+            } else {
+              localStorage.removeItem("me");
+            }
 
-        return { me };
+            return { me };
+          })
       })
-  })
+    ),
+    { name: "MeStore" }
+  )
 );
-
-export const useMeStore = create(devtools(store, { name: "MeStore" }));

@@ -7,7 +7,7 @@ export const DefaultMicSelector = () => {
   const [options, setOptions] = useState<{ id: string; label: string }[]>([]);
   const micStore = useMicStore();
 
-  const _fetch = () => {
+  const enumerate = () => {
     navigator.mediaDevices.enumerateDevices().then((info) => {
       const devices = info
         .filter((device) => device.kind === "audioinput" && device.deviceId)
@@ -17,7 +17,7 @@ export const DefaultMicSelector = () => {
   };
 
   useEffect(() => {
-    _fetch();
+    enumerate();
   }, []);
 
   return (
@@ -48,7 +48,7 @@ export const DefaultMicSelector = () => {
             />
           )}
         </Group>
-        <Button color="dark" onClick={_fetch}>
+        <Button color="dark" onClick={enumerate}>
           refresh
         </Button>
       </Group>

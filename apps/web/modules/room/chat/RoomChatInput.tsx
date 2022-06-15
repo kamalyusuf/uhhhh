@@ -15,6 +15,7 @@ export const RoomChatInput = () => {
 
   const send = useCallback(() => {
     if (!content.trim()) return;
+
     socket.emit("chat message", { content });
     setContent("");
   }, [content, socket]);
