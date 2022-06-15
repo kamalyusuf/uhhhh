@@ -20,7 +20,7 @@ const schema = Joi.object<User, true>({
   display_name: Joi.string()
 });
 
-const exclude: string[] = ["disconnect", "chat-message"];
+const exclude: string[] = ["disconnect"];
 
 class SocketIO {
   private _io?: TypedIO;

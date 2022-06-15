@@ -1,6 +1,6 @@
 import { Event } from "../types";
 import { ChatMessage } from "types";
-import { nanoid } from "nanoid";
+import crypto from "crypto";
 
 const handler: Event<"chat message"> = {
   on: "chat message",
@@ -8,7 +8,7 @@ const handler: Event<"chat message"> = {
     if (!peer.active_room_id) return;
 
     const message: ChatMessage = {
-      _id: nanoid(24),
+      _id: crypto.randomUUID(),
       content: payload.content,
       creator: peer.user,
       created_at: new Date().toISOString()

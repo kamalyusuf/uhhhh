@@ -1,4 +1,4 @@
-import { Room, ChatMessage, RoomVisibility, RoomStatus } from "./room";
+import { Room, ChatMessage, RoomVisibility } from "./room";
 import { User } from "./user";
 import { ErrorProps } from "./error";
 

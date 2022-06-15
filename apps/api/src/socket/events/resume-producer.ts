@@ -6,6 +6,7 @@ const handler: Event<"resume producer"> = {
     if (!peer.active_room_id) return;
 
     const producer = peer.producers.get(payload.producer_id);
+
     if (!producer) return;
 
     await producer.resume();

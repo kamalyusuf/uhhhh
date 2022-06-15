@@ -9,7 +9,6 @@ const handler: Event<"active speaker"> = {
     const room = MediasoupRoom.findById(peer.active_room_id);
 
     if (!room.hasPeer(peer.user._id)) return;
-    // throw new Error("peer not a member of room");
 
     io.to(room.id).emit("active speaker", {
       peer_id: peer.user._id,

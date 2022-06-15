@@ -5,7 +5,7 @@ import { env } from "../lib/env";
 
 class MediasoupWorkers {
   private workers: Worker[];
-  private workerIdx = 0;
+  private worker_idx = 0;
 
   constructor() {
     this.workers = [];
@@ -45,20 +45,17 @@ class MediasoupWorkers {
   }
 
   next(): Worker {
-    if (this.workers.length === 0) {
+    if (this.workers.length === 0)
       throw new Error("workers not running. call 'run()'");
-    }
 
-    const worker = this.workers[this.workerIdx];
-    if (++this.workerIdx === this.workers.length) this.workerIdx = 0;
+    const worker = this.workers[this.worker_idx];
+    if (++this.worker_idx === this.workers.length) this.worker_idx = 0;
 
     return worker;
   }
 
   close(): void {
-    for (const worker of this.workers) {
-      worker.close();
-    }
+    for (const worker of this.workers) worker.close();
 
     this.workers = [];
   }

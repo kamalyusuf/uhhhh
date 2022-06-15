@@ -14,6 +14,7 @@ import * as Tracing from "@sentry/tracing";
 
 class App {
   private readonly _app: Express;
+
   public port: number;
 
   constructor() {

@@ -10,6 +10,7 @@ let server: Server;
 
 const bootstrap = async () => {
   await workers.run();
+
   server = await _app.serve();
 };
 

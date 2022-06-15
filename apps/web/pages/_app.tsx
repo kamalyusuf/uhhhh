@@ -71,7 +71,7 @@ const MyApp = ({ Component: C, pageProps }: AppProps) => {
           styles={styles}
           theme={theme}
         >
-          <SocketProvider connect={Component.ws}>
+          <SocketProvider>
             {Component.authenticate === "yes" ? (
               <Authenticate>
                 <Component {...pageProps} />
