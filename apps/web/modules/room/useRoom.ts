@@ -1,15 +1,16 @@
 import { useRef, useCallback } from "react";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
+import { unstable_batchedUpdates as batch } from "react-dom";
 import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../hooks/useSocket";
 import { request } from "../../lib/request";
 import { detectDevice, Device } from "mediasoup-client";
 import { useTransportStore } from "../../store/transport";
-import { toast } from "react-toastify";
 import { usePeerStore } from "../../store/peer";
 import { useProducerStore } from "../../store/producer";
 import { useMicStore } from "../../store/mic";
 import { useRoomChatStore } from "../../store/room-chat";
-import { useRouter } from "next/router";
 
 const d = () => {
   let handlerName = detectDevice();
@@ -234,21 +235,20 @@ export const useRoom = (room_id: string) => {
 
       roomStore.setState("connected");
     } catch (e) {
-      micStore.reset();
-      transportStore.reset();
-      producerStore.reset();
-      peerStore.reset();
-      chatStore.reset();
-      roomStore.set({
-        state: "error",
-        error_message: e.message,
-        active_speakers: {},
-        warn_message: "",
-        show_warning: false
-      });
+      // micStore.reset();
+      // transportStore.reset();
+      // producerStore.reset();
+      // peerStore.reset();
+      // chatStore.reset();
+      // roomStore.set({
+      //   state: "error",
+      //   error_message: e.message,
+      //   active_speakers: {},
+      //   warn_message: "",
+      //   show_warning: false
+      // });
 
-      // react 18 for the win ahahah
-      /*batch(() => {
+      batch(() => {
         micStore.reset();
         transportStore.reset();
         producerStore.reset();
@@ -261,7 +261,7 @@ export const useRoom = (room_id: string) => {
           warn_message: "",
           show_warning: false
         });
-      });*/
+      });
     }
   }, [
     room_id,
@@ -279,12 +279,14 @@ export const useRoom = (room_id: string) => {
       payload: undefined
     });
 
-    micStore.reset();
-    transportStore.reset();
-    producerStore.reset();
-    peerStore.reset();
-    roomStore.reset();
-    chatStore.reset();
+    batch(() => {
+      micStore.reset();
+      transportStore.reset();
+      producerStore.reset();
+      peerStore.reset();
+      roomStore.reset();
+      chatStore.reset();
+    });
   }, [socket]);
 
   const mute = useCallback(async () => {

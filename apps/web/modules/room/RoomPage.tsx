@@ -59,6 +59,7 @@ export const RoomPage: PageComponent = () => {
   const [password, setPassword] = useState("");
   const me = useMeStore().me;
   const peers = usePeerStore().peers;
+  const [oking, setOking] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -109,16 +110,23 @@ export const RoomPage: PageComponent = () => {
               onSubmit={async (e) => {
                 e.preventDefault();
 
-                const { ok: success } = await request({
-                  socket,
-                  event: "room login",
-                  payload: {
-                    room_id: room._id,
-                    password
-                  }
-                });
+                setOking(true);
 
-                setOk(success);
+                try {
+                  const { ok: success } = await request({
+                    socket,
+                    event: "room login",
+                    payload: {
+                      room_id: room._id,
+                      password
+                    }
+                  });
+
+                  setOk(success);
+                } catch (e) {
+                } finally {
+                  setOking(false);
+                }
               }}
             >
               <Group direction="column" grow>
@@ -130,7 +138,9 @@ export const RoomPage: PageComponent = () => {
                   onChange={(e) => setPassword(e.currentTarget.value)}
                 />
 
-                <Button type="submit">join</Button>
+                <Button type="submit" disabled={oking} loading={oking}>
+                  join
+                </Button>
               </Group>
             </form>
           </Paper>
