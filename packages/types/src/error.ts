@@ -1,6 +1,6 @@
 export interface ErrorProps {
   message: string;
-  field?: string;
+  path?: string;
 }
 
 export interface ApiError {

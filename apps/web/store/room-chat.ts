@@ -26,19 +26,22 @@ const color = (str: string) => {
   return colors[sum % colors.length];
 };
 
-const store = combine({ messages: [] as Message[] }, (set) => ({
-  add: (message: ChatMessage) =>
-    set((state) => {
-      return {
-        messages: [
-          ...(state.messages.length <= c.chat.messages_limit
-            ? state.messages
-            : state.messages.slice(0, c.chat.messages_limit)),
-          { ...message, color: color(message.creator._id) }
-        ]
-      };
-    }),
-  reset: () => set({ messages: [] })
-}));
-
-export const useRoomChatStore = create(devtools(store, { name: "RoomChat" }));
+export const useRoomChatStore = create(
+  devtools(
+    combine({ messages: [] as Message[] }, (set) => ({
+      add: (message: ChatMessage) =>
+        set((state) => {
+          return {
+            messages: [
+              ...(state.messages.length <= c.chat.messages_limit
+                ? state.messages
+                : state.messages.slice(0, c.chat.messages_limit)),
+              { ...message, color: color(message.creator._id) }
+            ]
+          };
+        }),
+      reset: () => set({ messages: [] })
+    })),
+    { name: "RoomChat" }
+  )
+);

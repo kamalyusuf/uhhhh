@@ -12,20 +12,14 @@ export const onDisconnect =
         .magenta
     });
 
-    if (!peer.active_room_id) {
-      logger.log({
-        level: "warn",
-        dev: true,
-        message: `[onDisconnect] peer ${peer.user.display_name} isn't a member of any room. finna return`
-      });
-
-      return;
-    }
+    if (!peer.active_room_id) return;
 
     const rid = peer.active_room_id;
     const room = MediasoupRoom.findById(rid);
 
     await room.leave(peer);
+
     peer.socket.to(rid).emit("peer left", { peer: peer.user });
+
     Peer.remove(peer);
   };

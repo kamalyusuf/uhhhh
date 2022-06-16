@@ -1,85 +1,89 @@
 import {
-  createSchema,
-  Type,
-  typedModel,
-  ExtractDoc,
-  ExtractProps
-} from "ts-mongoose";
-import { createSchemaOptions } from "../shared/utils";
-import { RoomVisibility, RoomSpan, RoomStatus } from "types";
+  type Room as RoomType,
+  RoomSpan,
+  RoomStatus,
+  RoomVisibility
+} from "types";
+import { MongooseProps } from "../../types/types";
+import { HydratedDocument } from "mongoose";
+import { buildEntity } from "../shared/utils";
 import argon2 from "argon2";
 
-type Timestamp = {
-  created_at: Date;
-  updated_at: Date;
+export type RoomProps = Omit<MongooseProps<RoomType>, "members_count"> & {
+  password?: string;
+  span: RoomSpan;
 };
+export type RoomDoc = HydratedDocument<RoomProps>;
 
-export type RoomDoc = ExtractDoc<typeof RoomSchema> & Timestamp;
-export type RoomProps = ExtractProps<typeof RoomSchema> & Timestamp;
+export interface RoomMethods {
+  verifyPassword: (password: string) => Promise<boolean>;
+}
 
-const visibility = Object.values(RoomVisibility) as Readonly<RoomVisibility[]>;
+const builder = buildEntity<RoomProps, RoomMethods, {}>();
 
 const span = Object.values(RoomSpan) as Readonly<RoomSpan[]>;
 
 const status = Object.values(RoomStatus) as Readonly<RoomStatus[]>;
 
-const RoomSchema = createSchema(
-  {
-    name: Type.string({
-      required: [true, "room name is required"] as any,
-      trim: true
-    }),
-    description: Type.string({
-      required: [true, "room description is required"] as any,
-      trim: true
-    }),
-    visibility: Type.string({
-      required: [true, "room visibility is required"] as any,
-      enum: visibility,
-      index: true
-    }),
-    creator: Type.object({
-      required: [true, "room creator is required"] as any
-    }).of({
-      _id: Type.string({
-        required: [true, "room creator's id is required"] as any
-      }),
-      display_name: Type.string({
-        required: [true, "room creator's display name is required"] as any
-      })
-    }),
-    span: Type.string({
-      required: [true, "room span is required"] as any,
-      enum: span,
-      default: RoomSpan.TEMPORARY
-    }),
-    status: Type.string({
-      required: [true, "room status is required"] as any,
-      enum: status
-    }),
-    password: Type.string({
-      required: [
-        function () {
-          // @ts-ignore
-          return this.status === RoomStatus.PROTECTED;
-        },
-        "room password is required if room status is protected"
-      ] as any
-    }),
-    ...({} as {
-      comparePassword: (password: string) => Promise<boolean>;
-    })
-  },
-  createSchemaOptions({
-    collection: "rooms",
-    json_exclude_fields: ["span", "password"]
-  })
-);
+const visibility = Object.values(RoomVisibility) as Readonly<RoomVisibility[]>;
 
-RoomSchema.methods.comparePassword = async function (
-  password: string
-): Promise<boolean> {
-  return argon2.verify(this.get("password") || "", password);
+const RoomSchema = builder.schema({
+  name: {
+    type: String,
+    required: [true, "name is required"],
+    trim: true
+  },
+  creator: {
+    _id: {
+      type: String,
+      required: [true, "creator's id is required"]
+    },
+    display_name: {
+      type: String,
+      required: [true, "creator's display name is required"]
+    }
+  },
+  status: {
+    type: String,
+    required: [true, "status is required"],
+    enum: status
+  },
+  visibility: {
+    type: String,
+    required: [true, "visibility is required"],
+    enum: visibility,
+    index: true
+  },
+  description: {
+    type: String,
+    required: [true, "description is required"],
+    trim: true
+  },
+  password: {
+    type: String,
+    required: [
+      function () {
+        // @ts-ignore
+        return (this as RoomDoc).status === RoomStatus.PROTECTED;
+      },
+      "password is required if status is protected"
+    ]
+  },
+  span: {
+    type: String,
+    required: [true, "span is required"],
+    enum: span,
+    default: RoomSpan.TEMPORARY
+  }
+});
+
+RoomSchema.methods = {
+  verifyPassword: function (password: string) {
+    return argon2.verify(
+      (this as unknown as RoomDoc).get("password") || "",
+      password
+    );
+  }
 };
 
-export const Room = typedModel("Room", RoomSchema);
+export const Room = builder.model("Room", RoomSchema, "rooms");

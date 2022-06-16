@@ -3,8 +3,7 @@ import { Field, FieldProps, Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import { useSocket } from "../../hooks/useSocket";
 import { request } from "../../lib/request";
-import { RoomVisibility, RoomStatus } from "types";
-import React from "react";
+import { RoomVisibility } from "types";
 import splitbee from "@splitbee/web";
 
 interface Props {
@@ -28,15 +27,12 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
         const { room } = await request({
           socket,
           event: "create room",
-          data: {
+          payload: {
             name: values.name,
             description: values.description,
             visibility: values.private
               ? RoomVisibility.PRIVATE
               : RoomVisibility.PUBLIC,
-            status: values.require_password
-              ? RoomStatus.PROTECTED
-              : RoomStatus.UNPROTECTED,
             password:
               values.require_password && values.password
                 ? values.password
@@ -106,12 +102,6 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
                 )}
               </Field>
             )}
-            {/*<Divider*/}
-            {/*  size="xs"*/}
-            {/*  color="indigo"*/}
-            {/*  label="settings"*/}
-            {/*  labelPosition="center"*/}
-            {/*/>*/}
             <Group position="right" grow style={{ marginTop: 10 }}>
               <Button
                 type="submit"

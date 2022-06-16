@@ -56,19 +56,19 @@ export const MePage: PageComponent = () => {
                   />
                   <Button
                     onClick={() => {
-                      if (!name.trim()) {
-                        return toast.warn("where yo name at?");
-                      }
-                      if (name.trim().length < 3) {
+                      if (!name.trim()) return toast.warn("where yo name at?");
+
+                      if (name.trim().length < 3)
                         return toast.warn(
                           "name should be at least 3 characters"
                         );
-                      }
 
                       update(name, remember);
+
                       socket.emit("update display name", {
                         new_display_name: name
                       });
+
                       toast.success("saved");
                     }}
                   >

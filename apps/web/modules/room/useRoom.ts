@@ -1,22 +1,21 @@
 import { useRef, useCallback } from "react";
+import { toast } from "react-toastify";
+import { useRouter } from "next/router";
+import { unstable_batchedUpdates as batch } from "react-dom";
 import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../hooks/useSocket";
 import { request } from "../../lib/request";
 import { detectDevice, Device } from "mediasoup-client";
 import { useTransportStore } from "../../store/transport";
-import { toast } from "react-toastify";
 import { usePeerStore } from "../../store/peer";
 import { useProducerStore } from "../../store/producer";
 import { useMicStore } from "../../store/mic";
-import { unstable_batchedUpdates as batch } from "react-dom";
 import { useRoomChatStore } from "../../store/room-chat";
-import { useRouter } from "next/router";
 
-const getDevice = () => {
+const d = () => {
   let handlerName = detectDevice();
-  if (!handlerName) {
-    handlerName = "Chrome74";
-  }
+
+  if (!handlerName) handlerName = "Chrome74";
 
   return new Device({ handlerName });
 };
@@ -27,7 +26,7 @@ const PC_PROPRIETARY_CONSTRAINTS = {
 
 export const useRoom = (room_id: string) => {
   const { socket } = useSocket();
-  const device = useRef(getDevice()).current;
+  const device = useRef(d()).current;
   const transportStore = useTransportStore();
   const peerStore = usePeerStore();
   const producerStore = useProducerStore();
@@ -38,28 +37,21 @@ export const useRoom = (room_id: string) => {
 
   const join = useCallback(async () => {
     try {
-      if (roomStore.state === "connected") {
-        await leave();
-      }
+      if (roomStore.state === "connected") await leave();
 
       roomStore.setState("connecting");
 
-      if (producerStore.producer) {
-        producerStore.reset();
-      }
+      if (producerStore.producer) producerStore.reset();
 
-      if (transportStore.send_transport) {
-        transportStore.resetSendTransport();
-      }
+      if (transportStore.send_transport) transportStore.resetSendTransport();
 
-      if (transportStore.receive_transport) {
+      if (transportStore.receive_transport)
         transportStore.resetReceiveTransport();
-      }
 
       const { rtp_capabilities: routerRtpCapabilities } = await request({
         socket,
         event: "rtp capabilities",
-        data: {
+        payload: {
           room_id
         }
       });
@@ -80,7 +72,7 @@ export const useRoom = (room_id: string) => {
       const { transport_options: sendTransportOptions } = await request({
         socket,
         event: "create transport",
-        data: {
+        payload: {
           room_id,
           producing: true,
           consuming: false,
@@ -106,7 +98,7 @@ export const useRoom = (room_id: string) => {
           request({
             socket,
             event: "connect transport",
-            data: {
+            payload: {
               room_id,
               transport_id: sendTransport.id,
               dtls_parameters
@@ -128,7 +120,7 @@ export const useRoom = (room_id: string) => {
             const { id } = await request({
               socket,
               event: "produce",
-              data: {
+              payload: {
                 room_id,
                 transport_id: sendTransport.id,
                 kind,
@@ -149,7 +141,7 @@ export const useRoom = (room_id: string) => {
       const { transport_options: receiveTransportOptions } = await request({
         socket,
         event: "create transport",
-        data: {
+        payload: {
           room_id,
           producing: false,
           consuming: true,
@@ -176,7 +168,7 @@ export const useRoom = (room_id: string) => {
           request({
             socket,
             event: "connect transport",
-            data: {
+            payload: {
               room_id,
               transport_id: receiveTransport.id,
               dtls_parameters
@@ -190,15 +182,13 @@ export const useRoom = (room_id: string) => {
       const { peers } = await request({
         socket,
         event: "join",
-        data: {
+        payload: {
           room_id,
           rtp_capabilities: device.rtpCapabilities
         }
       });
 
-      for (const peer of peers) {
-        peerStore.add(peer);
-      }
+      for (const peer of peers) peerStore.add(peer);
 
       if (!device.canProduce("audio")) {
         roomStore.set({
@@ -208,12 +198,14 @@ export const useRoom = (room_id: string) => {
         });
 
         toast.info("connected");
+
         return;
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: micStore.id ? { deviceId: micStore.id } : true
       });
+
       const track = stream.getAudioTracks()[0];
 
       micStore.setStream(stream);
@@ -233,7 +225,9 @@ export const useRoom = (room_id: string) => {
 
       producer.on("trackended", async () => {
         toast.warn("microphone disconnected");
+
         await leave();
+
         router.replace("/rooms");
       });
 
@@ -241,6 +235,19 @@ export const useRoom = (room_id: string) => {
 
       roomStore.setState("connected");
     } catch (e) {
+      // micStore.reset();
+      // transportStore.reset();
+      // producerStore.reset();
+      // peerStore.reset();
+      // chatStore.reset();
+      // roomStore.set({
+      //   state: "error",
+      //   error_message: e.message,
+      //   active_speakers: {},
+      //   warn_message: "",
+      //   show_warning: false
+      // });
+
       batch(() => {
         micStore.reset();
         transportStore.reset();
@@ -269,7 +276,7 @@ export const useRoom = (room_id: string) => {
     await request({
       socket,
       event: "leave",
-      data: undefined
+      payload: undefined
     });
 
     batch(() => {
@@ -291,7 +298,7 @@ export const useRoom = (room_id: string) => {
     await request({
       socket,
       event: "pause producer",
-      data: {
+      payload: {
         producer_id: producer.id
       }
     });
@@ -308,7 +315,7 @@ export const useRoom = (room_id: string) => {
     await request({
       socket,
       event: "resume producer",
-      data: {
+      payload: {
         producer_id: producer.id
       }
     });
@@ -325,7 +332,7 @@ export const useRoom = (room_id: string) => {
     await request({
       socket,
       event: "close producer",
-      data: {
+      payload: {
         producer_id: producer.id
       }
     });

@@ -13,7 +13,6 @@ import {
   SocketData
 } from "types";
 import { Socket, Server as SocketServer } from "socket.io";
-import { Request } from "express";
 import { Peer } from "../mediasoup/peer";
 
 interface OutgoingTransportOptions {
@@ -57,39 +56,25 @@ export type TypedSocket = Socket<
   SocketData
 >;
 
-interface Action<K extends ClientEvent> {
-  emit: K;
-  to: string[];
-  send: Parameters<ServerToClientEvents[K]>[0];
-}
+export type Payload<K extends ServerEvent> = Parameters<
+  ClientToServerEvents[K]
+>[0] extends Function
+  ? undefined
+  : Parameters<ClientToServerEvents[K]>[0];
 
 export interface Event<K extends ServerEvent> {
   on: K;
-  // invoke: (
-  //   socket: Socket<
-  //     ClientToServerEvents,
-  //     ServerToClientEvents,
-  //     InterServerEvents,
-  //     SocketData
-  //   >,
-  //   payload: Parameters<ClientToServerEvents[K]>
-  // ) => Promise<Action<K>>;
   invoke: (t: {
     io: TypedIO;
     socket: TypedSocket;
-    payload: Parameters<ClientToServerEvents[K]>[0];
-    cb: Parameters<ClientToServerEvents[K]>[1];
     event: K;
-    req: Request;
+    req: Express.Request;
     peer: Peer;
-  }) =>
-    | Action<K>
-    | Promise<Action<K>>
-    | void
-    | Promise<void>
-    | undefined
-    | Promise<undefined>;
-  // invoke: (
-  //   payload: Parameters<ClientToServerEvents[K]>
-  // ) => Promise<(Action<K> | undefined)[]>;
+    payload: Payload<K>;
+    cb: Parameters<ClientToServerEvents[K]>[0] extends Function
+      ? Parameters<ClientToServerEvents[K]>[0]
+      : Parameters<ClientToServerEvents[K]>[1] extends Function
+      ? Parameters<ClientToServerEvents[K]>[1]
+      : undefined;
+  }) => void | Promise<void>;
 }

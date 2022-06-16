@@ -1,4 +1,3 @@
-import "colors";
 import { NextFunction, Request, Response } from "express";
 import { env } from "../lib/env";
 import { CustomError } from "@kamalyb/errors";
@@ -9,9 +8,8 @@ export const useGlobalErrorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  if (error instanceof CustomError) {
+  if (error instanceof CustomError)
     return res.status(error.status).send({ errors: error.serialize() });
-  }
 
   res.status(500).send({
     errors: [

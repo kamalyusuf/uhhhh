@@ -1,9 +1,10 @@
+import "./modules/deps";
 import "express-async-errors";
 import cors from "cors";
 import express, { Express } from "express";
 import { Server } from "http";
 import { env } from "./lib/env";
-import { start } from "./lib/start";
+import { start } from "./utils/start";
 import { router } from "./routes";
 import * as mongo from "./lib/mongo";
 import { io } from "./socket/io";
@@ -13,6 +14,7 @@ import * as Tracing from "@sentry/tracing";
 
 class App {
   private readonly _app: Express;
+
   public port: number;
 
   constructor() {
@@ -48,7 +50,8 @@ class App {
 
   public async serve(): Promise<Server> {
     await mongo.connect(env.MONGO_URL);
-    const server = await start(this._app);
+
+    const server = await start({ app: this._app, port: this.port });
 
     io.init(server);
 

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import {
   Button,
   Group,
@@ -41,12 +41,10 @@ const HomePage: PageComponent = () => {
                 />
                 <Button
                   onClick={() => {
-                    if (!name.trim()) {
-                      return toast.warn("where yo name at?");
-                    }
-                    if (name.trim().length < 3) {
+                    if (!name.trim()) return toast.warn("where yo name at?");
+
+                    if (name.trim().length < 3)
                       return toast.warn("name should be at least 3 characters");
-                    }
 
                     splitbee.track("login", { name });
 

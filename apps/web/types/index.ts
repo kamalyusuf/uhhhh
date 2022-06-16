@@ -13,7 +13,6 @@ export type Color =
 
 export type PageComponent<T = {}> = NextPage<T> & {
   authenticate?: "yes" | "not";
-  ws?: boolean;
 };
 
 export interface Message extends ChatMessage {

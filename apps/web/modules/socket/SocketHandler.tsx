@@ -6,7 +6,7 @@ import { usePeerStore } from "../../store/peer";
 import { toast } from "react-toastify";
 import { useRoomStore } from "../../store/room";
 import { useQueryClient } from "react-query";
-import { Room } from "types";
+import { Room, EventError } from "types";
 import { useRoomChatStore } from "../../store/room-chat";
 
 export const SocketHandler = () => {

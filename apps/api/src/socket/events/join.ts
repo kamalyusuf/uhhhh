@@ -3,15 +3,14 @@ import { MediasoupRoom } from "../../mediasoup/room";
 
 const handler: Event<"join"> = {
   on: "join",
-  invoke: async ({ io, peer, payload, socket, cb }) => {
-    const room = MediasoupRoom.findById(payload.room_id);
-    if (peer.active_room_id) {
+  invoke: async ({ peer, payload, socket, cb }) => {
+    if (peer.active_room_id)
       throw new Error("can't be in multiple rooms at once");
-    }
 
-    if (room.hasPeer(peer.user._id)) {
-      throw new Error("peer already joined");
-    }
+    const room = MediasoupRoom.findById(payload.room_id);
+
+    if (room.hasPeer(peer.user._id)) return;
+    // throw new Error("peer already joined");
 
     peer.rtp_capabilities = payload.rtp_capabilities;
     room.join(peer);

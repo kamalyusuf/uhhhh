@@ -31,37 +31,33 @@ export class Peer {
 
   static create(t: { user: User; socket: TypedSocket }) {
     const peer = new Peer(t);
+
     this.peers.set(peer.user._id, peer);
 
     return peer;
   }
 
   static remove(peer: Peer) {
-    if (!this.peers.has(peer.user._id)) {
-      return;
-    }
+    if (!this.peers.has(peer.user._id)) return;
 
     this.peers.delete(peer.user._id);
   }
 
   private closeProducers() {
-    for (const producer of this.producers.values()) {
-      producer.close();
-    }
+    for (const producer of this.producers.values()) producer.close();
+
     this.producers.clear();
   }
 
   private closeTransports() {
-    for (const transport of this.transports.values()) {
-      transport.close();
-    }
+    for (const transport of this.transports.values()) transport.close();
+
     this.transports.clear();
   }
 
   private closeConsumers() {
-    for (const consumer of this.consumers.values()) {
-      consumer.close();
-    }
+    for (const consumer of this.consumers.values()) consumer.close();
+
     this.consumers.clear();
   }
 

@@ -1,4 +1,4 @@
-import { RoomRepository, roomRepo } from "./room.repository";
+import { RoomRepository } from "./room.repository";
 import { Types } from "mongoose";
 import { NotFoundError } from "@kamalyb/errors";
 import { env } from "../../lib/env";
@@ -13,9 +13,8 @@ export class RoomService {
     description,
     visibility,
     creator,
-    span,
-    password,
-    status
+    span = RoomSpan.TEMPORARY,
+    password
   }: {
     name: string;
     description: string;
@@ -23,7 +22,6 @@ export class RoomService {
     creator: User;
     span?: RoomSpan;
     password?: string;
-    status: RoomStatus;
   }) {
     return this.roomRepo.createOne({
       name,
@@ -31,7 +29,7 @@ export class RoomService {
       visibility,
       creator,
       span,
-      status,
+      status: password ? RoomStatus.PROTECTED : RoomStatus.UNPROTECTED,
       password: password ? await argon2.hash(password) : undefined
     });
   }
@@ -54,9 +52,8 @@ export class RoomService {
 
   async findById(_id: Types.ObjectId) {
     const room = await this.roomRepo.findById(_id);
-    if (!room) {
-      throw new NotFoundError("no room found");
-    }
+
+    if (!room) throw new NotFoundError("no room found");
 
     return room;
   }
@@ -74,14 +71,11 @@ export class RoomService {
       !room ||
       (env.isDevelopment && room?.name === "akatsuki") ||
       room?.span === RoomSpan.PERMANENT
-    ) {
+    )
       return false;
-    }
 
     await room.remove();
 
     return true;
   }
 }
-
-export const roomService = new RoomService(roomRepo);

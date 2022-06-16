@@ -6,7 +6,7 @@ import { useMeStore } from "../../store/me";
 
 type V = TypedSocket | null;
 
-type SocketState = "idle" | "connected" | "connecting" | "error";
+type SocketState = "idle" | "connected" | "error";
 
 type Context = {
   socket: TypedSocket;
@@ -20,9 +20,7 @@ export const SocketContext = React.createContext<Context>({
   state: "idle"
 });
 
-interface Props {
-  connect: boolean;
-}
+interface Props {}
 
 export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
   const [socket, setSocket] = useState<V>(null);
@@ -31,8 +29,6 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
 
   useEffect(() => {
     if (!socket && !!me) {
-      setState("connecting");
-
       const s = io(process.env.NEXT_PUBLIC_API_URL, {
         rememberUpgrade: true,
         path: "/ws",
@@ -48,9 +44,7 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
   }, [socket, me]);
 
   useEffect(() => {
-    if (!socket) {
-      return;
-    }
+    if (!socket) return;
 
     socket.on("connect", () => {
       setState("connected");
@@ -58,10 +52,6 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
 
     socket.on("connect_error", (error) => {
       setState("error");
-      toast.error(error.message);
-    });
-
-    socket.on("error", (error) => {
       toast.error(error.message);
     });
 

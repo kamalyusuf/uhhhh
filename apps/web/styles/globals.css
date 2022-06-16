@@ -64,7 +64,8 @@ body,
 }
 
 .Toastify__toast-body {
-  font-size: 14px;
+    font-size: 14px;
+    white-space: pre-line;
 }
 
 ::-webkit-scrollbar {

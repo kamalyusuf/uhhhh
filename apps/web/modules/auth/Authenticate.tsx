@@ -7,14 +7,10 @@ export const Authenticate = ({ children }: { children: JSX.Element }) => {
   const { replace } = useRouter();
 
   useEffect(() => {
-    if (!me) {
-      replace(`/?cb=${encodeURIComponent(window.location.pathname)}`);
-    }
+    if (!me) replace(`/?cb=${encodeURIComponent(window.location.pathname)}`);
   }, [replace, me]);
 
-  if (me) {
-    return <>{children}</>;
-  }
+  if (me) return <>{children}</>;
 
   return null;
 };

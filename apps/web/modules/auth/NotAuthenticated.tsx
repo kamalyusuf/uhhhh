@@ -13,9 +13,7 @@ export const NotAuthenticated = ({ children }: { children: JSX.Element }) => {
     }
   }, [replace, me, query]);
 
-  if (!me) {
-    return <>{children}</>;
-  }
+  if (!me) return <>{children}</>;
 
   return null;
 };

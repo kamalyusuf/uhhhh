@@ -10,17 +10,15 @@ export const Rooms = () => {
     retry: 3
   });
 
-  if (isLoading) {
+  if (isLoading)
     return (
       <Center>
         <Loader size="lg" />
       </Center>
     );
-  }
 
-  if (!data && !isLoading && isError) {
+  if (!data && !isLoading && isError)
     return <ErrorAlert message="failed to fetch rooms" />;
-  }
 
   return (
     <ScrollArea
