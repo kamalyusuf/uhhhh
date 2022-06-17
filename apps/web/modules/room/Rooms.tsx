@@ -2,7 +2,7 @@ import { useSocketQuery } from "../../hooks/useSocketQuery";
 import { Group, Center, Loader, ScrollArea } from "@mantine/core";
 import { RoomCard } from "./RoomCard";
 import { ErrorAlert } from "../../components/ErrorAlert";
-import { c } from "../../lib/constants";
+import { c } from "../../utils/constants";
 
 export const Rooms = () => {
   const { data, isLoading, isError } = useSocketQuery("rooms", undefined, {

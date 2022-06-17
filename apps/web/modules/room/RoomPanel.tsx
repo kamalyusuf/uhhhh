@@ -9,9 +9,8 @@ import {
 } from "@mantine/core";
 import { Heading } from "../../components/Heading";
 import { ToggleMuteButton } from "../audio/ToggleMuteButton";
-import { c } from "../../lib/constants";
+import { c } from "../../utils/constants";
 import { PeerBadge } from "../user/PeerBadge";
-import React from "react";
 import { useRouter } from "next/router";
 import { Room } from "types";
 import { usePeerStore } from "../../store/peer";

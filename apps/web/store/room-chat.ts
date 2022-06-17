@@ -2,7 +2,7 @@ import create from "zustand";
 import { combine, devtools } from "zustand/middleware";
 import { Message } from "../types";
 import { ChatMessage } from "types";
-import { c } from "../lib/constants";
+import { c } from "../utils/constants";
 
 const colors = [
   "#65A30D",

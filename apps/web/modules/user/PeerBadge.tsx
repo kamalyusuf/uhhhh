@@ -1,6 +1,6 @@
 import { Badge } from "@mantine/core";
 import { User } from "types";
-import { c } from "../../lib/constants";
+import { c } from "../../utils/constants";
 import { Audio } from "../audio/Audio";
 import { useConsumerStore } from "../../store/consumer";
 import { AiOutlineAudioMuted } from "react-icons/ai";
