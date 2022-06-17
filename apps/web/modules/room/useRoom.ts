@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { unstable_batchedUpdates as batch } from "react-dom";
 import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../hooks/useSocket";
-import { request } from "../../lib/request";
+import { request } from "../../utils/request";
 import { detectDevice, Device } from "mediasoup-client";
 import { useTransportStore } from "../../store/transport";
 import { usePeerStore } from "../../store/peer";

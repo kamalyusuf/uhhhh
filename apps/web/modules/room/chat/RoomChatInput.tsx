@@ -1,7 +1,7 @@
 import { TextInput, ActionIcon } from "@mantine/core";
 import { AiOutlineSend } from "react-icons/ai";
 import { useState, useCallback, useEffect } from "react";
-import { c } from "../../../lib/constants";
+import { c } from "../../../utils/constants";
 import { useSocket } from "../../../hooks/useSocket";
 
 export const RoomChatInput = () => {

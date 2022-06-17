@@ -1,7 +1,7 @@
 import { useQuery, UseQueryOptions } from "react-query";
 import { ServerEvent, ClientToServerEvents } from "../modules/socket/types";
 import { useSocket } from "./useSocket";
-import { request } from "../lib/request";
+import { request } from "../utils/request";
 import { EventError } from "types";
 
 type Fn = (...args: any) => any;

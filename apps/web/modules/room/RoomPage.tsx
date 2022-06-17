@@ -25,7 +25,7 @@ import { useSocket } from "../../hooks/useSocket";
 import hark from "hark";
 import { useMicStore } from "../../store/mic";
 import { useMediaQuery } from "@mantine/hooks";
-import { request } from "../../lib/request";
+import { request } from "../../utils/request";
 import splitbee from "@splitbee/web";
 import { useMeStore } from "../../store/me";
 import { usePeerStore } from "../../store/peer";

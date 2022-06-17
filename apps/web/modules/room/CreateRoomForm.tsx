@@ -2,7 +2,7 @@ import { Button, Group, TextInput, Text, Checkbox } from "@mantine/core";
 import { Field, FieldProps, Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import { useSocket } from "../../hooks/useSocket";
-import { request } from "../../lib/request";
+import { request } from "../../utils/request";
 import { RoomVisibility } from "types";
 import splitbee from "@splitbee/web";
 
