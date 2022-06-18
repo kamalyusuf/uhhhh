@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useSocket } from "../../hooks/useSocket";
 import { request } from "../../utils/request";
 import { RoomVisibility } from "types";
-import splitbee from "@splitbee/web";
+import { analytics } from "../../lib/analytics";
 
 interface Props {
   onCancel: () => void;
@@ -40,7 +40,7 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
           }
         });
 
-        splitbee.track("create room", {
+        analytics.track("create room", {
           ...room,
           room_creator_name: room.creator.display_name,
           creator: undefined

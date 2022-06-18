@@ -164,7 +164,7 @@ function onError({
     "event error",
     new SocketEventError(
       {
-        message: env.isProduction ? "internal server error" : error.message
+        message: error.message ?? "internal server error"
       },
       event.on as any
     )

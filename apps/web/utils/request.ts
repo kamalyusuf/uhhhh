@@ -44,6 +44,8 @@ export const request = async <E extends ServerEvent>({
       reject(error);
     });
 
+    console.log("[socket.request] emitting", { event, payload });
+
     // @ts-ignore
     socket.emit(event, payload, (response: Return<E>) => {
       resolve(response);

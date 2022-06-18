@@ -1,6 +1,12 @@
 version: "3"
 
 services:
+  mongo:
+    image: mongo
+    container_name: mongodb
+    restart: always
+#    volumes:
+#      - mongo-data:/data/db
   api:
     container_name: api
     restart: unless-stopped
@@ -15,8 +21,26 @@ services:
       - MEDIASOUP_MAX_PORT=2020
       - LISTEN_IP=0.0.0.0
       - WEB_URL=http://localhost:3000
-    env_file:
-      - .env
+      - MONGO_URL=mongodb://mongo:27017/uhhhh
+      - ANNOUNCED_IP=127.0.0.1
+      - SENTRY_DSN=
+    depends_on:
+      - mongo
+#    env_file:
+#      - .env
+  web:
+    container_name: web
+    restart: unless-stopped
+    ports:
+      - 3000:3000
+    build:
+      context: .
+      dockerfile: web.Dockerfile
+    depends_on:
+      - api
+
+volumes:
+  mongo-data:
 
 # -- .env --
 # MONGO_URL=

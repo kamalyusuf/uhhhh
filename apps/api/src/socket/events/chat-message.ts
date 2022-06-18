@@ -1,11 +1,12 @@
 import { Event } from "../types";
 import { ChatMessage } from "types";
 import crypto from "crypto";
+import { NotJoinedError } from "../../utils/socket";
 
 const handler: Event<"chat message"> = {
   on: "chat message",
   invoke: ({ peer, payload, io }) => {
-    if (!peer.active_room_id) return;
+    if (!peer.active_room_id) throw new NotJoinedError();
 
     const message: ChatMessage = {
       _id: crypto.randomUUID(),

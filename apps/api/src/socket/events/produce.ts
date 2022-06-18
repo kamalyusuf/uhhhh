@@ -1,5 +1,6 @@
 import { MediasoupRoom } from "../../mediasoup/room";
 import { Event } from "../types";
+import { NotJoinedError, NoTransportFoundError } from "../../utils/socket";
 
 const handler: Event<"produce"> = {
   on: "produce",
@@ -8,15 +9,16 @@ const handler: Event<"produce"> = {
     payload: { room_id, transport_id, kind, rtp_parameters, app_data },
     cb
   }) => {
-    if (!peer.active_room_id) return;
+    if (!peer.active_room_id) throw new NotJoinedError();
 
     const room = MediasoupRoom.findById(room_id);
 
-    if (!room.hasPeer(peer.user._id) || peer.active_room_id !== room.id) return;
+    if (!room.hasPeer(peer.user._id) || peer.active_room_id !== room.id)
+      throw new NotJoinedError();
 
     const transport = peer.transports.get(transport_id);
 
-    if (!transport) return;
+    if (!transport) throw new NoTransportFoundError(transport_id);
 
     const producer = await transport.produce({
       kind,

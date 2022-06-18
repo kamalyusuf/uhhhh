@@ -17,7 +17,9 @@ export const onDisconnect =
     const rid = peer.active_room_id;
     const room = MediasoupRoom.findById(rid);
 
-    await room.leave(peer);
+    try {
+      await room.leave(peer);
+    } catch (e) {}
 
     peer.socket.to(rid).emit("peer left", { peer: peer.user });
 

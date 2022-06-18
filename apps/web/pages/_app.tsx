@@ -5,7 +5,6 @@ import { AppProps } from "next/app";
 import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
-import splitbee from "@splitbee/web";
 import { Slide, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { styles } from "../mantine/styles";
@@ -20,6 +19,7 @@ import { NotAuthenticated } from "../modules/auth/NotAuthenticated";
 import { Authenticate } from "../modules/auth/Authenticate";
 import { SocketHandler } from "../modules/socket/SocketHandler";
 import { useMeStore } from "../store/me";
+import { analytics } from "../lib/analytics";
 
 if (!process.env.NEXT_PUBLIC_API_URL) throw new Error("where API_URL at?");
 
@@ -38,17 +38,16 @@ const MyApp = ({ Component: C, pageProps }: AppProps) => {
   useEffect(() => {
     setMounted(true);
 
-    splitbee.init();
-    splitbee.enableCookie();
+    analytics.enable();
   }, []);
 
   useEffect(() => {
     if (!me) return;
 
-    splitbee.user.set({ ...me });
+    analytics.identify({ ...me });
 
     return () => {
-      splitbee.reset();
+      analytics.disable();
     };
   }, [me]);
 

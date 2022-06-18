@@ -20,9 +20,9 @@ const d = () => {
   return new Device({ handlerName });
 };
 
-const PC_PROPRIETARY_CONSTRAINTS = {
-  optional: [{ googDscp: true }]
-};
+// const PC_PROPRIETARY_CONSTRAINTS = {
+//   optional: [{ googDscp: true }]
+// };
 
 export const useRoom = (room_id: string) => {
   const { socket } = useSocket();
@@ -88,8 +88,8 @@ export const useRoom = (room_id: string) => {
           ...sendTransportOptions.dtls_parameters,
           role: "auto"
         },
-        iceServers: [],
-        proprietaryConstraints: PC_PROPRIETARY_CONSTRAINTS
+        iceServers: []
+        // proprietaryConstraints: PC_PROPRIETARY_CONSTRAINTS
       });
 
       sendTransport.on(
@@ -248,6 +248,8 @@ export const useRoom = (room_id: string) => {
       //   show_warning: false
       // });
 
+      console.log("[useRoom.join] error", e);
+
       batch(() => {
         micStore.reset();
         transportStore.reset();
@@ -291,6 +293,7 @@ export const useRoom = (room_id: string) => {
 
   const mute = useCallback(async () => {
     const producer = producerStore.producer;
+
     if (!producer) return;
 
     producer.pause();
@@ -308,6 +311,7 @@ export const useRoom = (room_id: string) => {
 
   const unmute = useCallback(async () => {
     const producer = producerStore.producer;
+
     if (!producer) return;
 
     producer.resume();
@@ -325,6 +329,7 @@ export const useRoom = (room_id: string) => {
 
   const disable = useCallback(async () => {
     const producer = producerStore.producer;
+
     if (!producer) return;
 
     producer.close();

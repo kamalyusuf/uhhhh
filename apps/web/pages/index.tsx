@@ -12,7 +12,7 @@ import { useMeStore } from "../store/me";
 import { toast } from "react-toastify";
 import { Layout } from "../components/Layout";
 import { PageComponent } from "../types";
-import splitbee from "@splitbee/web";
+import { analytics } from "../lib/analytics";
 
 const HomePage: PageComponent = () => {
   const [name, setName] = useState("");
@@ -46,7 +46,7 @@ const HomePage: PageComponent = () => {
                     if (name.trim().length < 3)
                       return toast.warn("name should be at least 3 characters");
 
-                    splitbee.track("login", { name });
+                    analytics.track("login", { name });
 
                     load(name, remember);
                   }}

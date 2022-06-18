@@ -76,9 +76,7 @@ export const RoomChat = () => {
               height: "100%"
             }}
             followOutput={(bottom) => {
-              if (force()) {
-                return "smooth";
-              }
+              if (force()) return "smooth";
 
               return bottom ? "smooth" : false;
             }}

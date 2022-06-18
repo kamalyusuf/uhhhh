@@ -65,3 +65,27 @@ export const validatePayloadAndCb = (
 
   return { payload: data, cb: callbackFn };
 };
+
+export class NotJoinedError extends Error {
+  constructor() {
+    super("not joined in room");
+  }
+}
+
+export class NoProducerFoundError extends Error {
+  constructor(id: string) {
+    super(`no producer with id ${id} found`);
+  }
+}
+
+export class NoTransportFoundError extends Error {
+  constructor(id: string) {
+    super(`no transport with id ${id} found`);
+  }
+}
+
+export class NoConsumerFoundError extends Error {
+  constructor(id: string) {
+    super(`no constumer with id ${id} found`);
+  }
+}

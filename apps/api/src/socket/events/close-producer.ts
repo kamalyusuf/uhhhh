@@ -1,14 +1,14 @@
 import { Event } from "../types";
+import { NotJoinedError, NoProducerFoundError } from "../../utils/socket";
 
 const handler: Event<"close producer"> = {
   on: "close producer",
   invoke: ({ peer, payload, cb }) => {
-    if (!peer.active_room_id) return;
+    if (!peer.active_room_id) throw new NotJoinedError();
 
     const producer = peer.producers.get(payload.producer_id);
 
-    if (!producer) return;
-    // throw new Error(`no producer with id ${payload.producer_id} found`);
+    if (!producer) throw new NoProducerFoundError(payload.producer_id);
 
     producer.close();
 

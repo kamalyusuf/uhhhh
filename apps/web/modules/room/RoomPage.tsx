@@ -1,3 +1,4 @@
+import { useState, useEffect, useMemo } from "react";
 import {
   Group,
   Center,
@@ -6,29 +7,28 @@ import {
   Paper,
   PasswordInput
 } from "@mantine/core";
-import { Layout } from "../../components/Layout";
-import React, { useState, useEffect, useMemo } from "react";
+import { useMediaQuery } from "@mantine/hooks";
 import { useRouter } from "next/router";
+import { useQuery } from "react-query";
+import { Room, ApiError, RoomStatus } from "types";
+import { AxiosError } from "axios";
+import hark from "hark";
+import { useRoom } from "./useRoom";
+import { Layout } from "../../components/Layout";
 import { Container } from "../../components/Container";
 import { RoomChat } from "./chat/RoomChat";
 import { RoomPanel } from "./RoomPanel";
 import { PageComponent } from "../../types";
-import { useQuery } from "react-query";
 import { api } from "../../lib/api";
-import { Room, ApiError, RoomStatus } from "types";
-import { AxiosError } from "axios";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { parseApiError } from "../../utils/error";
-import { useRoom } from "./useRoom";
 import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../hooks/useSocket";
-import hark from "hark";
 import { useMicStore } from "../../store/mic";
-import { useMediaQuery } from "@mantine/hooks";
 import { request } from "../../utils/request";
-import splitbee from "@splitbee/web";
 import { useMeStore } from "../../store/me";
 import { usePeerStore } from "../../store/peer";
+import { analytics } from "../../lib/analytics";
 
 export const RoomPage: PageComponent = () => {
   const router = useRouter();
@@ -40,7 +40,7 @@ export const RoomPage: PageComponent = () => {
     error
   } = useQuery<Room, AxiosError<ApiError>>(
     ["room", _id],
-    async () => (await api.get(`/rooms/${_id}`)).data,
+    async () => (await api.get<Room>(`/rooms/${_id}`)).data,
     {
       enabled: typeof window !== "undefined" && mounted && !!_id,
       refetchOnMount: "always"
@@ -57,8 +57,8 @@ export const RoomPage: PageComponent = () => {
   );
   const [ok, setOk] = useState(false);
   const [password, setPassword] = useState("");
-  const me = useMeStore().me;
-  const peers = usePeerStore().peers;
+  const me = useMeStore((state) => state.me);
+  const peers = usePeerStore((state) => state.peers);
   const [oking, setOking] = useState(false);
 
   useEffect(() => {
@@ -66,8 +66,14 @@ export const RoomPage: PageComponent = () => {
   }, []);
 
   useEffect(() => {
-    if (((locked && ok) || !locked) && socketState === "connected") join();
-  }, [socketState, ok, locked]);
+    if (
+      mounted &&
+      ((locked && ok) || !locked) &&
+      socketState === "connected" &&
+      room?._id
+    )
+      join();
+  }, [mounted, socketState, ok, locked, room?._id]);
 
   useEffect(() => {
     if (!stream) return;
@@ -89,7 +95,7 @@ export const RoomPage: PageComponent = () => {
 
   useEffect(() => {
     if (roomStore.state === "connected")
-      splitbee.track("join room", {
+      analytics.track("join room", {
         ...room,
         creator: undefined,
         user_display_name: me.display_name,
