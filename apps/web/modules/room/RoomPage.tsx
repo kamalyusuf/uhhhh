@@ -1,12 +1,5 @@
 import { useState, useEffect, useMemo } from "react";
-import {
-  Group,
-  Center,
-  Loader,
-  Button,
-  Paper,
-  PasswordInput
-} from "@mantine/core";
+import { Group, Center, Loader } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import { useQuery } from "react-query";
@@ -20,15 +13,16 @@ import { RoomChat } from "./chat/RoomChat";
 import { RoomPanel } from "./RoomPanel";
 import { PageComponent } from "../../types";
 import { api } from "../../lib/api";
-import { ErrorAlert } from "../../components/ErrorAlert";
-import { parseApiError } from "../../utils/error";
 import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../hooks/useSocket";
 import { useMicStore } from "../../store/mic";
-import { request } from "../../utils/request";
 import { useMeStore } from "../../store/me";
 import { usePeerStore } from "../../store/peer";
 import { analytics } from "../../lib/analytics";
+import { RoomLogin } from "./RoomLogin";
+import { RoomFetchError } from "./RoomFetchError";
+import { RoomJoinError } from "./RoomJoinError";
+import { RoomError } from "./RoomError";
 
 export const RoomPage: PageComponent = () => {
   const router = useRouter();
@@ -56,10 +50,8 @@ export const RoomPage: PageComponent = () => {
     [room?.status]
   );
   const [ok, setOk] = useState(false);
-  const [password, setPassword] = useState("");
   const me = useMeStore((state) => state.me);
   const peers = usePeerStore((state) => state.peers);
-  const [oking, setOking] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -107,113 +99,19 @@ export const RoomPage: PageComponent = () => {
 
   if (!mounted) return null;
 
-  if (mounted && locked && !ok) {
-    return (
-      <Layout title={`uhhhh | ${room?.name}`}>
-        <Container>
-          <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>
-            <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-
-                setOking(true);
-
-                try {
-                  const { ok: success } = await request({
-                    socket,
-                    event: "room login",
-                    payload: {
-                      room_id: room._id,
-                      password
-                    }
-                  });
-
-                  setOk(success);
-                } catch (e) {
-                } finally {
-                  setOking(false);
-                }
-              }}
-            >
-              <Group direction="column" grow>
-                <PasswordInput
-                  label="password"
-                  placeholder="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.currentTarget.value)}
-                />
-
-                <Button type="submit" disabled={oking} loading={oking}>
-                  join
-                </Button>
-              </Group>
-            </form>
-          </Paper>
-        </Container>
-      </Layout>
-    );
-  }
+  if (mounted && locked && !ok)
+    return <RoomLogin room={room} onSuccess={(success) => setOk(success)} />;
 
   if (isLoading || roomStore.state === "connecting")
-    return (
-      <Layout title={`uhhhh | ${room?.name}`}>
-        <Container>
-          <Group style={{ height: "97%" }} align="start">
-            <Center>
-              <Loader size="lg" />
-            </Center>
-          </Group>
-        </Container>
-      </Layout>
-    );
+    return <Loading room={room} />;
 
-  if (error)
-    return (
-      <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
-        <ErrorAlert
-          title="uh-oh! failed to fetch room"
-          message={parseApiError(error)[0]}
-        />
-      </Layout>
-    );
+  if (error) return <RoomFetchError room={room} error={error} />;
 
-  if (!room)
-    return (
-      <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
-        <></>
-      </Layout>
-    );
+  if (!room) return <NoRoom />;
 
-  if (socketState === "error")
-    return (
-      <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
-        <ErrorAlert
-          title="uh-oh! failed to establish websocket connection"
-          message="could not join room"
-        />
-      </Layout>
-    );
+  if (socketState === "error") return <RoomJoinError />;
 
-  if (roomStore.state === "error") {
-    const isDeviceError = roomStore.error_message === "already loaded";
-    const isMicError = roomStore.error_message === "Permission denied";
-
-    return (
-      <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
-        <ErrorAlert
-          title="uh-oh"
-          message={
-            isDeviceError
-              ? "please refresh the page"
-              : isMicError
-              ? "microphone access is denied"
-              : "could not join room"
-          }
-        />
-      </Layout>
-    );
-  }
+  if (roomStore.state === "error") return <RoomError />;
 
   if (roomStore.state === "connected")
     return (
@@ -231,3 +129,25 @@ export const RoomPage: PageComponent = () => {
 };
 
 RoomPage.authenticate = "yes";
+
+function Loading({ room }: { room?: Room }) {
+  return (
+    <Layout title={`uhhhh | ${room?.name}`}>
+      <Container>
+        <Group style={{ height: "97%" }} align="start">
+          <Center>
+            <Loader size="lg" />
+          </Center>
+        </Group>
+      </Container>
+    </Layout>
+  );
+}
+
+function NoRoom({ room }: { room?: Room }) {
+  return (
+    <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
+      <></>
+    </Layout>
+  );
+}
