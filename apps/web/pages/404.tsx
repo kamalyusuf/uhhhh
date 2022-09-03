@@ -1,11 +1,11 @@
 import React from "react";
-import { ErrorAlert } from "../components/ErrorAlert";
+import { Alert } from "../components/Alert";
 import { Layout } from "../components/Layout";
 
 const Custom404Page = () => {
   return (
     <Layout>
-      <ErrorAlert title="uh-oh" message="page does not exist" color="indigo" />
+      <Alert type="info" message="page does not exist" />
     </Layout>
   );
 };

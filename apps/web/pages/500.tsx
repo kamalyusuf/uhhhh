@@ -1,11 +1,11 @@
 import React from "react";
-import { ErrorAlert } from "../components/ErrorAlert";
+import { Alert } from "../components/Alert";
 import { Layout } from "../components/Layout";
 
 const Custom500Page = () => {
   return (
     <Layout>
-      <ErrorAlert title="uh-oh" message="something went wrong" color="indigo" />
+      <Alert type="error" message="something went wrong" />
     </Layout>
   );
 };

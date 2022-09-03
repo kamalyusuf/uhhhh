@@ -1,5 +1,5 @@
 import type { Room } from "types";
-import { ErrorAlert } from "../../components/ErrorAlert";
+import { Alert } from "../../components/Alert";
 import { Layout } from "../../components/Layout";
 import { useRoomStore } from "../../store/room";
 
@@ -13,8 +13,8 @@ export const RoomError = ({ room }: { room?: Room }) => {
 
   return (
     <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
-      <ErrorAlert
-        title="error"
+      <Alert
+        type="error"
         message={
           isDeviceError
             ? "please refresh the page"

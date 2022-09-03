@@ -20,6 +20,8 @@ import { SocketHandler } from "../modules/socket/SocketHandler";
 import { useMeStore } from "../store/me";
 import { analytics } from "../lib/analytics";
 import { useMounted } from "../hooks/use-mounted";
+import { isFirefox } from "react-device-detect";
+import { Alert } from "../components/Alert";
 
 if (!process.env.NEXT_PUBLIC_API_URL) throw new Error("where API_URL at?");
 
@@ -63,17 +65,29 @@ const MyApp = ({ Component: C, pageProps }: AppProps) => {
 
       <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
         <SocketProvider>
-          {Component.authenticate === "yes" ? (
-            <Authenticate>
-              <Component {...pageProps} />
-            </Authenticate>
-          ) : Component.authenticate === "not" ? (
-            <NotAuthenticated>
-              <Component {...pageProps} />
-            </NotAuthenticated>
+          {isFirefox ? (
+            <Alert
+              type="warning"
+              message="firefox is not supported. download chrome/edge/brave/opera"
+              wrap={false}
+              style={{ marginTop: 100 }}
+            />
           ) : (
-            <Component {...pageProps} />
+            <>
+              {Component.authenticate === "yes" ? (
+                <Authenticate>
+                  <Component {...pageProps} />
+                </Authenticate>
+              ) : Component.authenticate === "not" ? (
+                <NotAuthenticated>
+                  <Component {...pageProps} />
+                </NotAuthenticated>
+              ) : (
+                <Component {...pageProps} />
+              )}
+            </>
           )}
+
           <ToastContainer
             position="bottom-center"
             autoClose={3000}

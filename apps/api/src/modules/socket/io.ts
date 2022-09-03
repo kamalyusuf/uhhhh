@@ -83,12 +83,6 @@ class SocketIO {
         });
       }
 
-      logger.cinfo(
-        `${peer.user.display_name}'s listening events: '${socket
-          .eventNames()
-          .join(", ")}'`
-      );
-
       socket.on("disconnect", onDisconnect({ peer }));
     });
   }

@@ -15,6 +15,7 @@
     "@mantine/hooks": "^5.2.4",
     "@mantine/next": "^5.2.4",
     "@splitbee/web": "^0.3.0",
+    "@tabler/icons": "^1.92.0",
     "axios": "^0.27.2",
     "formik": "^2.2.9",
     "hark": "^1.2.3",
@@ -24,6 +25,7 @@
     "next": "^12.2.5",
     "nprogress": "^0.2.0",
     "react": "18.2.0",
+    "react-device-detect": "^2.2.2",
     "react-dom": "18.2.0",
     "react-icons": "^4.4.0",
     "react-query": "^3.39.2",
@@ -31,6 +33,7 @@
     "react-virtuoso": "^2.17.2",
     "sass": "^1.54.8",
     "socket.io-client": "^4.5.2",
+    "tabler-icons-react": "^1.54.0",
     "types": "*",
     "zustand": "^4.1.1"
   },

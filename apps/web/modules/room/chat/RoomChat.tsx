@@ -54,31 +54,24 @@ export const RoomChat = () => {
       })}
     >
       <Stack justify="space-between" style={{ height: "100%" }}>
-        <Box>
-          <Virtuoso
-            ref={virtuoso}
-            data={messages}
-            alignToBottom
-            className="virtuoso"
-            initialTopMostItemIndex={
-              messages.length > 0 ? messages.length - 1 : 0
-            }
-            overscan={0}
-            itemContent={(index, item) => {
-              console.log({ index, item });
+        <Virtuoso
+          ref={virtuoso}
+          alignToBottom
+          style={{ height: "100%" }}
+          data={messages}
+          initialTopMostItemIndex={
+            messages.length > 0 ? messages.length - 1 : 0
+          }
+          overscan={0}
+          itemContent={(_, item) => (
+            <RoomChatMessageCard key={item._id} message={item} />
+          )}
+          followOutput={(bottom) => {
+            if (force()) return "smooth";
 
-              return <RoomChatMessageCard key={item._id} message={item} />;
-            }}
-            style={{
-              height: "100%"
-            }}
-            followOutput={(bottom) => {
-              if (force()) return "smooth";
-
-              return bottom ? "smooth" : false;
-            }}
-          />
-        </Box>
+            return bottom ? "smooth" : false;
+          }}
+        />
         <RoomChatInput />
       </Stack>
     </Box>

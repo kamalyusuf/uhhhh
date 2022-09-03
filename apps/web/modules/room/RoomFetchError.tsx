@@ -1,8 +1,7 @@
 import { AxiosError } from "axios";
 import type { ApiError, Room } from "types";
-import { ErrorAlert } from "../../components/ErrorAlert";
+import { Alert } from "../../components/Alert";
 import { Layout } from "../../components/Layout";
-import { parse } from "../../utils/error";
 
 export const RoomFetchError = ({
   room,
@@ -13,10 +12,7 @@ export const RoomFetchError = ({
 }) => {
   return (
     <Layout>
-      <ErrorAlert
-        title="error! failed to fetch room"
-        message={parse(error)[0]}
-      />
+      <Alert type="error" message={error} />
     </Layout>
   );
 };

@@ -1,14 +1,11 @@
 import type { Room } from "types";
-import { ErrorAlert } from "../../components/ErrorAlert";
+import { Alert } from "../../components/Alert";
 import { Layout } from "../../components/Layout";
 
 export const RoomJoinError = ({ room }: { room?: Room }) => {
   return (
     <Layout>
-      <ErrorAlert
-        title="uh-oh! failed to establish websocket connection"
-        message="could not join room"
-      />
+      <Alert type="error" message="could not join room" />
     </Layout>
   );
 };

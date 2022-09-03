@@ -1,7 +1,7 @@
 import { useSocketQuery } from "../../hooks/use-socket-query";
 import { Center, Loader, ScrollArea, Stack } from "@mantine/core";
 import { RoomCard } from "./RoomCard";
-import { ErrorAlert } from "../../components/ErrorAlert";
+import { Alert } from "../../components/Alert";
 import { c } from "../../utils/constants";
 
 export const Rooms = () => {
@@ -18,7 +18,7 @@ export const Rooms = () => {
     );
 
   if (!data && !isLoading && isError)
-    return <ErrorAlert message="failed to fetch rooms" />;
+    return <Alert type="error" message="failed to fetch rooms" />;
 
   return (
     <ScrollArea

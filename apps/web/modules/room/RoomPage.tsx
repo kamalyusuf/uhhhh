@@ -23,13 +23,14 @@ import { RoomLogin } from "./RoomLogin";
 import { RoomFetchError } from "./RoomFetchError";
 import { RoomJoinError } from "./RoomJoinError";
 import { RoomError } from "./RoomError";
+import { useMounted } from "../../hooks/use-mounted";
 
 // todo: revamp because too messy
 
 export const RoomPage: PageComponent = () => {
   const router = useRouter();
   const _id = router.query.id as string | undefined;
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const {
     data: room,
     isLoading,
@@ -54,10 +55,6 @@ export const RoomPage: PageComponent = () => {
   const [ok, setOk] = useState(false);
   const me = useMeStore((state) => state.me);
   const peers = usePeerStore((state) => state.peers);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (
@@ -118,7 +115,7 @@ export const RoomPage: PageComponent = () => {
   if (roomStore.state === "connected")
     return (
       <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
-        <Container style={{ width: "100%" }}>
+        <Container style={{ width: "100%", height: "100%" }}>
           <Group style={{ height: "97%" }} align="start">
             <RoomPanel room={room} actions={{ leave, mute, unmute }} />
             {!matches && <RoomChat />}

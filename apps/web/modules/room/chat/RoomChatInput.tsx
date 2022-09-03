@@ -36,9 +36,13 @@ export const RoomChatInput = () => {
           }
         }}
         value={content}
-        onChange={(e) =>
-          setContent(e.currentTarget.value.slice(0, c.chat.text_limit))
-        }
+        onChange={(e) => {
+          const value = e.currentTarget.value;
+
+          if (!value.trim()) return;
+
+          setContent(e.currentTarget.value.slice(0, c.chat.text_limit));
+        }}
         onKeyDown={(e) => {
           switch (e.key) {
             case "Enter":
@@ -47,6 +51,7 @@ export const RoomChatInput = () => {
               break;
           }
         }}
+        autoComplete="off"
       />
       <span
         style={{
