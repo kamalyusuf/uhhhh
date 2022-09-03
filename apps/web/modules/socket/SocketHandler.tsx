@@ -1,12 +1,12 @@
 import { useEffect } from "react";
-import { useSocket } from "../../hooks/useSocket";
+import { useSocket } from "../../hooks/use-socket";
 import { useTransportStore } from "../../store/transport";
 import { useConsumerStore } from "../../store/consumer";
 import { usePeerStore } from "../../store/peer";
 import { toast } from "react-toastify";
 import { useRoomStore } from "../../store/room";
 import { useQueryClient } from "react-query";
-import { Room, EventError } from "types";
+import type { Room } from "types";
 import { useRoomChatStore } from "../../store/room-chat";
 
 export const SocketHandler = () => {

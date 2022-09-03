@@ -1,8 +1,8 @@
 import { AxiosError } from "axios";
-import { ApiError, Room } from "types";
+import type { ApiError, Room } from "types";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { Layout } from "../../components/Layout";
-import { parseApiError } from "../../utils/error";
+import { parse } from "../../utils/error";
 
 export const RoomFetchError = ({
   room,
@@ -12,10 +12,10 @@ export const RoomFetchError = ({
   error: AxiosError<ApiError>;
 }) => {
   return (
-    <Layout title={`uhhhh | ${room?.name ?? "room"}`}>
+    <Layout>
       <ErrorAlert
-        title="uh-oh! failed to fetch room"
-        message={parseApiError(error)[0]}
+        title="error! failed to fetch room"
+        message={parse(error)[0]}
       />
     </Layout>
   );

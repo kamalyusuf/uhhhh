@@ -1,7 +1,7 @@
 import * as mediasoup from "mediasoup";
 import { Worker } from "mediasoup/node/lib/types";
 import os from "os";
-import { logger } from "src/lib/logger";
+import { logger } from "../lib/logger";
 import { env } from "../lib/env";
 
 class MediasoupWorkers {

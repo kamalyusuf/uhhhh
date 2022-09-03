@@ -1,7 +1,7 @@
 import { MantineTheme } from "@mantine/core";
 import { Color } from "../types";
 
-export const parseColor = (theme: MantineTheme, color: Color | undefined) => {
+export const parse = (theme: MantineTheme, color: Color | undefined) => {
   switch (color) {
     case "white":
       return theme.white;

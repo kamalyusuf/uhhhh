@@ -6,14 +6,15 @@ import {
   Checkbox,
   Button,
   Group,
-  Divider
+  Divider,
+  Stack
 } from "@mantine/core";
 import { Layout } from "../../components/Layout";
 import { PageComponent } from "../../types";
 import { toast } from "react-toastify";
 import React, { useState, useEffect } from "react";
 import { useMeStore } from "../../store/me";
-import { useSocket } from "../../hooks/useSocket";
+import { useSocket } from "../../hooks/use-socket";
 import { DefaultMicSelector } from "../audio/DefaultMicSelector";
 
 export const MePage: PageComponent = () => {
@@ -39,8 +40,8 @@ export const MePage: PageComponent = () => {
         <Box>
           <Center>
             <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>
-              <Group direction="column" grow spacing={10}>
-                <Group direction="column" grow>
+              <Stack spacing={10}>
+                <Stack>
                   <TextInput
                     placeholder="display name"
                     label="display name"
@@ -74,10 +75,10 @@ export const MePage: PageComponent = () => {
                   >
                     update
                   </Button>
-                </Group>
+                </Stack>
                 <Divider size="xs" color="indigo" />
                 <DefaultMicSelector />
-              </Group>
+              </Stack>
             </Paper>
           </Center>
         </Box>

@@ -19,13 +19,16 @@ export const useProducerStore = create(
 
             return { producer };
           }),
+
         reset: () =>
           set((state) => {
             state.producer?.close();
 
             return { producer: null, paused: false };
           }),
+
         setPaused: (paused: boolean) => set({ paused }),
+
         remove: () => set({ producer: null, paused: false })
       })
     ),

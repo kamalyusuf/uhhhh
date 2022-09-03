@@ -6,7 +6,8 @@ import {
   TextInput,
   Box,
   Center,
-  Checkbox
+  Checkbox,
+  Stack
 } from "@mantine/core";
 import { useMeStore } from "../store/me";
 import { toast } from "react-toastify";
@@ -25,7 +26,7 @@ const HomePage: PageComponent = () => {
         <Box>
           <Center>
             <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>
-              <Group direction="column" grow>
+              <Stack>
                 <TextInput
                   placeholder="display name"
                   label="display name"
@@ -53,7 +54,7 @@ const HomePage: PageComponent = () => {
                 >
                   submit
                 </Button>
-              </Group>
+              </Stack>
             </Paper>
           </Center>
         </Box>

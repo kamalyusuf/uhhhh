@@ -5,14 +5,15 @@ import {
   Button,
   ScrollArea,
   Notification,
-  Space
+  Space,
+  Stack
 } from "@mantine/core";
 import { Heading } from "../../components/Heading";
 import { ToggleMuteButton } from "../audio/ToggleMuteButton";
 import { c } from "../../utils/constants";
 import { PeerBadge } from "../user/PeerBadge";
 import { useRouter } from "next/router";
-import { Room } from "types";
+import type { Room } from "types";
 import { usePeerStore } from "../../store/peer";
 import { useMeStore } from "../../store/me";
 import { useRoomStore } from "../../store/room";
@@ -48,7 +49,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
 
   return (
     <Group style={{ flex: 1 }}>
-      <Group direction="column" spacing={0} style={{ width: "100%" }}>
+      <Stack spacing={0} style={{ width: "100%" }}>
         {roomStore.warn_message && roomStore.show_warning && (
           <Notification
             color="yellow"
@@ -67,7 +68,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
         <Text color="indigo" size="xs">
           {room.description}
         </Text>
-      </Group>
+      </Stack>
 
       <Divider variant="solid" color="indigo" style={{ width: "100%" }} />
 

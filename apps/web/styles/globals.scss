@@ -1,7 +1,4 @@
-/*html,*/
-/*body {*/
-/*    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;*/
-/*}*/
+@import url("https://fonts.googleapis.com/css2?family=Finlandica&display=swap");
 
 :root {
   --toastify-color-info: #4f46e5;
@@ -64,28 +61,28 @@ body,
 }
 
 .Toastify__toast-body {
-    font-size: 14px;
-    white-space: pre-line;
+  font-size: 14px;
+  white-space: pre-line;
 }
 
 ::-webkit-scrollbar {
-    /*width: 7.21591px;*/
-    width: 8px;
+  /*width: 7.21591px;*/
+  width: 8px;
 }
 
-::-webkit-scrollbar-track:hover  {
-    background: #F9FAFB;
+::-webkit-scrollbar-track:hover {
+  background: #f9fafb;
 }
 
-::-webkit-scrollbar-track:hover ::-webkit-scrollbar-thumb  {
-    background: #555;
+::-webkit-scrollbar-track:hover ::-webkit-scrollbar-thumb {
+  background: #555;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #4f46e5;
-    border-radius: 12px;
+  background: #4f46e5;
+  border-radius: 12px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #555;
+  background: #555;
 }

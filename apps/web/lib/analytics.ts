@@ -17,6 +17,8 @@ class Analytics {
   }
 
   disable() {
+    if (!this._enabled) return;
+
     splitbee.reset();
   }
 

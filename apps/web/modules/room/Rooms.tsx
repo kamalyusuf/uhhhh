@@ -1,5 +1,5 @@
-import { useSocketQuery } from "../../hooks/useSocketQuery";
-import { Group, Center, Loader, ScrollArea } from "@mantine/core";
+import { useSocketQuery } from "../../hooks/use-socket-query";
+import { Center, Loader, ScrollArea, Stack } from "@mantine/core";
 import { RoomCard } from "./RoomCard";
 import { ErrorAlert } from "../../components/ErrorAlert";
 import { c } from "../../utils/constants";
@@ -27,11 +27,11 @@ export const Rooms = () => {
       offsetScrollbars
       styles={{ thumb: { backgroundColor: c.colors.indigo } }}
     >
-      <Group direction="column" grow style={{}}>
+      <Stack>
         {data?.rooms.map((room) => (
           <RoomCard key={room._id} room={room} />
         ))}
-      </Group>
+      </Stack>
     </ScrollArea>
   );
 };

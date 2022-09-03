@@ -1,6 +1,6 @@
 import React from "react";
 import { NavBar } from "./NavBar";
-import { Group, GroupProps } from "@mantine/core";
+import { Stack, StackProps } from "@mantine/core";
 import Head from "next/head";
 
 export const Layout = ({
@@ -8,7 +8,7 @@ export const Layout = ({
   spacing = 15,
   title,
   ...props
-}: React.PropsWithChildren<GroupProps> & { title?: string }) => {
+}: React.PropsWithChildren<StackProps> & { title?: string }) => {
   return (
     <>
       {title && (
@@ -16,17 +16,10 @@ export const Layout = ({
           <title>{title}</title>
         </Head>
       )}
-      <Group
-        direction="column"
-        grow
-        spacing={spacing}
-        {...props}
-        noWrap
-        sx={{ height: "100%" }}
-      >
+      <Stack spacing={spacing} {...props} sx={{ height: "100%" }}>
         <NavBar />
         {children}
-      </Group>
+      </Stack>
     </>
   );
 };

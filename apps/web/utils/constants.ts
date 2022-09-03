@@ -1,4 +1,4 @@
-export const constants = {
+export const c = Object.freeze({
   colors: {
     primary: "#DC2626",
     error: "#DC2626",
@@ -17,6 +17,4 @@ export const constants = {
     text_limit: 120,
     messages_limit: 100
   }
-} as const;
-
-export const c = constants;
+});

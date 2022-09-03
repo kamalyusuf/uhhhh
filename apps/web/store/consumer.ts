@@ -21,6 +21,7 @@ export const useConsumerStore = create(
               }
             };
           }),
+
         remove: (peer_id: string) =>
           set((state) => {
             return {
@@ -30,6 +31,7 @@ export const useConsumerStore = create(
               }
             };
           }),
+
         pause: (peer_id: string) =>
           set((state) => {
             const c = state.consumers[peer_id];
@@ -47,6 +49,7 @@ export const useConsumerStore = create(
               }
             };
           }),
+
         resume: (peer_id: string) =>
           set((state) => {
             const c = state.consumers[peer_id];

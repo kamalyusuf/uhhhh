@@ -1,9 +1,9 @@
-import {
+import type {
   ClientToServerEvents,
   ServerEvent,
   TypedSocket
 } from "../modules/socket/types";
-import { EventError } from "types";
+import type { EventError } from "types";
 import { toast } from "react-toastify";
 
 type Fn = (...args: any) => any;

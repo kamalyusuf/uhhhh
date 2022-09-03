@@ -1,5 +1,5 @@
-import { Group, Box } from "@mantine/core";
-import React, { useRef, useEffect } from "react";
+import { Box, Stack } from "@mantine/core";
+import { useRef, useEffect } from "react";
 import { RoomChatInput } from "./RoomChatInput";
 import { Virtuoso } from "react-virtuoso";
 import { RoomChatMessageCard } from "./RoomChatMessageCard";
@@ -53,25 +53,22 @@ export const RoomChat = () => {
         minWidth: 350
       })}
     >
-      <Group
-        direction="column"
-        grow
-        style={{ height: "100%", justifyContent: "space-between" }}
-      >
+      <Stack justify="space-between" style={{ height: "100%" }}>
         <Box>
           <Virtuoso
             ref={virtuoso}
             data={messages}
             alignToBottom
-            className={"virtuoso"}
-            totalCount={messages.length}
+            className="virtuoso"
             initialTopMostItemIndex={
               messages.length > 0 ? messages.length - 1 : 0
             }
             overscan={0}
-            itemContent={(index, item) => (
-              <RoomChatMessageCard key={item._id} message={item} />
-            )}
+            itemContent={(index, item) => {
+              console.log({ index, item });
+
+              return <RoomChatMessageCard key={item._id} message={item} />;
+            }}
             style={{
               height: "100%"
             }}
@@ -83,7 +80,7 @@ export const RoomChat = () => {
           />
         </Box>
         <RoomChatInput />
-      </Group>
+      </Stack>
     </Box>
   );
 };

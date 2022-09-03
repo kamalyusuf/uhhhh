@@ -1,7 +1,14 @@
 import { io } from "socket.io-client";
-import React, { PropsWithChildren, useEffect, useMemo, useState } from "react";
+import {
+  createContext,
+  type PropsWithChildren,
+  useEffect,
+  useMemo,
+  useState,
+  useRef
+} from "react";
 import { toast } from "react-toastify";
-import { TypedSocket } from "./types";
+import type { TypedSocket } from "./types";
 import { useMeStore } from "../../store/me";
 
 type V = TypedSocket | null;
@@ -14,7 +21,7 @@ type Context = {
   state: SocketState;
 };
 
-export const SocketContext = React.createContext<Context>({
+export const SocketContext = createContext<Context>({
   socket: null,
   setSocket: () => {},
   state: "idle"
@@ -26,9 +33,12 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
   const [socket, setSocket] = useState<V>(null);
   const { me } = useMeStore();
   const [state, setState] = useState<SocketState>("idle");
+  const called = useRef(false);
 
   useEffect(() => {
-    if (!socket && !!me) {
+    if (!socket && !!me && !called.current) {
+      called.current = true;
+
       const s = io(process.env.NEXT_PUBLIC_API_URL, {
         rememberUpgrade: true,
         path: "/ws",
@@ -52,6 +62,7 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
 
     socket.on("connect_error", (error) => {
       setState("error");
+
       toast.error(error.message);
     });
 

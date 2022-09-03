@@ -1,8 +1,8 @@
-import { Alert, Text, AlertProps, MantineColor } from "@mantine/core";
-import { AlertVariant } from "@mantine/core/lib/components/Alert/Alert";
+import { Alert, Text, MantineColor } from "@mantine/core";
+import { AlertVariant } from "@mantine/core/lib/Alert/Alert";
 
 export const ErrorAlert = ({
-  title = "uh-oh! request failed",
+  title = "error",
   message,
   color = "red",
   variant = "outline"
@@ -25,7 +25,7 @@ export const ErrorAlert = ({
         }}
         variant={variant}
       >
-        <Text color="white" style={{ fontSize: 16 }}>
+        <Text color="dark" weight="bold" style={{ fontSize: 16 }}>
           {message}
         </Text>
       </Alert>

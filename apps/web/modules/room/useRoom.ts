@@ -1,9 +1,8 @@
 import { useRef, useCallback } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
-import { unstable_batchedUpdates as batch } from "react-dom";
 import { useRoomStore } from "../../store/room";
-import { useSocket } from "../../hooks/useSocket";
+import { useSocket } from "../../hooks/use-socket";
 import { request } from "../../utils/request";
 import { detectDevice, Device } from "mediasoup-client";
 import { useTransportStore } from "../../store/transport";
@@ -125,7 +124,7 @@ export const useRoom = (room_id: string) => {
                 transport_id: sendTransport.id,
                 kind,
                 rtp_parameters,
-                app_data
+                app_data: app_data as Record<string, string>
               }
             });
 
@@ -235,34 +234,19 @@ export const useRoom = (room_id: string) => {
 
       roomStore.setState("connected");
     } catch (e) {
-      // micStore.reset();
-      // transportStore.reset();
-      // producerStore.reset();
-      // peerStore.reset();
-      // chatStore.reset();
-      // roomStore.set({
-      //   state: "error",
-      //   error_message: e.message,
-      //   active_speakers: {},
-      //   warn_message: "",
-      //   show_warning: false
-      // });
-
       console.log("[useRoom.join] error", e);
 
-      batch(() => {
-        micStore.reset();
-        transportStore.reset();
-        producerStore.reset();
-        peerStore.reset();
-        chatStore.reset();
-        roomStore.set({
-          state: "error",
-          error_message: e.message,
-          active_speakers: {},
-          warn_message: "",
-          show_warning: false
-        });
+      micStore.reset();
+      transportStore.reset();
+      producerStore.reset();
+      peerStore.reset();
+      chatStore.reset();
+      roomStore.set({
+        state: "error",
+        error_message: e.message,
+        active_speakers: {},
+        warn_message: "",
+        show_warning: false
       });
     }
   }, [
@@ -281,14 +265,12 @@ export const useRoom = (room_id: string) => {
       payload: undefined
     });
 
-    batch(() => {
-      micStore.reset();
-      transportStore.reset();
-      producerStore.reset();
-      peerStore.reset();
-      roomStore.reset();
-      chatStore.reset();
-    });
+    micStore.reset();
+    transportStore.reset();
+    producerStore.reset();
+    peerStore.reset();
+    roomStore.reset();
+    chatStore.reset();
   }, [socket]);
 
   const mute = useCallback(async () => {

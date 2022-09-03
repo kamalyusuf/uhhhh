@@ -3,7 +3,7 @@ import { Group, Center, Loader } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useRouter } from "next/router";
 import { useQuery } from "react-query";
-import { Room, ApiError, RoomStatus } from "types";
+import { type Room, type ApiError, RoomStatus } from "types";
 import { AxiosError } from "axios";
 import hark from "hark";
 import { useRoom } from "./useRoom";
@@ -11,10 +11,10 @@ import { Layout } from "../../components/Layout";
 import { Container } from "../../components/Container";
 import { RoomChat } from "./chat/RoomChat";
 import { RoomPanel } from "./RoomPanel";
-import { PageComponent } from "../../types";
+import type { PageComponent } from "../../types";
 import { api } from "../../lib/api";
 import { useRoomStore } from "../../store/room";
-import { useSocket } from "../../hooks/useSocket";
+import { useSocket } from "../../hooks/use-socket";
 import { useMicStore } from "../../store/mic";
 import { useMeStore } from "../../store/me";
 import { usePeerStore } from "../../store/peer";
@@ -23,6 +23,8 @@ import { RoomLogin } from "./RoomLogin";
 import { RoomFetchError } from "./RoomFetchError";
 import { RoomJoinError } from "./RoomJoinError";
 import { RoomError } from "./RoomError";
+
+// todo: revamp because too messy
 
 export const RoomPage: PageComponent = () => {
   const router = useRouter();

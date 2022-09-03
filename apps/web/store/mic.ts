@@ -1,7 +1,7 @@
 import create from "zustand";
 import { combine, devtools } from "zustand/middleware";
 
-const key = "default mic id";
+const key = "default_mic_id";
 
 const initial = () => {
   try {
@@ -21,11 +21,14 @@ export const useMicStore = create(
       },
       (set) => ({
         setTrack: (track: MediaStreamTrack) => set({ track }),
+
         setStream: (stream: MediaStream) => set({ stream }),
+
         setDefaultMicId: (id: string) => {
           if (id === "-") {
             localStorage.removeItem(key);
             set({ id: "" });
+
             return;
           }
 
@@ -35,6 +38,7 @@ export const useMicStore = create(
 
           set({ id });
         },
+
         reset: () =>
           set((state) => {
             state.track?.stop();

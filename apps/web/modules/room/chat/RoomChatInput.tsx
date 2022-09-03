@@ -1,8 +1,8 @@
-import { TextInput, ActionIcon } from "@mantine/core";
+import { TextInput, ActionIcon, Stack } from "@mantine/core";
 import { AiOutlineSend } from "react-icons/ai";
 import { useState, useCallback, useEffect } from "react";
 import { c } from "../../../utils/constants";
-import { useSocket } from "../../../hooks/useSocket";
+import { useSocket } from "../../../hooks/use-socket";
 
 export const RoomChatInput = () => {
   const [content, setContent] = useState("");
@@ -21,7 +21,7 @@ export const RoomChatInput = () => {
   }, [content, socket]);
 
   return (
-    <>
+    <Stack spacing={5}>
       <TextInput
         placeholder="chat..."
         variant="filled"
@@ -56,6 +56,6 @@ export const RoomChatInput = () => {
       >
         character count: {count} (max {c.chat.text_limit})
       </span>
-    </>
+    </Stack>
   );
 };

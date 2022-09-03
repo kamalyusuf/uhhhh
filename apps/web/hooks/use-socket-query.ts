@@ -1,8 +1,11 @@
 import { useQuery, UseQueryOptions } from "react-query";
-import { ServerEvent, ClientToServerEvents } from "../modules/socket/types";
-import { useSocket } from "./useSocket";
+import type {
+  ServerEvent,
+  ClientToServerEvents
+} from "../modules/socket/types";
+import { useSocket } from "./use-socket";
 import { request } from "../utils/request";
-import { EventError } from "types";
+import type { EventError } from "types";
 
 type Fn = (...args: any) => any;
 

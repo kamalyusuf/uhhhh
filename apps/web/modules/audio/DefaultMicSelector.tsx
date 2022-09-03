@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useMicStore } from "../../store/mic";
-import { Group, Text, Select, Button } from "@mantine/core";
+import { Stack, Text, Select, Button } from "@mantine/core";
 import { toast } from "react-toastify";
 
 export const DefaultMicSelector = () => {
@@ -22,8 +22,8 @@ export const DefaultMicSelector = () => {
 
   return (
     <>
-      <Group direction="column" grow spacing={15}>
-        <Group grow>
+      <Stack spacing={15}>
+        <Stack>
           {options.length === 0 ? (
             <Text color="indigo" size="sm" style={{ fontStyle: "italic" }}>
               no microphone(s) detected
@@ -43,15 +43,16 @@ export const DefaultMicSelector = () => {
               value={micStore.id}
               onChange={(value) => {
                 micStore.setDefaultMicId(value);
+
                 toast.success("saved");
               }}
             />
           )}
-        </Group>
+        </Stack>
         <Button color="dark" onClick={enumerate}>
           refresh
         </Button>
-      </Group>
+      </Stack>
     </>
   );
 };

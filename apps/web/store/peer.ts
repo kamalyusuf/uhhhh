@@ -18,6 +18,7 @@ export const usePeerStore = create(
               }
             };
           }),
+
         remove: (peer_id: string) =>
           set((state) => {
             if (!state.peers[peer_id]) return state;
@@ -29,6 +30,7 @@ export const usePeerStore = create(
               }
             };
           }),
+
         reset: () => set({ peers: {} })
       })
     ),

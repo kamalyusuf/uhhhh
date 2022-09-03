@@ -1,31 +1,10 @@
 import { MantineThemeOverride } from "@mantine/core";
-
-// color[6] is default
-// red = #DC2626
-// dark = #25262B
-
-/**
- *
- * @DEFAULT
- */
-// breakpoints: {
-//   xs: 500,
-//     sm: 800,
-//     md: 1000,
-//     lg: 1275,
-//     xl: 1800,
-// },
+import { styles } from "./styles";
 
 export const theme: MantineThemeOverride = {
+  fontFamily: "Finlandica, sans-serif",
   primaryColor: "indigo",
-  /**
-   * @DEFAULT
-   */
-  // xs: 12,
-  // sm: 14,
-  // md: 16,
-  // lg: 18,
-  // xl: 20,
+  components: styles,
   fontSizes: {
     xl: 26,
     lg: 22,

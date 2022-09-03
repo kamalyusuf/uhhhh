@@ -23,6 +23,7 @@ export const useRoomStore = create(
       (set) => ({
         set,
         setState: (state: RoomState) => set({ state }),
+
         setActiveSpeaker: (peer_id: string, value: boolean) =>
           set((state) => {
             return {
@@ -32,6 +33,7 @@ export const useRoomStore = create(
               }
             };
           }),
+
         reset: () =>
           set({
             state: "disconnected",
