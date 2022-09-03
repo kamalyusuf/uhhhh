@@ -11,7 +11,6 @@
     "dev": "turbo run dev --no-cache --parallel --include-dependencies --continue",
     "api:dev": "turbo run dev --scope=api --include-dependencies --no-cache",
     "api:build": "turbo run build --scope=api",
-    "api:build2": "turbo run build2 --scope=api",
     "api:start": "turbo run start --scope=api",
     "web:dev": "turbo run dev --scope=web --include-dependencies --no-cache",
     "web:build": "turbo run build --scope=web",

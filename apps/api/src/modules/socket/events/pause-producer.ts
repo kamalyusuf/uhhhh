@@ -1,7 +1,7 @@
-import type { Event } from "../types";
+import type { CallbackEvent } from "../types";
 import { NoProducerFoundError, NotJoinedError } from "../utils";
 
-export const handler: Event<"pause producer"> = {
+export const handler: CallbackEvent<"pause producer"> = {
   on: "pause producer",
   invoke: async ({ peer, payload, cb }) => {
     if (!peer.active_room_id) throw new NotJoinedError();

@@ -3,7 +3,7 @@ import { logger } from "../../lib/logger";
 import { Server } from "node:http";
 import { Server as SocketServer } from "socket.io";
 import { createAdapter } from "@socket.io/redis-adapter";
-import type { ServerEvent, TypedIO, Event, Payload, EventCb } from "./types";
+import type { ServerEvent, TypedIO, Payload, EventCb, E } from "./types";
 import fs from "node:fs";
 import path from "node:path";
 import { Peer } from "../../mediasoup/peer";
@@ -17,7 +17,7 @@ const exclude: string[] = ["disconnect"];
 class SocketIO {
   private _io?: TypedIO;
 
-  public events = new Map<ServerEvent, Event<ServerEvent>>();
+  public events = new Map<ServerEvent, E>();
 
   initialize(server: Server) {
     this._io = new SocketServer(server, {
@@ -40,7 +40,7 @@ class SocketIO {
     for (const file of files) {
       if (exclude.some((ex) => file.startsWith(ex))) continue;
 
-      const handler = require(`./events/${file}`).handler as Event<ServerEvent>;
+      const handler = require(`./events/${file}`).handler as E;
 
       if (!handler) throw new Error(`no handler found for ${file}`.red);
 

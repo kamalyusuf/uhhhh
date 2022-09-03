@@ -5,7 +5,6 @@
   "main": "index.js",
   "scripts": {
     "build": "rimraf ./dist && tsc",
-    "build2": "rimraf ./dist && tsup src/**/*.ts --format esm,cjs --dts --no-splitting",
     "dev": "rimraf ./dist && kill-port 2300 && ts-node-dev --respawn --transpile-only --rs -r dotenv/config src/index.ts",
     "dpdm": "dpdm --tree false --warning false src",
     "madge": "madge --circular .",

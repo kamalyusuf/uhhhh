@@ -1,8 +1,8 @@
 import { MediasoupRoom } from "../../../mediasoup/room";
-import type { Event } from "../types";
+import type { CallbackEvent } from "../types";
 import { env } from "../../../lib/env";
 
-export const handler: Event<"create transport"> = {
+export const handler: CallbackEvent<"create transport"> = {
   on: "create transport",
   invoke: async ({ peer, payload: { room_id, direction }, cb }) => {
     const room = MediasoupRoom.findById(room_id);

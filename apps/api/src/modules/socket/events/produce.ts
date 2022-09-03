@@ -1,8 +1,8 @@
 import { MediasoupRoom } from "../../../mediasoup/room";
-import type { Event } from "../types";
+import type { CallbackEvent } from "../types";
 import { NotJoinedError, NoTransportFoundError } from "../utils";
 
-export const handler: Event<"produce"> = {
+export const handler: CallbackEvent<"produce"> = {
   on: "produce",
   invoke: async ({
     peer,

@@ -1,7 +1,7 @@
-import type { Event } from "../types";
+import type { CallbackEvent } from "../types";
 import { MediasoupRoom } from "../../../mediasoup/room";
 
-export const handler: Event<"rtp capabilities"> = {
+export const handler: CallbackEvent<"rtp capabilities"> = {
   on: "rtp capabilities",
   invoke: async ({ payload, cb, io }) => {
     const doc = await deps.room.findById(payload.room_id);

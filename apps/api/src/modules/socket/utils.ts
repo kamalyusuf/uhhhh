@@ -3,6 +3,7 @@ import { logger } from "./../../lib/logger";
 import { SocketEventError } from "./../../utils/socket-event-error";
 import { CustomError, NotAuthorizedError } from "@kamalyb/errors";
 import type {
+  E,
   Event,
   Payload,
   ServerEvent,
@@ -137,7 +138,7 @@ export const onError = ({
 }: {
   error: Error;
   socket: TypedSocket;
-  event: Event<ServerEvent>;
+  event: E;
   peer: Peer;
   __request__?: boolean;
 }) => {

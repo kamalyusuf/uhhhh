@@ -1,8 +1,8 @@
-import type { Event } from "../types";
+import type { CallbackEvent } from "../types";
 import { MediasoupRoom } from "../../../mediasoup/room";
 import type { Room } from "types";
 
-export const handler: Event<"rooms"> = {
+export const handler: CallbackEvent<"rooms"> = {
   on: "rooms",
   invoke: async ({ cb }) => {
     const data = await deps.room.find();

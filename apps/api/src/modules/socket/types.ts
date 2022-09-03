@@ -1,12 +1,12 @@
 import {
-  DtlsParameters,
-  MediaKind,
-  RtpCapabilities,
-  RtpParameters,
+  type DtlsParameters,
+  type MediaKind,
+  type RtpCapabilities,
+  type RtpParameters,
   WebRtcTransport,
-  ConsumerType
+  type ConsumerType
 } from "mediasoup/node/lib/types";
-import {
+import type {
   ServerToClientEvents as TServerToClientEvents,
   ClientToServerEvents as TClientToServerEvents,
   InterServerEvents,
@@ -56,33 +56,53 @@ export type TypedSocket = Socket<
   SocketData
 >;
 
-export type Payload<K extends ServerEvent> = Parameters<
-  ClientToServerEvents[K]
+export type Payload<E extends ServerEvent> = Parameters<
+  ClientToServerEvents[E]
 >[0] extends Function
   ? undefined
-  : Parameters<ClientToServerEvents[K]>[0];
+  : Parameters<ClientToServerEvents[E]>[0];
 
-export type EventCb<K extends ServerEvent> = Parameters<
-  ClientToServerEvents[K]
+export type EventCb<E extends ServerEvent> = Parameters<
+  ClientToServerEvents[E]
 >[0] extends Function
-  ? Parameters<ClientToServerEvents[K]>[0]
-  : Parameters<ClientToServerEvents[K]>[1] extends Function
-  ? Parameters<ClientToServerEvents[K]>[1]
+  ? Parameters<ClientToServerEvents[E]>[0]
+  : Parameters<ClientToServerEvents[E]>[1] extends Function
+  ? Parameters<ClientToServerEvents[E]>[1]
   : undefined;
 
-export interface Event<K extends ServerEvent> {
-  on: K;
-  invoke: (t: {
-    io: TypedIO;
-    socket: TypedSocket;
-    event: K;
-    peer: Peer;
-    payload: Payload<K>;
-    cb: EventCb<K>;
-    // cb: Parameters<ClientToServerEvents[K]>[0] extends Function
-    //   ? Parameters<ClientToServerEvents[K]>[0]
-    //   : Parameters<ClientToServerEvents[K]>[1] extends Function
-    //   ? Parameters<ClientToServerEvents[K]>[1]
-    //   : undefined;
-  }) => void | Promise<void>;
+export interface BaseParams<E extends ServerEvent> {
+  io: TypedIO;
+  socket: TypedSocket;
+  event: E;
+  peer: Peer;
+  payload: Payload<E>;
 }
+
+export interface CallbackEventParams<E extends ServerEvent>
+  extends BaseParams<E> {
+  cb: EventCb<E>;
+}
+
+export type InvokeParams<E extends ServerEvent> =
+  | EventParams<E>
+  | CallbackEventParams<E>;
+
+interface EventParams<E extends ServerEvent> extends BaseParams<E> {}
+
+type Invoke<E extends ServerEvent> = (
+  t: InvokeParams<E>
+) => void | Promise<void>;
+
+interface BaseEvent<E extends ServerEvent> {
+  on: E;
+  invoke: Invoke<E>;
+}
+
+export interface Event<E extends ServerEvent> extends BaseEvent<E> {}
+
+export interface CallbackEvent<E extends ServerEvent>
+  extends Omit<BaseEvent<E>, "invoke"> {
+  invoke: (t: CallbackEventParams<E>) => void | Promise<void>;
+}
+
+export type E = Event<ServerEvent> | CallbackEvent<ServerEvent>;

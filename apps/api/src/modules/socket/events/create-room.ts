@@ -1,9 +1,9 @@
-import type { Event } from "../types";
+import type { CallbackEvent } from "../types";
 import { MediasoupRoom } from "../../../mediasoup/room";
 import { RoomVisibility, RoomSpan, type Room } from "types";
 import { BadRequestError } from "@kamalyb/errors";
 
-export const handler: Event<"create room"> = {
+export const handler: CallbackEvent<"create room"> = {
   on: "create room",
   invoke: async ({ payload, cb, io, peer }) => {
     let name = payload.name;

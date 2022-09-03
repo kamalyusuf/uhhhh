@@ -1,7 +1,7 @@
-import type { Event } from "../types";
+import type { CallbackEvent } from "../types";
 import { BadRequestError } from "@kamalyb/errors";
 
-export const handler: Event<"room login"> = {
+export const handler: CallbackEvent<"room login"> = {
   on: "room login",
   invoke: async ({ payload, cb }) => {
     const room = await deps.room.findById(payload.room_id);

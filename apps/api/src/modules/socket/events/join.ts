@@ -1,7 +1,7 @@
-import type { Event } from "../types";
+import type { CallbackEvent } from "../types";
 import { MediasoupRoom } from "../../../mediasoup/room";
 
-export const handler: Event<"join"> = {
+export const handler: CallbackEvent<"join"> = {
   on: "join",
   invoke: async ({ peer, payload, socket, cb }) => {
     if (peer.active_room_id) throw new Error("already in a room");
