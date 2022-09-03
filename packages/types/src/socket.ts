@@ -11,7 +11,7 @@ export type Direction = "send" | "receive";
 export type EventError = {
   event?: Exclude<
     keyof ServerToClientEvents<{}, {}, {}, {}, {}>,
-    "event error"
+    "request error"
   >;
   errors: Omit<ErrorProps, "location">[];
 };
@@ -23,6 +23,10 @@ export interface ServerToClientEvents<
   RtpParameters,
   ConsumerType
 > {
+  "request error": (t: EventError) => void;
+
+  error: (t: EventError) => void;
+
   "rtp capabilities": (t: { rtp_capabilities: RtpCapabilities }) => void;
 
   "create transport": (t: { transport: OutgoingTransport }) => void;
@@ -32,10 +36,6 @@ export interface ServerToClientEvents<
   produce: (t: { id: string }) => void;
 
   join: (t: { peers: User[] }) => void;
-
-  "event error": (t: EventError) => void;
-
-  error: (t: { errors: EventError["errors"] }) => void;
 
   rooms: (t: { rooms: Room[] }) => void;
 
@@ -145,6 +145,8 @@ export interface ClientToServerEvents<
     },
     cb: Cb<{ peers: User[] }>
   ) => void;
+
+  room: (t: { room_id: string }, cb: Cb<{ room: Room }>) => void;
 
   rooms: (cb: Cb<{ rooms: Room[] }>) => void;
 

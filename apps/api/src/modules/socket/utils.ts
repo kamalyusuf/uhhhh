@@ -43,8 +43,10 @@ export const validateArgs = (
 ): {
   cb: (() => void) | undefined;
   payload: Payload<ServerEvent> | undefined;
+  __request__: boolean;
 } => {
-  if (!args.length) return { payload: undefined, cb: undefined };
+  if (!args.length)
+    return { payload: undefined, cb: undefined, __request__: false };
 
   if (args.length > 2) throw error;
 
@@ -52,15 +54,26 @@ export const validateArgs = (
 
   let callbackFn: (() => void) | undefined;
   let data: Payload<ServerEvent> | undefined;
+  let __request__ = false;
+
+  const set = (payload: { __request__?: boolean } & { [key: string]: any }) => {
+    if (payload.__request__) __request__ = true;
+
+    delete payload.__request__;
+  };
 
   if (payload && cb) {
     isObjectOrThrow(payload, "payload");
     isFunctionOrThrow(cb, "callback");
 
+    set(payload);
+
     data = payload;
     callbackFn = cb;
   } else if (payload && !cb && typeof payload !== "function") {
     isObjectOrThrow(payload, "payload");
+
+    set(payload);
 
     data = payload;
     callbackFn = undefined;
@@ -77,7 +90,7 @@ export const validateArgs = (
     callbackFn = cb;
   } else throw error;
 
-  return { payload: data, cb: callbackFn };
+  return { payload: data, cb: callbackFn, __request__ };
 };
 
 export class NotJoinedError extends Error {
@@ -142,11 +155,9 @@ export const onError = ({
   peer: Peer;
   __request__?: boolean;
 }) => {
-  // const ev = __request__ ? "request error" : "event error";
+  const ev = __request__ ? "request error" : "error";
 
-  const ev = "event error";
-
-  const on = event.on;
+  const on = event.on as Exclude<keyof ServerToClientEvents, "request error">;
 
   if (error instanceof CustomError) {
     const errors: EventError["errors"] = error.serialize();

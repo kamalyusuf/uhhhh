@@ -1,5 +1,4 @@
-import { AxiosError } from "axios";
-import type { ApiError, Room } from "types";
+import type { EventError, Room } from "types";
 import { Alert } from "../../components/Alert";
 import { Layout } from "../../components/Layout";
 
@@ -8,7 +7,7 @@ export const RoomFetchError = ({
   error
 }: {
   room?: Room;
-  error: AxiosError<ApiError>;
+  error: EventError;
 }) => {
   return (
     <Layout>

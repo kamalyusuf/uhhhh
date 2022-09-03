@@ -1,4 +1,4 @@
-import { QueryClient, type QueryFunction } from "react-query";
+import { QueryClient, type QueryFunction } from "@tanstack/react-query";
 import { api } from "./api";
 
 export const defaultQueryFn: QueryFunction = async ({ queryKey }) =>

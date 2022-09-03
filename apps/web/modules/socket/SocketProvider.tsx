@@ -19,12 +19,14 @@ type Context = {
   socket: TypedSocket;
   setSocket: (socket: TypedSocket) => void;
   state: SocketState;
+  connected: boolean;
 };
 
 export const SocketContext = createContext<Context>({
   socket: null,
   setSocket: () => {},
-  state: "idle"
+  state: "idle",
+  connected: false
 });
 
 interface Props {}
@@ -46,7 +48,8 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
         reconnectionAttempts: 2,
         query: {
           user: JSON.stringify(me)
-        }
+        },
+        transports: ["websocket", "polling"]
       });
 
       setSocket(s);
@@ -74,7 +77,10 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
 
   return (
     <SocketContext.Provider
-      value={useMemo(() => ({ socket, setSocket, state }), [socket, state])}
+      value={useMemo(
+        () => ({ socket, setSocket, state, connected: state === "connected" }),
+        [socket, state]
+      )}
     >
       {children}
     </SocketContext.Provider>

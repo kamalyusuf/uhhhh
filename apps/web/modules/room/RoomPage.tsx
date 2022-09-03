@@ -2,9 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { Group, Center, Loader } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { useRouter } from "next/router";
-import { useQuery } from "react-query";
-import { type Room, type ApiError, RoomStatus } from "types";
-import { AxiosError } from "axios";
+import { type Room, RoomStatus } from "types";
 import hark from "hark";
 import { useRoom } from "./useRoom";
 import { Layout } from "../../components/Layout";
@@ -12,7 +10,6 @@ import { Container } from "../../components/Container";
 import { RoomChat } from "./chat/RoomChat";
 import { RoomPanel } from "./RoomPanel";
 import type { PageComponent } from "../../types";
-import { api } from "../../lib/api";
 import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../hooks/use-socket";
 import { useMicStore } from "../../store/mic";
@@ -24,6 +21,7 @@ import { RoomFetchError } from "./RoomFetchError";
 import { RoomJoinError } from "./RoomJoinError";
 import { RoomError } from "./RoomError";
 import { useMounted } from "../../hooks/use-mounted";
+import { useSocketQuery } from "../../hooks/use-socket-query";
 
 // todo: revamp because too messy
 
@@ -31,18 +29,15 @@ export const RoomPage: PageComponent = () => {
   const router = useRouter();
   const _id = router.query.id as string | undefined;
   const mounted = useMounted();
-  const {
-    data: room,
-    isLoading,
-    error
-  } = useQuery<Room, AxiosError<ApiError>>(
-    ["room", _id],
-    async () => (await api.get<Room>(`/rooms/${_id}`)).data,
-    {
-      enabled: typeof window !== "undefined" && mounted && !!_id,
+  const { data, isLoading, error } = useSocketQuery({
+    event: "room",
+    payload: { room_id: _id },
+    options: {
+      _enabled: mounted && !!_id,
       refetchOnMount: "always"
     }
-  );
+  });
+  const room = data?.room;
   const { join, leave, mute, unmute } = useRoom(room?._id);
   const roomStore = useRoomStore();
   const { state: socketState, socket } = useSocket();

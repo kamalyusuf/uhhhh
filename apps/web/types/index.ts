@@ -22,3 +22,7 @@ export interface Message extends ChatMessage {
 export interface Peer extends User {
   consumers: string[];
 }
+
+export type NoObj = Record<string | number | symbol, never>;
+
+export type ExtraQueryKeys = (string | number | boolean)[];

@@ -1,16 +1,20 @@
 import { Router } from "express";
-import { ValidationError } from "@kamalyb/errors";
-import { isValidObjectId } from "../../utils/mongo";
 
 export const router = Router();
 
-router.get("/:id", async (req, res) => {
-  const id = req.params.id;
+// router.get("/", async (_req, res) => {
+//   const rooms = await deps.room.find();
 
-  if (!isValidObjectId(id))
-    throw new ValidationError({ message: "invalid id" });
+//   res.send(rooms);
+// });
 
-  const room = await deps.room.findById(id);
+// router.get("/:id", async (req, res) => {
+//   const id = req.params.id;
 
-  res.send(room);
-});
+//   if (!isValidObjectId(id))
+//     throw new ValidationError({ message: "invalid id" });
+
+//   const room = await deps.room.findById(id);
+
+//   res.send(room);
+// });

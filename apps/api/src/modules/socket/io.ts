@@ -62,10 +62,13 @@ class SocketIO {
         socket.on(event.on, async (...args: any[]) => {
           if (!this._io) throw new Error("io is not initialized");
 
-          let t;
+          let t,
+            __request__: boolean | undefined = false;
 
           try {
             t = validateArgs(...args);
+
+            __request__ = t.__request__;
 
             await event.invoke({
               io: this._io,
@@ -78,7 +81,7 @@ class SocketIO {
           } catch (e) {
             const error = e as Error;
 
-            onError({ error, peer, socket, event });
+            onError({ error, peer, socket, event, __request__ });
           }
         });
       }

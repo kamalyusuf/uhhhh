@@ -1,4 +1,8 @@
-import { useQuery, UseQueryOptions } from "react-query";
+import {
+  useQuery,
+  type UseQueryOptions,
+  type UseQueryResult
+} from "@tanstack/react-query";
 import type {
   ServerEvent,
   ClientToServerEvents
@@ -6,38 +10,73 @@ import type {
 import { useSocket } from "./use-socket";
 import { request } from "../utils/request";
 import type { EventError } from "types";
+import type { ExtraQueryKeys, NoObj } from "../types";
 
 type Fn = (...args: any) => any;
 
-type P<E extends ServerEvent> = Parameters<ClientToServerEvents[E]>;
+type Params<E extends ServerEvent> = Parameters<ClientToServerEvents[E]>;
 
-type Return<K extends ServerEvent> = P<K>[0] extends Fn
-  ? Parameters<P<K>[0]>[0]
-  : P<K>[1] extends Fn
-  ? Parameters<P<K>[1]>[0]
-  : void;
+type Return<K extends ServerEvent> = Params<K>[0] extends Fn
+  ? Parameters<Params<K>[0]>[0]
+  : Params<K>[1] extends Fn
+  ? Parameters<Params<K>[1]>[0]
+  : never;
 
-export const useSocketQuery = <K extends ServerEvent>(
-  event: K | [K, ...string[]],
-  payload: P<K>[0] extends undefined | Fn ? undefined : P<K>[0],
-  options: Omit<UseQueryOptions<Return<K>>, "enabled"> & { e?: boolean } = {}
-) => {
-  const { socket } = useSocket();
+interface Config<K extends ServerEvent> {
+  event: K | [K, ...ExtraQueryKeys[]];
+  payload: Params<K>[0] extends undefined | Fn ? NoObj : Params<K>[0];
+  options?: Omit<UseQueryOptions<Return<K>>, "enabled"> & {
+    _enabled?: boolean;
+  };
+}
+
+export function useSocketQuery<K extends ServerEvent>(
+  config: Config<K>
+): UseQueryResult<Return<K>, EventError>;
+
+export function useSocketQuery<K extends ServerEvent>(
+  event: Config<K>["event"],
+  payload: Config<K>["payload"],
+  options?: Config<K>["options"]
+): UseQueryResult<Return<K>, EventError>;
+
+export function useSocketQuery<K extends ServerEvent>(
+  arg: Config<K>["event"] | Config<K>,
+  payload?: Config<K>["payload"],
+  options?: Config<K>["options"]
+) {
+  const { socket, connected } = useSocket();
+
+  let event: Config<K>["event"];
+  let data: Config<K>["payload"];
+  let opts: Config<K>["options"];
+
+  const isConfig = typeof arg === "object" && !Array.isArray(arg);
+
+  if (isConfig) {
+    event = arg.event;
+    data = arg.payload;
+    opts = arg.options;
+  } else {
+    event = arg;
+    data = payload;
+    opts = options;
+  }
 
   return useQuery<Return<K>, EventError>(
-    event,
+    Array.isArray(event) ? event : [event],
     () =>
       request({
         socket,
         event: typeof event === "string" ? event : event[0],
-        payload
+        payload: data
       }),
     {
       enabled:
-        !!socket &&
         typeof window !== "undefined" &&
-        (typeof options.e === "undefined" ? true : options.e),
-      ...options
+        connected &&
+        (typeof opts?._enabled === "undefined" ? true : opts?._enabled),
+      ...(opts || {})
     }
   );
-};
+}

@@ -5,7 +5,7 @@ import { useConsumerStore } from "../../store/consumer";
 import { usePeerStore } from "../../store/peer";
 import { toast } from "react-toastify";
 import { useRoomStore } from "../../store/room";
-import { useQueryClient } from "react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import type { Room } from "types";
 import { useRoomChatStore } from "../../store/room-chat";
 
@@ -20,6 +20,10 @@ export const SocketHandler = () => {
 
   useEffect(() => {
     if (!socket) return;
+
+    socket.on("error", (error) => {
+      error.errors.forEach((e) => toast.error(e.message));
+    });
 
     socket.on(
       "new consumer",
@@ -81,23 +85,29 @@ export const SocketHandler = () => {
     });
 
     socket.on("delete room", ({ room_id }) => {
-      client.setQueryData<{ rooms: Room[] } | undefined>("rooms", (cached) => {
-        if (!cached) return undefined;
+      client.setQueryData<{ rooms: Room[] } | undefined>(
+        ["rooms"],
+        (cached) => {
+          if (!cached) return undefined;
 
-        return {
-          rooms: cached.rooms.filter((room) => room._id !== room_id)
-        };
-      });
+          return {
+            rooms: cached.rooms.filter((room) => room._id !== room_id)
+          };
+        }
+      );
     });
 
     socket.on("create room", ({ room }) => {
-      client.setQueryData<{ rooms: Room[] } | undefined>("rooms", (cached) => {
-        if (!cached) return undefined;
+      client.setQueryData<{ rooms: Room[] } | undefined>(
+        ["rooms"],
+        (cached) => {
+          if (!cached) return undefined;
 
-        return {
-          rooms: [...cached.rooms, room]
-        };
-      });
+          return {
+            rooms: [...cached.rooms, room]
+          };
+        }
+      );
     });
 
     socket.on("chat message", ({ message }) => {
@@ -105,22 +115,25 @@ export const SocketHandler = () => {
     });
 
     socket.on("update room members count", ({ room_id, members_count }) => {
-      client.setQueryData<{ rooms: Room[] } | undefined>("rooms", (cached) => {
-        if (!cached) return undefined;
+      client.setQueryData<{ rooms: Room[] } | undefined>(
+        ["rooms"],
+        (cached) => {
+          if (!cached) return undefined;
 
-        return {
-          rooms: cached.rooms.map((room) => {
-            if (room._id === room_id) {
-              return {
-                ...room,
-                members_count
-              };
-            } else {
-              return room;
-            }
-          })
-        };
-      });
+          return {
+            rooms: cached.rooms.map((room) => {
+              if (room._id === room_id) {
+                return {
+                  ...room,
+                  members_count
+                };
+              } else {
+                return room;
+              }
+            })
+          };
+        }
+      );
     });
 
     return () => {
