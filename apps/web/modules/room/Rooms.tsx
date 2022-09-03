@@ -5,9 +5,10 @@ import { Alert } from "../../components/Alert";
 import { c } from "../../utils/constants";
 
 export const Rooms = () => {
-  const { data, isLoading, isError } = useSocketQuery("rooms", undefined, {
-    refetchOnMount: "always",
-    retry: 3
+  const { data, isLoading, isError } = useSocketQuery({
+    event: "rooms",
+    payload: {},
+    options: { refetchOnMount: "always" }
   });
 
   if (isLoading)

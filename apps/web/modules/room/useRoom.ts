@@ -262,7 +262,7 @@ export const useRoom = (room_id: string) => {
     await request({
       socket,
       event: "leave",
-      payload: undefined
+      payload: {}
     });
 
     micStore.reset();

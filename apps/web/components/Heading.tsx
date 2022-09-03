@@ -1,6 +1,6 @@
-import { Title, TitleProps } from "@mantine/core";
+import { Title, type TitleProps } from "@mantine/core";
 import { forwardRef } from "react";
-import { Color } from "../types";
+import type { Color } from "../types";
 import { parse } from "../utils/color";
 
 interface Props extends TitleProps {

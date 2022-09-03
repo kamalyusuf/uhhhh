@@ -4,7 +4,6 @@ import { SocketEventError } from "./../../utils/socket-event-error";
 import { CustomError, NotAuthorizedError } from "@kamalyb/errors";
 import type {
   E,
-  Event,
   Payload,
   ServerEvent,
   ServerToClientEvents,
@@ -38,15 +37,8 @@ export const isFunctionOrThrow = (t: any, arg: Arg) => {
     throw new Error(`expected ${arg} to be a function`);
 };
 
-export const validateArgs = (
-  ...args: any[]
-): {
-  cb: (() => void) | undefined;
-  payload: Payload<ServerEvent> | undefined;
-  __request__: boolean;
-} => {
-  if (!args.length)
-    return { payload: undefined, cb: undefined, __request__: false };
+export const validateArgs = (...args: any[]) => {
+  if (!args.length) return { payload: undefined, cb: undefined };
 
   if (args.length > 2) throw error;
 
@@ -167,20 +159,19 @@ export const onError = ({
     return;
   }
 
-  if (!(error instanceof CustomError))
-    logger.error(error.message, error, {
-      capture: true,
-      extra: {
-        peer: { user: peer.user, active_room_id: peer.active_room_id },
-        event: event.on
-      }
-    });
+  logger.error(error.message, error, {
+    capture: true,
+    extra: {
+      peer: { user: peer.user, active_room_id: peer.active_room_id },
+      event: event.on
+    }
+  });
 
   socket.emit(
     ev,
     new SocketEventError(
       {
-        message: error.message ?? "internal server error"
+        message: error.message
       },
       on
     )

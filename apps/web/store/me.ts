@@ -4,6 +4,8 @@ import { nanoid } from "nanoid";
 import type { User } from "types";
 import Joi from "joi";
 
+// todo: should generate the id on the server
+
 const schema = Joi.object<User, true>({
   _id: Joi.string(),
   display_name: Joi.string()

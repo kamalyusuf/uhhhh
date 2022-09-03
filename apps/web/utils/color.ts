@@ -1,7 +1,7 @@
 import { MantineTheme } from "@mantine/core";
 import { Color } from "../types";
 
-export const parse = (theme: MantineTheme, color: Color | undefined) => {
+export const parse = (theme: MantineTheme, color: Color) => {
   switch (color) {
     case "white":
       return theme.white;
@@ -17,6 +17,6 @@ export const parse = (theme: MantineTheme, color: Color | undefined) => {
     case "tertiary":
       return theme.colors.indigo[6];
     default:
-      return undefined;
+      throw new Error("invalid color");
   }
 };

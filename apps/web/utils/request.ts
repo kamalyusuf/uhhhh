@@ -5,7 +5,6 @@ import type {
 } from "../modules/socket/types";
 import { toast } from "react-toastify";
 import type { NoObj } from "../types";
-import { clearTimeout } from "timers";
 
 type Fn = (...args: any) => any;
 
@@ -36,8 +35,6 @@ export const request = async <E extends ServerEvent>({
 
       reject(error);
     });
-
-    console.info("[socket.request] emitting", { event, payload });
 
     socket.emit(
       event,

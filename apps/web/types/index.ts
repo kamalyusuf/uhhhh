@@ -1,5 +1,5 @@
-import { NextPage } from "next";
-import { ChatMessage, User } from "types";
+import type { NextPage } from "next";
+import type { ChatMessage, User } from "types";
 
 export type Color =
   | "white"

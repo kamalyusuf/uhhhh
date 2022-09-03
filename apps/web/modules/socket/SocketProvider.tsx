@@ -5,72 +5,90 @@ import {
   useEffect,
   useMemo,
   useState,
-  useRef
+  useRef,
+  useCallback
 } from "react";
 import { toast } from "react-toastify";
 import type { TypedSocket } from "./types";
 import { useMeStore } from "../../store/me";
+import type { User } from "types";
 
 type V = TypedSocket | null;
 
-type SocketState = "idle" | "connected" | "error";
+type SocketState = "idle" | "connected" | "error" | "disconnected";
 
 type Context = {
   socket: TypedSocket;
-  setSocket: (socket: TypedSocket) => void;
   state: SocketState;
   connected: boolean;
 };
 
 export const SocketContext = createContext<Context>({
   socket: null,
-  setSocket: () => {},
   state: "idle",
   connected: false
 });
 
-interface Props {}
+const connect = (me: User): Promise<TypedSocket> => {
+  return new Promise<TypedSocket>((resolve, reject) => {
+    const socket: TypedSocket = io(process.env.NEXT_PUBLIC_API_URL, {
+      rememberUpgrade: true,
+      path: "/ws",
+      autoConnect: true,
+      reconnectionAttempts: 2,
+      transports: ["websocket", "polling"],
+      withCredentials: true,
+      query: {
+        user: JSON.stringify(me)
+      }
+    });
 
-export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
+    socket.on("connect", () => resolve(socket));
+
+    socket.on("connect_error", reject);
+
+    socket.io.on("error", reject);
+
+    socket.on("disconnect", () => {
+      reject(new Error("socket disconnected"));
+    });
+  });
+};
+
+export const SocketProvider = ({ children }: PropsWithChildren<{}>) => {
   const [socket, setSocket] = useState<V>(null);
   const { me } = useMeStore();
   const [state, setState] = useState<SocketState>("idle");
   const called = useRef(false);
 
-  useEffect(() => {
-    if (!socket && !!me && !called.current) {
-      called.current = true;
-
-      const s = io(process.env.NEXT_PUBLIC_API_URL, {
-        rememberUpgrade: true,
-        path: "/ws",
-        autoConnect: true,
-        reconnectionAttempts: 2,
-        query: {
-          user: JSON.stringify(me)
-        },
-        transports: ["websocket", "polling"]
-      });
+  const initialize = useCallback(async () => {
+    try {
+      const s = await connect(me);
 
       setSocket(s);
+      setState("connected");
+    } catch (e) {
+      console.log(e);
+
+      if (e.message === "socket disconnected") setState("disconnected");
+      else setState("error");
+
+      toast.error("websocket connection failed");
     }
-  }, [socket, me]);
+  }, [me]);
+
+  useEffect(() => {
+    if (!!me && !socket && !called.current) {
+      called.current = true;
+
+      initialize();
+    }
+  }, [me, socket, initialize]);
 
   useEffect(() => {
     if (!socket) return;
 
-    socket.on("connect", () => {
-      setState("connected");
-    });
-
-    socket.on("connect_error", (error) => {
-      setState("error");
-
-      toast.error(error.message);
-    });
-
     return () => {
-      socket.removeAllListeners();
       socket.disconnect();
     };
   }, [socket]);
@@ -78,7 +96,7 @@ export const SocketProvider = ({ children }: PropsWithChildren<Props>) => {
   return (
     <SocketContext.Provider
       value={useMemo(
-        () => ({ socket, setSocket, state, connected: state === "connected" }),
+        () => ({ socket, state, connected: state === "connected" }),
         [socket, state]
       )}
     >

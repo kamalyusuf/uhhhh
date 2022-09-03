@@ -36,9 +36,7 @@ export const SocketHandler = () => {
         app_data,
         producer_paused
       }) => {
-        if (!transportStore.receive_transport) {
-          return;
-        }
+        if (!transportStore.receive_transport) return;
 
         const consumer = await transportStore.receive_transport.consume({
           id,
@@ -61,6 +59,7 @@ export const SocketHandler = () => {
 
     socket.on("new peer", ({ peer }) => {
       peerStore.add(peer);
+
       toast.info(`${peer.display_name} has joined the room`);
     });
 
@@ -85,29 +84,23 @@ export const SocketHandler = () => {
     });
 
     socket.on("delete room", ({ room_id }) => {
-      client.setQueryData<{ rooms: Room[] } | undefined>(
-        ["rooms"],
-        (cached) => {
-          if (!cached) return undefined;
+      client.setQueryData<{ rooms: Room[] }>(["rooms"], (cached) => {
+        if (!cached) return undefined;
 
-          return {
-            rooms: cached.rooms.filter((room) => room._id !== room_id)
-          };
-        }
-      );
+        return {
+          rooms: cached.rooms.filter((room) => room._id !== room_id)
+        };
+      });
     });
 
     socket.on("create room", ({ room }) => {
-      client.setQueryData<{ rooms: Room[] } | undefined>(
-        ["rooms"],
-        (cached) => {
-          if (!cached) return undefined;
+      client.setQueryData<{ rooms: Room[] }>(["rooms"], (cached) => {
+        if (!cached) return undefined;
 
-          return {
-            rooms: [...cached.rooms, room]
-          };
-        }
-      );
+        return {
+          rooms: [...cached.rooms, room]
+        };
+      });
     });
 
     socket.on("chat message", ({ message }) => {
@@ -122,14 +115,12 @@ export const SocketHandler = () => {
 
           return {
             rooms: cached.rooms.map((room) => {
-              if (room._id === room_id) {
+              if (room._id === room_id)
                 return {
                   ...room,
                   members_count
                 };
-              } else {
-                return room;
-              }
+              else return room;
             })
           };
         }

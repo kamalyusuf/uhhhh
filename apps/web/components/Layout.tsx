@@ -1,6 +1,5 @@
-import React from "react";
 import { NavBar } from "./NavBar";
-import { Stack, StackProps } from "@mantine/core";
+import { Stack, type StackProps } from "@mantine/core";
 import Head from "next/head";
 
 export const Layout = ({

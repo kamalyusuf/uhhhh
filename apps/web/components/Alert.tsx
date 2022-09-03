@@ -11,7 +11,7 @@ import { type CSSProperties } from "react";
 
 interface Props {
   type: "success" | "error" | "warning" | "info";
-  message: AxiosError<ApiError> | string | EventError;
+  message: AxiosError<ApiError> | string | EventError | Error;
   wrap?: boolean;
   style?: CSSProperties;
 }
@@ -26,14 +26,7 @@ const icons: Record<Props["type"], any> = {
 export const Alert = ({ type, message, wrap, style }: Props) => {
   const color = c.colors[type];
   const Icon = icons[type];
-  const m =
-    typeof message === "string"
-      ? message
-      : message instanceof AxiosError
-      ? parse(message).messages[0]
-      : message.errors
-      ? message.errors[0].message
-      : (message as unknown as Error).message || "something went wrong";
+  const m = msg(message);
 
   const component = (
     <Container my={wrap ? 20 : undefined} style={style}>
@@ -61,3 +54,13 @@ export const Alert = ({ type, message, wrap, style }: Props) => {
 
   return wrap ? <Layout>{component}</Layout> : component;
 };
+
+function msg(message: Props["message"]): string {
+  if (typeof message === "string") return message;
+
+  if (message instanceof AxiosError) return parse(message).messages[0];
+
+  if ("errors" in message) return message.errors[0].message;
+
+  return message.message;
+}

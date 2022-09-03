@@ -29,6 +29,7 @@ const useForceScrollToBottom = (messages: Message[]) => {
   useEffect(() => {
     if (messages.length && !focus.current) {
       focus.current = true;
+
       check();
     }
   }, [messages, messages.length]);

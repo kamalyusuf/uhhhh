@@ -1,6 +1,5 @@
 import type { Id } from "../../types/types";
 import { RoomRepository } from "./room.repository";
-import { Types } from "mongoose";
 import { NotFoundError } from "@kamalyb/errors";
 import { env } from "../../lib/env";
 import { RoomVisibility, User, RoomSpan, RoomStatus } from "types";
