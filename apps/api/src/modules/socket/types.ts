@@ -13,7 +13,7 @@ import {
   SocketData
 } from "types";
 import { Socket, Server as SocketServer } from "socket.io";
-import { Peer } from "../mediasoup/peer";
+import { Peer } from "../../mediasoup/peer";
 
 interface OutgoingTransportOptions {
   id: WebRtcTransport["id"];
@@ -62,19 +62,27 @@ export type Payload<K extends ServerEvent> = Parameters<
   ? undefined
   : Parameters<ClientToServerEvents[K]>[0];
 
+export type EventCb<K extends ServerEvent> = Parameters<
+  ClientToServerEvents[K]
+>[0] extends Function
+  ? Parameters<ClientToServerEvents[K]>[0]
+  : Parameters<ClientToServerEvents[K]>[1] extends Function
+  ? Parameters<ClientToServerEvents[K]>[1]
+  : undefined;
+
 export interface Event<K extends ServerEvent> {
   on: K;
   invoke: (t: {
     io: TypedIO;
     socket: TypedSocket;
     event: K;
-    req: Express.Request;
     peer: Peer;
     payload: Payload<K>;
-    cb: Parameters<ClientToServerEvents[K]>[0] extends Function
-      ? Parameters<ClientToServerEvents[K]>[0]
-      : Parameters<ClientToServerEvents[K]>[1] extends Function
-      ? Parameters<ClientToServerEvents[K]>[1]
-      : undefined;
+    cb: EventCb<K>;
+    // cb: Parameters<ClientToServerEvents[K]>[0] extends Function
+    //   ? Parameters<ClientToServerEvents[K]>[0]
+    //   : Parameters<ClientToServerEvents[K]>[1] extends Function
+    //   ? Parameters<ClientToServerEvents[K]>[1]
+    //   : undefined;
   }) => void | Promise<void>;
 }

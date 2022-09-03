@@ -1,4 +1,17 @@
-import { Payload, ServerEvent } from "../socket/types";
+import { Peer } from "../../mediasoup/peer";
+import { logger } from "./../../lib/logger";
+import { SocketEventError } from "./../../utils/socket-event-error";
+import { CustomError, NotAuthorizedError } from "@kamalyb/errors";
+import type {
+  Event,
+  Payload,
+  ServerEvent,
+  ServerToClientEvents,
+  TypedIO,
+  TypedSocket
+} from "./types";
+import Joi from "joi";
+import type { EventError, User } from "types";
 
 type Arg = "payload" | "callback";
 
@@ -24,7 +37,7 @@ export const isFunctionOrThrow = (t: any, arg: Arg) => {
     throw new Error(`expected ${arg} to be a function`);
 };
 
-export const validatePayloadAndCb = (
+export const validateArgs = (
   ...args: any[]
 ): {
   cb: (() => void) | undefined;
@@ -89,3 +102,75 @@ export class NoConsumerFoundError extends Error {
     super(`no constumer with id ${id} found`);
   }
 }
+
+const schema = Joi.object<User, true>({
+  _id: Joi.string(),
+  display_name: Joi.string()
+});
+
+export const authenticate: Parameters<TypedIO["use"]>[0] = (socket, next) => {
+  const raw = socket.handshake.query.user;
+
+  if (!raw || typeof raw !== "string") return next(new NotAuthorizedError());
+
+  let parsed;
+
+  try {
+    parsed = JSON.parse(raw);
+  } catch (e) {}
+
+  if (!parsed) return next(new NotAuthorizedError());
+
+  const { error } = schema.validate(parsed);
+
+  if (error) return next(new NotAuthorizedError());
+
+  next();
+};
+
+export const onError = ({
+  error,
+  peer,
+  socket,
+  event,
+  __request__
+}: {
+  error: Error;
+  socket: TypedSocket;
+  event: Event<ServerEvent>;
+  peer: Peer;
+  __request__?: boolean;
+}) => {
+  // const ev = __request__ ? "request error" : "event error";
+
+  const ev = "event error";
+
+  const on = event.on;
+
+  if (error instanceof CustomError) {
+    const errors: EventError["errors"] = error.serialize();
+
+    socket.emit(ev, new SocketEventError(errors, on));
+
+    return;
+  }
+
+  if (!(error instanceof CustomError))
+    logger.error(error.message, error, {
+      capture: true,
+      extra: {
+        peer: { user: peer.user, active_room_id: peer.active_room_id },
+        event: event.on
+      }
+    });
+
+  socket.emit(
+    ev,
+    new SocketEventError(
+      {
+        message: error.message ?? "internal server error"
+      },
+      on
+    )
+  );
+};

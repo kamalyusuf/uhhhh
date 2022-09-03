@@ -1,5 +1,4 @@
 import { Router } from "express";
-import listRoutes from "@kamalyb/express-list-routes";
 import { router as RoomRouter } from "../modules/room/room.route";
 import { useGlobalErrorHandler } from "../middlewares/error";
 import { NotFoundError } from "@kamalyb/errors";
@@ -17,4 +16,4 @@ router.use((_, __, ___) => {
 
 router.use(useGlobalErrorHandler);
 
-listRoutes(router);
+require("express-list-routes")(router);

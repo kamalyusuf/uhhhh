@@ -2,16 +2,14 @@ import {
   Producer,
   Consumer,
   Transport,
-  RtpCapabilities
+  type RtpCapabilities
 } from "mediasoup/node/lib/types";
-import { User } from "types";
-import { TypedSocket } from "../socket/types";
+import type { User } from "types";
+import type { TypedSocket } from "../modules/socket/types";
 
 export class Peer {
-  static peers: Map<string, Peer> = new Map();
+  private static _peers: Map<string, Peer> = new Map();
 
-  // note to self: we're receiving the user from the client.
-  // and peer.user because user corresponds with the client socket
   public user: User;
   public socket: TypedSocket;
   public active_room_id?: string;
@@ -32,15 +30,15 @@ export class Peer {
   static create(t: { user: User; socket: TypedSocket }) {
     const peer = new Peer(t);
 
-    this.peers.set(peer.user._id, peer);
+    this._peers.set(peer.user._id, peer);
 
     return peer;
   }
 
   static remove(peer: Peer) {
-    if (!this.peers.has(peer.user._id)) return;
+    if (!this._peers.has(peer.user._id)) return;
 
-    this.peers.delete(peer.user._id);
+    this._peers.delete(peer.user._id);
   }
 
   private closeProducers() {

@@ -1,7 +1,7 @@
-import { Event } from "../types";
-import { NoTransportFoundError } from "../../utils/socket";
+import type { Event } from "../types";
+import { NoTransportFoundError } from "../utils";
 
-const handler: Event<"connect transport"> = {
+export const handler: Event<"connect transport"> = {
   on: "connect transport",
   invoke: async ({ peer, payload, cb }) => {
     const transport = peer.transports.get(payload.transport_id);
@@ -13,5 +13,3 @@ const handler: Event<"connect transport"> = {
     cb();
   }
 };
-
-export default handler;

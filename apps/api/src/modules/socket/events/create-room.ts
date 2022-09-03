@@ -1,9 +1,9 @@
-import { Event } from "../types";
-import { MediasoupRoom } from "../../mediasoup/room";
-import { RoomVisibility, RoomSpan, Room } from "types";
+import type { Event } from "../types";
+import { MediasoupRoom } from "../../../mediasoup/room";
+import { RoomVisibility, RoomSpan, type Room } from "types";
 import { BadRequestError } from "@kamalyb/errors";
 
-const handler: Event<"create room"> = {
+export const handler: Event<"create room"> = {
   on: "create room",
   invoke: async ({ payload, cb, io, peer }) => {
     let name = payload.name;
@@ -53,5 +53,3 @@ const handler: Event<"create room"> = {
     });
   }
 };
-
-export default handler;

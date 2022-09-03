@@ -14,6 +14,7 @@ export const start = ({
 
     server.on("listening", () => {
       logger.info(`api on http://localhost:${port}`.green);
+
       resolve(server);
     });
 

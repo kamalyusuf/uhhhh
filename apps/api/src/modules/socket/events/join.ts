@@ -1,7 +1,7 @@
-import { Event } from "../types";
-import { MediasoupRoom } from "../../mediasoup/room";
+import type { Event } from "../types";
+import { MediasoupRoom } from "../../../mediasoup/room";
 
-const handler: Event<"join"> = {
+export const handler: Event<"join"> = {
   on: "join",
   invoke: async ({ peer, payload, socket, cb }) => {
     if (peer.active_room_id) throw new Error("already in a room");
@@ -18,20 +18,16 @@ const handler: Event<"join"> = {
 
     const peers = room._peers().filter((p) => p.user._id !== peer.user._id);
 
-    for (const p of peers) {
-      for (const producer of p.producers.values()) {
+    for (const p of peers)
+      for (const producer of p.producers.values())
         await room.createConsumer({
           consumer_peer: peer,
           producer_peer: p,
           producer
         });
-      }
-    }
 
     socket.to(payload.room_id).emit("new peer", { peer: peer.user });
 
     cb({ peers: room.users().filter((p) => p._id !== peer.user._id) });
   }
 };
-
-export default handler;

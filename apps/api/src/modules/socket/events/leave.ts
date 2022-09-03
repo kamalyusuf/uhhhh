@@ -1,7 +1,7 @@
-import { Event } from "../types";
-import { MediasoupRoom } from "../../mediasoup/room";
+import type { Event } from "../types";
+import { MediasoupRoom } from "../../../mediasoup/room";
 
-const handler: Event<"leave"> = {
+export const handler: Event<"leave"> = {
   on: "leave",
   invoke: async ({ peer, socket, cb }) => {
     if (!peer.active_room_id) return cb();
@@ -17,5 +17,3 @@ const handler: Event<"leave"> = {
     cb();
   }
 };
-
-export default handler;

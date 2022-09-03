@@ -1,8 +1,7 @@
-import { Event } from "../types";
-import { logger } from "../../lib/logger";
-import { NoConsumerFoundError } from "../../utils/socket";
+import type { Event } from "../types";
+import { NoConsumerFoundError } from "../utils";
 
-const handler: Event<"consumer consumed"> = {
+export const handler: Event<"consumer consumed"> = {
   on: "consumer consumed",
   invoke: async ({ peer, payload }) => {
     const consumer = peer.consumers.get(payload.consumer_id);
@@ -12,5 +11,3 @@ const handler: Event<"consumer consumed"> = {
     await consumer.resume();
   }
 };
-
-export default handler;

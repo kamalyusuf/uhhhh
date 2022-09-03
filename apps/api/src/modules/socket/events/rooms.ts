@@ -1,8 +1,8 @@
-import { Event } from "../types";
-import { MediasoupRoom } from "../../mediasoup/room";
-import { Room } from "types";
+import type { Event } from "../types";
+import { MediasoupRoom } from "../../../mediasoup/room";
+import type { Room } from "types";
 
-const handler: Event<"rooms"> = {
+export const handler: Event<"rooms"> = {
   on: "rooms",
   invoke: async ({ cb }) => {
     const data = await deps.room.find();
@@ -32,5 +32,3 @@ const handler: Event<"rooms"> = {
     });
   }
 };
-
-export default handler;

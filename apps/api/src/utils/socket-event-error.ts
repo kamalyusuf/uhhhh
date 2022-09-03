@@ -1,4 +1,4 @@
-import { EventError } from "types";
+import type { EventError } from "types";
 
 type T =
   | string

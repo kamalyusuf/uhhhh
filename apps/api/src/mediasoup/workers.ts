@@ -1,10 +1,12 @@
 import * as mediasoup from "mediasoup";
 import { Worker } from "mediasoup/node/lib/types";
 import os from "os";
+import { logger } from "src/lib/logger";
 import { env } from "../lib/env";
 
 class MediasoupWorkers {
   private workers: Worker[];
+
   private worker_idx = 0;
 
   constructor() {
@@ -33,8 +35,9 @@ class MediasoupWorkers {
         rtcMaxPort: env.MEDIASOUP_MAX_PORT
       });
 
-      worker.on("died", () => {
-        console.log("mediasoup worker died".red);
+      worker.on("died", (e) => {
+        logger.error("mediasoup worker died", e, { capture: true });
+
         setTimeout(() => {
           process.exit(1);
         }, 2000);

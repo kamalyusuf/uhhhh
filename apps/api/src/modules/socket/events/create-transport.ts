@@ -1,8 +1,8 @@
-import { MediasoupRoom } from "../../mediasoup/room";
-import { Event } from "../types";
-import { env } from "../../lib/env";
+import { MediasoupRoom } from "../../../mediasoup/room";
+import type { Event } from "../types";
+import { env } from "../../../lib/env";
 
-const handler: Event<"create transport"> = {
+export const handler: Event<"create transport"> = {
   on: "create transport",
   invoke: async ({ peer, payload: { room_id, direction }, cb }) => {
     const room = MediasoupRoom.findById(room_id);
@@ -35,5 +35,3 @@ const handler: Event<"create transport"> = {
     });
   }
 };
-
-export default handler;

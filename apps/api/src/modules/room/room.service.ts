@@ -1,3 +1,4 @@
+import type { Id } from "../../types/types";
 import { RoomRepository } from "./room.repository";
 import { Types } from "mongoose";
 import { NotFoundError } from "@kamalyb/errors";
@@ -6,7 +7,7 @@ import { RoomVisibility, User, RoomSpan, RoomStatus } from "types";
 import argon2 from "argon2";
 
 export class RoomService {
-  constructor(private readonly roomRepo: RoomRepository) {}
+  constructor(private readonly repo: RoomRepository) {}
 
   async create({
     name,
@@ -23,7 +24,7 @@ export class RoomService {
     span?: RoomSpan;
     password?: string;
   }) {
-    return this.roomRepo.createOne({
+    return this.repo.create({
       name,
       description,
       visibility,
@@ -35,30 +36,32 @@ export class RoomService {
   }
 
   async find() {
-    return this.roomRepo.find(
+    return this.repo.find(
       {
         visibility: {
           $eq: RoomVisibility.PUBLIC
         }
       },
       {
-        sort: {
-          created_at: -1
-        },
-        lean: true
+        options: {
+          sort: {
+            created_at: -1
+          },
+          lean: true
+        }
       }
     );
   }
 
-  async findById(_id: Types.ObjectId) {
-    const room = await this.roomRepo.findById(_id);
+  async findById(_id: Id) {
+    const room = await this.repo.findById(_id);
 
     if (!room) throw new NotFoundError("no room found");
 
     return room;
   }
 
-  async _delete(_id: Types.ObjectId): Promise<boolean> {
+  async delete(_id: Id): Promise<boolean> {
     let room;
 
     try {

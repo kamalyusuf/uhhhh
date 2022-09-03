@@ -1,8 +1,8 @@
-import { MediasoupRoom } from "../../mediasoup/room";
-import { Event } from "../types";
-import { NotJoinedError } from "../../utils/socket";
+import { MediasoupRoom } from "../../../mediasoup/room";
+import type { Event } from "../types";
+import { NotJoinedError } from "../utils";
 
-const handler: Event<"active speaker"> = {
+export const handler: Event<"active speaker"> = {
   on: "active speaker",
   invoke: ({ peer, payload, io }) => {
     if (!peer.active_room_id) throw new NotJoinedError();
@@ -17,5 +17,3 @@ const handler: Event<"active speaker"> = {
     });
   }
 };
-
-export default handler;

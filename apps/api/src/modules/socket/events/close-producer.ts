@@ -1,7 +1,7 @@
-import { Event } from "../types";
-import { NotJoinedError, NoProducerFoundError } from "../../utils/socket";
+import type { Event } from "../types";
+import { NotJoinedError, NoProducerFoundError } from "../utils";
 
-const handler: Event<"close producer"> = {
+export const handler: Event<"close producer"> = {
   on: "close producer",
   invoke: ({ peer, payload, cb }) => {
     if (!peer.active_room_id) throw new NotJoinedError();
@@ -17,5 +17,3 @@ const handler: Event<"close producer"> = {
     cb();
   }
 };
-
-export default handler;

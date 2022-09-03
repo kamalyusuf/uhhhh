@@ -1,106 +1,95 @@
-import {
-  Model as MongooseModel,
-  HydratedDocument,
-  Types,
-  SaveOptions,
-  QueryOptions,
-  FilterQuery,
-  UpdateQuery
+import mongoose, {
+  type Model as MongooseModel,
+  type HydratedDocument,
+  type SaveOptions,
+  type FilterQuery,
+  type QueryOptions as DefaultQueryOptions
 } from "mongoose";
-import type { MongooseSchemaProps, Timestamp } from "../../types/types";
+import type { QueryOptions } from "../types";
+import type { Id, MongooseSchemaProps, Timestamp } from "../../types/types";
 
 export abstract class BaseRepository<
-  Props extends Timestamp,
+  Props extends Timestamp & { _id: mongoose.Types.ObjectId },
   Methods extends {},
+  Virtuals extends {},
+  Statics extends {},
   T = MongooseSchemaProps<Props>
 > {
-  constructor(protected readonly Model: MongooseModel<Props, {}, Methods>) {}
+  constructor(
+    protected readonly Model: MongooseModel<Props, {}, Methods, Virtuals> &
+      Statics
+  ) {}
 
-  build(props: T): HydratedDocument<Props, Methods> {
+  build(props: T): HydratedDocument<Props, Methods, Virtuals> {
+    // @ts-ignore
     return new this.Model(props);
   }
 
-  async createOne(props: T): Promise<HydratedDocument<Props, Methods>> {
-    return this.Model.create(props);
-  }
-
+  async create(props: T): Promise<HydratedDocument<Props, Methods, Virtuals>>;
   async create(
-    docs: T[],
+    props: T[],
     options?: SaveOptions
-  ): Promise<Array<HydratedDocument<Props, Methods>>> {
-    return this.Model.create(docs, options);
+  ): Promise<HydratedDocument<Props, Methods, Virtuals>[]>;
+  async create(
+    props: T | T[],
+    options?: SaveOptions
+  ): Promise<
+    | HydratedDocument<Props, Methods, Virtuals>
+    | HydratedDocument<Props, Methods, Virtuals>[]
+  > {
+    // @ts-ignore
+    return this.Model.create(props, options);
   }
 
-  async findById(
-    _id: Types.ObjectId,
-    options?: QueryOptions
-  ): Promise<HydratedDocument<Props, Methods> | null> {
+  async findById<Lean extends boolean = false>(
+    _id: Id,
+    opts?: {
+      options?: QueryOptions<Props, Lean>;
+    }
+  ): Promise<
+    Lean extends true
+      ? Props | null
+      : HydratedDocument<Props, Methods, Virtuals> | null
+  > {
     let query = this.Model.findById(_id);
 
-    if (options) query = query.setOptions(options);
+    if (opts?.options)
+      query = query.setOptions(opts.options as DefaultQueryOptions);
 
     return query;
   }
 
-  async exists(filter: FilterQuery<Props>): Promise<boolean> {
-    const exists = await this.Model.exists(filter);
-
-    return Boolean(exists);
+  async exists(filter: FilterQuery<Props>) {
+    return this.Model.exists(filter);
   }
 
-  async findOne(
+  async findOne<Lean extends boolean = false>(
     filter: FilterQuery<Props>,
-    options?: QueryOptions
-  ): Promise<HydratedDocument<Props, Methods> | null> {
+    opts?: { options?: QueryOptions<Props, Lean> }
+  ): Promise<
+    Lean extends true
+      ? Props | null
+      : HydratedDocument<Props, Methods, Virtuals> | null
+  > {
     let query = this.Model.findOne(filter);
 
-    if (options) query = query.setOptions(options);
+    if (opts?.options)
+      query = query.setOptions(opts.options as DefaultQueryOptions);
 
     return query;
   }
 
-  async find(
+  async find<Lean extends boolean = false>(
     filter: FilterQuery<Props>,
-    options?: QueryOptions
-  ): Promise<HydratedDocument<Props, Methods>[]> {
+    opts?: { options?: QueryOptions<Props, Lean> }
+  ): Promise<
+    Lean extends true ? Props[] : HydratedDocument<Props, Methods, Virtuals>[]
+  > {
     let query = this.Model.find(filter);
 
-    if (options) query = query.setOptions(options);
+    if (opts?.options)
+      query = query.setOptions(opts.options as DefaultQueryOptions);
 
     return query;
-  }
-
-  async save(
-    doc: HydratedDocument<Props, Methods>,
-    options?: SaveOptions
-  ): Promise<HydratedDocument<Props, Methods>> {
-    return doc.save(options);
-  }
-
-  async setAndSave(
-    doc: HydratedDocument<Props, Methods>,
-    props: Partial<T>,
-    options?: SaveOptions
-  ): Promise<HydratedDocument<Props, Methods>> {
-    doc.set(props);
-
-    return doc.save(options);
-  }
-
-  async buildAndSave(
-    props: T,
-    options?: SaveOptions
-  ): Promise<HydratedDocument<Props, Methods>> {
-    const doc = this.build(props);
-
-    return doc.save(options);
-  }
-
-  async updateOne(
-    filter: FilterQuery<Props>,
-    update: UpdateQuery<Props>,
-    options?: QueryOptions<Props>
-  ): Promise<void> {
-    await this.Model.updateOne(filter, update, options);
   }
 }

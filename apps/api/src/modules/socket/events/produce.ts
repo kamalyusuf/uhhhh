@@ -1,8 +1,8 @@
-import { MediasoupRoom } from "../../mediasoup/room";
-import { Event } from "../types";
-import { NotJoinedError, NoTransportFoundError } from "../../utils/socket";
+import { MediasoupRoom } from "../../../mediasoup/room";
+import type { Event } from "../types";
+import { NotJoinedError, NoTransportFoundError } from "../utils";
 
-const handler: Event<"produce"> = {
+export const handler: Event<"produce"> = {
   on: "produce",
   invoke: async ({
     peer,
@@ -33,16 +33,13 @@ const handler: Event<"produce"> = {
 
     const peers = room._peers().filter((p) => p.user._id !== peer.user._id);
 
-    for (const p of peers) {
+    for (const p of peers)
       await room.createConsumer({
         consumer_peer: p,
         producer_peer: peer,
         producer: producer
       });
-    }
 
     cb({ id: producer.id });
   }
 };
-
-export default handler;

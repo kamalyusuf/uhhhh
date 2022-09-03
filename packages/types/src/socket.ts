@@ -1,6 +1,6 @@
-import { Room, ChatMessage, RoomVisibility } from "./room";
-import { User } from "./user";
-import { ErrorProps } from "./error";
+import type { Room, ChatMessage, RoomVisibility } from "./room";
+import type { User } from "./user";
+import type { ErrorProps } from "./error";
 
 type Cb<T> = (t: T) => void;
 
