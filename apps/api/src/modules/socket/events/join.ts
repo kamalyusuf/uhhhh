@@ -4,7 +4,13 @@ import { MediasoupRoom } from "../../../mediasoup/room";
 export const handler: CallbackEvent<"join"> = {
   on: "join",
   invoke: async ({ peer, payload, socket, cb }) => {
-    if (peer.active_room_id) throw new Error("already in a room");
+    // if (peer.active_room_id) throw new Error("already in a room");
+
+    if (peer.active_room_id) {
+      const room = MediasoupRoom.findById(peer.active_room_id);
+
+      await room.leave(peer);
+    }
 
     const room = MediasoupRoom.findById(payload.room_id);
 

@@ -4,7 +4,6 @@ import { Heading } from "../../components/Heading";
 import { MdRoom } from "react-icons/md";
 import { GoPrimitiveDot } from "react-icons/go";
 import { useRouter } from "next/router";
-import { useState } from "react";
 
 interface Props {
   room: Room;
@@ -12,7 +11,6 @@ interface Props {
 
 export const RoomCard = ({ room }: Props) => {
   const router = useRouter();
-  const [opened, setOpened] = useState(false);
 
   return (
     <Group position="apart" align="center">

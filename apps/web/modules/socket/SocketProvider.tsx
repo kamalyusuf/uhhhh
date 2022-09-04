@@ -8,7 +8,6 @@ import {
   useRef,
   useCallback
 } from "react";
-import { toast } from "react-toastify";
 import type { TypedSocket } from "./types";
 import { useMeStore } from "../../store/me";
 import type { User } from "types";
@@ -72,8 +71,6 @@ export const SocketProvider = ({ children }: PropsWithChildren<{}>) => {
 
       if (e.message === "socket disconnected") setState("disconnected");
       else setState("error");
-
-      toast.error("websocket connection failed");
     }
   }, [me]);
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useMicStore } from "../../store/mic";
 import { Stack, Text, Select, Button } from "@mantine/core";
 import { toast } from "react-toastify";

@@ -36,9 +36,9 @@ export const useRoom = (room_id: string) => {
 
   const join = useCallback(async () => {
     try {
-      if (roomStore.state === "connected") await leave();
-
       roomStore.setState("connecting");
+
+      if (roomStore.state === "connected") await leave();
 
       if (producerStore.producer) producerStore.reset();
 
@@ -192,8 +192,7 @@ export const useRoom = (room_id: string) => {
       if (!device.canProduce("audio")) {
         roomStore.set({
           state: "connected",
-          warn_message: " cannot consume your audio due to some unknown error",
-          show_warning: true
+          warn_message: "cannot consume your audio due to some unknown error"
         });
 
         toast.info("connected");
@@ -245,8 +244,7 @@ export const useRoom = (room_id: string) => {
         state: "error",
         error_message: e.message,
         active_speakers: {},
-        warn_message: "",
-        show_warning: false
+        warn_message: ""
       });
     }
   }, [

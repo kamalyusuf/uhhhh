@@ -1,0 +1,29 @@
+import { useEffect } from "react";
+import hark from "hark";
+import { useMicStore } from "../store/mic";
+import { useSocket } from "./use-socket";
+
+export const useActiveSpeaker = (): null => {
+  const { socket } = useSocket();
+  const { stream } = useMicStore();
+
+  useEffect(() => {
+    if (!stream) return;
+
+    const harker = hark(stream, { threshold: -65, interval: 75 });
+
+    harker.on("speaking", () => {
+      socket.emit("active speaker", { speaking: true });
+    });
+
+    harker.on("stopped_speaking", () => {
+      socket.emit("active speaker", { speaking: false });
+    });
+
+    return () => {
+      harker.stop();
+    };
+  }, [stream]);
+
+  return null;
+};

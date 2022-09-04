@@ -25,5 +25,3 @@ export const env = envalid.cleanEnv<Env>(process.env, {
   MEDIASOUP_MAX_PORT: envalid.port(),
   REDIS_URL: envalid.url({ devDefault: "redis://localhost:6379" })
 });
-
-console.log(env);

@@ -17,8 +17,7 @@ export const useRoomStore = create(
         state: "idle" as RoomState,
         active_speakers: {} as Record<string, boolean>,
         error_message: "",
-        warn_message: "",
-        show_warning: false
+        warn_message: ""
       },
       (set) => ({
         set,
@@ -39,8 +38,7 @@ export const useRoomStore = create(
             state: "disconnected",
             active_speakers: {},
             error_message: "",
-            warn_message: "",
-            show_warning: false
+            warn_message: ""
           })
       })
     ),

@@ -18,21 +18,23 @@ export const Rooms = () => {
       </Center>
     );
 
-  if (!data && !isLoading && isError)
-    return <Alert type="error" message="failed to fetch rooms" />;
+  if (isError) return <Alert type="error" message="failed to fetch rooms" />;
 
-  return (
-    <ScrollArea
-      style={{ height: 600 }}
-      type="auto"
-      offsetScrollbars
-      styles={{ thumb: { backgroundColor: c.colors.indigo } }}
-    >
-      <Stack>
-        {data?.rooms.map((room) => (
-          <RoomCard key={room._id} room={room} />
-        ))}
-      </Stack>
-    </ScrollArea>
-  );
+  if (data)
+    return (
+      <ScrollArea
+        style={{ height: 600 }}
+        type="auto"
+        offsetScrollbars
+        styles={{ thumb: { backgroundColor: c.colors.indigo } }}
+      >
+        <Stack>
+          {data.rooms.map((room) => (
+            <RoomCard key={room._id} room={room} />
+          ))}
+        </Stack>
+      </ScrollArea>
+    );
+
+  return null;
 };

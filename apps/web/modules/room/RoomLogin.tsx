@@ -6,7 +6,7 @@ import { useSocket } from "../../hooks/use-socket";
 import { request } from "../../utils/request";
 
 interface Props {
-  room?: Room;
+  room: Room;
   onSuccess: (success: boolean) => void;
 }
 

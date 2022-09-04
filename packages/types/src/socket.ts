@@ -146,8 +146,6 @@ export interface ClientToServerEvents<
     cb: Cb<{ peers: User[] }>
   ) => void;
 
-  room: (t: { room_id: string }, cb: Cb<{ room: Room }>) => void;
-
   rooms: (cb: Cb<{ rooms: Room[] }>) => void;
 
   "create room": (

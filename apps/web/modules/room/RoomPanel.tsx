@@ -50,13 +50,11 @@ export const RoomPanel = ({ room, actions }: Props) => {
   return (
     <Group style={{ flex: 1 }}>
       <Stack spacing={0} style={{ width: "100%" }}>
-        {roomStore.warn_message && roomStore.show_warning && (
+        {roomStore.warn_message && (
           <Notification
             color="yellow"
             sx={{ width: "100%" }}
-            onClose={() =>
-              roomStore.set({ show_warning: false, warn_message: "" })
-            }
+            onClose={() => roomStore.set({ warn_message: "" })}
           >
             {roomStore.warn_message}
           </Notification>
@@ -137,6 +135,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
             speaker={roomStore.active_speakers[me._id]}
             me={true}
           />
+
           {Object.values(peerStore.peers)
             .filter(Boolean)
             .map((peer) => (

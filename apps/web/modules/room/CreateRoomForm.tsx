@@ -95,6 +95,7 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
               <Field name="password">
                 {({ field }: FieldProps) => (
                   <TextInput
+                    type="password"
                     label="password"
                     placeholder="room password"
                     {...field}
