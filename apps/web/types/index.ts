@@ -1,5 +1,5 @@
-import { NextPage } from "next";
-import { ChatMessage, User } from "types";
+import type { NextPage } from "next";
+import type { ChatMessage, User } from "types";
 
 export type Color =
   | "white"
@@ -22,3 +22,7 @@ export interface Message extends ChatMessage {
 export interface Peer extends User {
   consumers: string[];
 }
+
+export type NoObj = Record<string | number | symbol, never>;
+
+export type ExtraQueryKeys = (string | number | boolean)[];

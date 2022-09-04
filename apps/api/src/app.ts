@@ -6,11 +6,10 @@ import { Server } from "http";
 import { env } from "./lib/env";
 import { start } from "./utils/start";
 import { router } from "./routes";
-import * as mongo from "./lib/mongo";
-import { io } from "./socket/io";
+import { mongo } from "./lib/mongo";
+import { io } from "./modules/socket/io";
 import helmet from "helmet";
-import * as Sentry from "@sentry/node";
-import * as Tracing from "@sentry/tracing";
+import { useSentry } from "./lib/sentry";
 
 class App {
   private readonly _app: Express;
@@ -22,10 +21,6 @@ class App {
     this.port = env.PORT;
 
     this.configure();
-  }
-
-  get app() {
-    return this._app;
   }
 
   private configure() {
@@ -40,10 +35,7 @@ class App {
     );
     this._app.use(helmet());
 
-    this.sentry();
-
-    this._app.use(Sentry.Handlers.requestHandler({ ip: true }));
-    this._app.use(Sentry.Handlers.tracingHandler());
+    if (env.isProduction) useSentry(this._app);
 
     this._app.use(router);
   }
@@ -53,22 +45,10 @@ class App {
 
     const server = await start({ app: this._app, port: this.port });
 
-    io.init(server);
+    io.initialize(server);
 
     return server;
   }
-
-  private sentry() {
-    Sentry.init({
-      dsn: env.SENTRY_DSN,
-      enabled: !!env.SENTRY_DSN,
-      integrations: [
-        new Sentry.Integrations.Http({ tracing: true }),
-        new Tracing.Integrations.Express({ app: this._app })
-      ],
-      tracesSampleRate: 1.0
-    });
-  }
 }
 
-export const _app = new App();
+export const app = new App();

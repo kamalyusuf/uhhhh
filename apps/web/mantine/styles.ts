@@ -1,37 +1,50 @@
-import { MantineTheme } from "@mantine/core";
+import type { CSSObject, MantineTheme } from "@mantine/core";
 
-// remember: `sx={}` always add the styles to the root element
-
-export const styles = {
-  TextInput: (theme: MantineTheme) => ({
-    input: {
-      "&:focus": {
-        borderColor: theme.colors.indigo[6]
+interface ThemeComponent {
+  defaultProps?: Record<string, any>;
+  classNames?: Record<string, string>;
+  styles?:
+    | Record<string, CSSObject>
+    | ((theme: MantineTheme, params: any) => Record<string, CSSObject>);
+}
+export const styles: Record<string, ThemeComponent> = {
+  TextInput: {
+    styles: (theme: MantineTheme) => ({
+      input: {
+        "&:focus": {
+          borderColor: theme.colors.indigo[6]
+        }
+      },
+      required: {
+        color: "red"
       }
-    },
-    required: {
-      color: "red"
-    }
-  }),
-  PasswordInput: (theme: MantineTheme) => ({
-    input: {
-      "&:focus": {
-        borderColor: theme.colors.indigo[6]
+    })
+  },
+  PasswordInput: {
+    styles: (theme: MantineTheme) => ({
+      input: {
+        "&:focus": {
+          borderColor: theme.colors.indigo[6]
+        }
+      },
+      required: {
+        color: theme.colors.red[6]
       }
-    },
-    required: {
-      color: theme.colors.red[6]
-    }
-  }),
-  Menu: (theme: MantineTheme) => ({
-    itemHovered: {
-      backgroundColor: theme.colors.gray[2]
-    }
-  })
-  // Container: {
-  //   // size: "lg"
-  //   wrapper: {
-  //     size: "lg"
-  //   }
-  // }
+    })
+  },
+  Menu: {
+    styles: (theme: MantineTheme) => ({
+      itemHovered: {
+        backgroundColor: theme.colors.gray[2]
+      }
+    })
+  },
+  Title: {
+    defaultProps: {},
+    styles: () => ({
+      root: {
+        fontFamily: "Finlandica, sans-serif"
+      }
+    })
+  }
 };

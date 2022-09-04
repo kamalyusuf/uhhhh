@@ -1,7 +1,7 @@
-import { Button, Group, TextInput, Text, Checkbox } from "@mantine/core";
+import { Button, Group, TextInput, Text, Checkbox, Stack } from "@mantine/core";
 import { Field, FieldProps, Form, Formik } from "formik";
 import { useRouter } from "next/router";
-import { useSocket } from "../../hooks/useSocket";
+import { useSocket } from "../../hooks/use-socket";
 import { request } from "../../utils/request";
 import { RoomVisibility } from "types";
 import { analytics } from "../../lib/analytics";
@@ -55,7 +55,7 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
           <Text size="xs" color="yellow" style={{ fontStyle: "italic" }}>
             note: rooms are automatically deleted upon leaving
           </Text>
-          <Group direction="column" grow>
+          <Stack>
             <Field name="name">
               {({ field }: FieldProps) => (
                 <TextInput
@@ -95,6 +95,7 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
               <Field name="password">
                 {({ field }: FieldProps) => (
                   <TextInput
+                    type="password"
                     label="password"
                     placeholder="room password"
                     {...field}
@@ -118,7 +119,7 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
                 cancel
               </Button>
             </Group>
-          </Group>
+          </Stack>
         </Form>
       )}
     </Formik>

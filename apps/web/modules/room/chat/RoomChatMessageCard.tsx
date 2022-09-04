@@ -1,5 +1,5 @@
 import { Box, Group, Text } from "@mantine/core";
-import { Message } from "../../../types";
+import type { Message } from "../../../types";
 
 interface Props {
   message: Message;

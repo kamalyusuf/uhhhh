@@ -11,21 +11,36 @@ mongoose.SchemaTypes.String.cast(false);
 mongoose.SchemaTypes.Number.cast(false);
 mongoose.SchemaTypes.Boolean.cast(false);
 
-export const connect = async (url: string) => {
+const maxAttempts = 5;
+
+const connect = async (url: string) => {
+  let attempts = 1;
+
   await retry(
     async () => {
       await mongoose.connect(url);
 
-      logger.info(`mongo connected on '${mongoose.connection.host}'`.magenta);
+      logger.info(`mongodb connected on '${mongoose.connection.host}'`);
     },
     {
-      maxAttempts: 10,
+      maxAttempts,
       factor: 2,
       jitter: true,
+      delay: 200,
       maxDelay: 2000,
-      handleError: (error: Error) => {
-        throw error;
+      handleError: (error: Error, ctx) => {
+        attempts += 1;
+
+        const done = ctx.attemptsRemaining === 0;
+
+        if (done) throw error;
+        else
+          logger.warn(
+            `mongodb connection failed. re-attempting connection. attempt ${attempts} / ${maxAttempts}. reason: ${error.message}`
+          );
       }
     }
   );
 };
+
+export const mongo = { connect };

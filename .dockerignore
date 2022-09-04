@@ -4,4 +4,4 @@ dist
 apps/api/.env
 .idea
 .turbo
-apps/web/.env.local
+apps/web/.env

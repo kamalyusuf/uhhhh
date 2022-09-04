@@ -1,7 +1,7 @@
 import create from "zustand";
 import { combine, devtools } from "zustand/middleware";
-import { Message } from "../types";
-import { ChatMessage } from "types";
+import type { Message } from "../types";
+import type { ChatMessage } from "types";
 import { c } from "../utils/constants";
 
 const colors = [
@@ -22,7 +22,9 @@ const colors = [
 
 const color = (str: string) => {
   let sum = 0;
+
   for (let x = 0; x < str.length; x++) sum += x * str.charCodeAt(x);
+
   return colors[sum % colors.length];
 };
 
@@ -40,6 +42,7 @@ export const useRoomChatStore = create(
             ]
           };
         }),
+
       reset: () => set({ messages: [] })
     })),
     { name: "RoomChat" }

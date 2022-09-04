@@ -1,5 +1,5 @@
 import { Badge } from "@mantine/core";
-import { User } from "types";
+import type { User } from "types";
 import { c } from "../../utils/constants";
 import { Audio } from "../audio/Audio";
 import { useConsumerStore } from "../../store/consumer";
@@ -45,6 +45,7 @@ export const PeerBadge = ({
       >
         {me ? "you" : peer.display_name}
       </Badge>
+
       {!me && <Audio consumer={consumer} />}
     </>
   );

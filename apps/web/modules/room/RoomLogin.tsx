@@ -1,12 +1,12 @@
-import { Button, Container, Group, Paper, PasswordInput } from "@mantine/core";
+import { Button, Container, Paper, PasswordInput, Stack } from "@mantine/core";
 import { useState } from "react";
-import { Room } from "types";
+import type { Room } from "types";
 import { Layout } from "../../components/Layout";
-import { useSocket } from "../../hooks/useSocket";
+import { useSocket } from "../../hooks/use-socket";
 import { request } from "../../utils/request";
 
 interface Props {
-  room?: Room;
+  room: Room;
   onSuccess: (success: boolean) => void;
 }
 
@@ -16,7 +16,7 @@ export const RoomLogin = ({ room, onSuccess }: Props) => {
   const [oking, setOking] = useState(false);
 
   return (
-    <Layout title={`uhhhh | ${room?.name}`}>
+    <Layout>
       <Container>
         <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>
           <form
@@ -35,7 +35,6 @@ export const RoomLogin = ({ room, onSuccess }: Props) => {
                   }
                 });
 
-                // setOk(success);
                 onSuccess(success);
               } catch (e) {
               } finally {
@@ -43,7 +42,7 @@ export const RoomLogin = ({ room, onSuccess }: Props) => {
               }
             }}
           >
-            <Group direction="column" grow>
+            <Stack>
               <PasswordInput
                 label="password"
                 placeholder="password"
@@ -55,7 +54,7 @@ export const RoomLogin = ({ room, onSuccess }: Props) => {
               <Button type="submit" disabled={oking} loading={oking}>
                 join
               </Button>
-            </Group>
+            </Stack>
           </form>
         </Paper>
       </Container>

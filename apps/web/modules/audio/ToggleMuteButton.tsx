@@ -12,11 +12,8 @@ export const ToggleMuteButton = ({ mute, unmute }: Props) => {
   const { producer } = useProducerStore();
 
   const toggle = useCallback(async () => {
-    if (producer.paused) {
-      await unmute();
-    } else {
-      await mute();
-    }
+    if (producer.paused) await unmute();
+    else await mute();
   }, [producer.paused]);
 
   return (

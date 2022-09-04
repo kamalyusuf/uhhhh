@@ -5,16 +5,17 @@ import {
   TextInput,
   Checkbox,
   Button,
-  Group,
-  Divider
+  Divider,
+  Stack
 } from "@mantine/core";
 import { Layout } from "../../components/Layout";
 import { PageComponent } from "../../types";
 import { toast } from "react-toastify";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useMeStore } from "../../store/me";
-import { useSocket } from "../../hooks/useSocket";
+import { useSocket } from "../../hooks/use-socket";
 import { DefaultMicSelector } from "../audio/DefaultMicSelector";
+import { useMounted } from "../../hooks/use-mounted";
 
 export const MePage: PageComponent = () => {
   const { me, update } = useMeStore();
@@ -22,16 +23,10 @@ export const MePage: PageComponent = () => {
   const [remember, setRemember] = useState(
     localStorage.getItem("remember me") === "true"
   );
-  const [mounted, setMounted] = useState(false);
+  const mounted = useMounted();
   const { socket } = useSocket();
 
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return null;
-  }
+  if (!mounted) return null;
 
   return (
     <>
@@ -39,8 +34,8 @@ export const MePage: PageComponent = () => {
         <Box>
           <Center>
             <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>
-              <Group direction="column" grow spacing={10}>
-                <Group direction="column" grow>
+              <Stack spacing={10}>
+                <Stack>
                   <TextInput
                     placeholder="display name"
                     label="display name"
@@ -74,10 +69,11 @@ export const MePage: PageComponent = () => {
                   >
                     update
                   </Button>
-                </Group>
+                </Stack>
                 <Divider size="xs" color="indigo" />
+
                 <DefaultMicSelector />
-              </Group>
+              </Stack>
             </Paper>
           </Center>
         </Box>

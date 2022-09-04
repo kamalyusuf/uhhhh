@@ -1,4 +1,4 @@
-import { ThemeIcon, ThemeIconProps } from "@mantine/core";
+import { ThemeIcon, type ThemeIconProps } from "@mantine/core";
 
 export const Icon = ({ children, style, ...props }: ThemeIconProps) => {
   return (

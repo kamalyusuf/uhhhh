@@ -1,14 +1,14 @@
-import React from "react";
-import { Title, TitleProps } from "@mantine/core";
-import { Color } from "../types";
-import { parseColor } from "../utils/color";
+import { Title, type TitleProps } from "@mantine/core";
+import { forwardRef } from "react";
+import type { Color } from "../types";
+import { parse } from "../utils/color";
 
 interface Props extends TitleProps {
   title: string;
   color?: Color;
 }
 
-export const Heading = React.forwardRef<any, Props>(
+export const Heading = forwardRef<any, Props>(
   ({ color, title, ...props }, ref) => {
     return (
       <>
@@ -16,7 +16,7 @@ export const Heading = React.forwardRef<any, Props>(
           order={2}
           ref={ref}
           sx={(theme) => ({
-            color: color ? `${parseColor(theme, color)} !important` : undefined
+            color: color ? `${parse(theme, color)} !important` : undefined
           })}
           {...props}
         >

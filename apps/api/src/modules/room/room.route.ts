@@ -1,16 +1,15 @@
+import { UnprocessableEntityError } from "@kamalyb/errors";
 import { Router } from "express";
-import { isValidObjectId, toObjectId } from "../../utils/object-id";
-import { ValidationError } from "@kamalyb/errors";
+import { isValidObjectId } from "../../utils/mongo";
 
 export const router = Router();
 
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
 
-  if (!isValidObjectId(id))
-    throw new ValidationError({ message: "invalid id" });
+  if (!isValidObjectId(id)) throw new UnprocessableEntityError("invalid id");
 
-  const room = await deps.room.findById(toObjectId(id));
+  const room = await deps.room.findById(id);
 
   res.send(room);
 });

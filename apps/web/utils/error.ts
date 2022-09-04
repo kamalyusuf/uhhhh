@@ -1,10 +1,37 @@
 import { AxiosError } from "axios";
-import { ApiError } from "types";
+import type { ApiError, ErrorProps, ErrorStatus } from "types";
 
-export const parseApiError = (error?: AxiosError<ApiError>): string[] => {
-  const errors = error?.response?.data?.errors;
+export const parse = (
+  error: AxiosError<ApiError>
+): {
+  messages: string[];
+  map: Record<string, string>;
+  errors: ErrorProps[];
+  status: ErrorStatus;
+} => {
+  const errors = error?.response?.data.errors;
+  const status = error?.response?.status as ErrorStatus;
 
-  if (!errors) return ["something went wrong"];
+  if (!errors || !errors?.length)
+    return {
+      messages: [error?.message ?? "something went wrong"],
+      map: {},
+      errors,
+      status
+    };
 
-  return errors.map((error) => error.message);
+  const map: Record<string, string> = {};
+
+  errors.forEach((error) => {
+    if (error.path) map[error.path] = error.message;
+  });
+
+  const messages = errors.map((e) => e.message);
+
+  return {
+    messages,
+    map,
+    errors,
+    status
+  };
 };

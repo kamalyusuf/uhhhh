@@ -1,14 +1,10 @@
-import { QueryClient, QueryFunction } from "react-query";
+import { QueryClient, type QueryFunction } from "@tanstack/react-query";
 import { api } from "./api";
 
-export const defaultQueryFn: QueryFunction = async ({ queryKey }) => {
-  try {
-    const { data } = await api.get(`${queryKey}`);
-    return data;
-  } catch (e) {
-    throw e;
-  }
-};
+export const defaultQueryFn: QueryFunction = async ({ queryKey }) =>
+  await (
+    await api.get(`${queryKey}`)
+  ).data;
 
 export const queryClient = () => {
   return new QueryClient({
@@ -18,9 +14,13 @@ export const queryClient = () => {
         staleTime: 60 * 1000 * 5,
         queryFn: defaultQueryFn,
         refetchOnWindowFocus: false,
-        refetchOnReconnect: false
+        refetchOnReconnect: false,
+        retryOnMount: false,
+        refetchOnMount: false
       },
-      mutations: {}
+      mutations: {
+        retry: false
+      }
     }
   });
 };

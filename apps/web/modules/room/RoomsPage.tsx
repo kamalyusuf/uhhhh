@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { Layout } from "../../components/Layout";
 import { Box, Group, Divider, Space, ActionIcon } from "@mantine/core";
 import { Container } from "../../components/Container";
@@ -6,16 +6,12 @@ import { Heading } from "../../components/Heading";
 import { MdOutlineAdd } from "react-icons/md";
 import { CreateRoomModal } from "./CreateRoomModal";
 import { Rooms } from "./Rooms";
-import { PageComponent } from "../../types";
-import Head from "next/head";
+import type { PageComponent } from "../../types";
+import { useMounted } from "../../hooks/use-mounted";
 
 export const RoomsPage: PageComponent = () => {
   const [opened, setOpened] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const mounted = useMounted();
 
   if (!mounted) return null;
 
@@ -42,6 +38,7 @@ export const RoomsPage: PageComponent = () => {
             <Rooms />
           </Container>
         </Box>
+
         {opened && (
           <CreateRoomModal
             opened={opened}

@@ -12,22 +12,29 @@ export const useTransportStore = create(
       (set) => ({
         setSendTransport: (send_transport: Transport | null) =>
           set({ send_transport }),
+
         setReceiveTransport: (receive_transport: Transport | null) =>
           set({ receive_transport }),
+
         resetSendTransport: () =>
           set((state) => {
             state.send_transport?.close();
+
             return { send_transport: null };
           }),
+
         resetReceiveTransport: () =>
           set((state) => {
             state.receive_transport?.close();
+
             return { receive_transport: null };
           }),
+
         reset: () =>
           set((state) => {
             state.send_transport?.close();
             state.receive_transport?.close();
+
             return { send_transport: null, receive_transport: null };
           })
       })

@@ -1,13 +1,14 @@
-import { useSocketQuery } from "../../hooks/useSocketQuery";
-import { Group, Center, Loader, ScrollArea } from "@mantine/core";
+import { useSocketQuery } from "../../hooks/use-socket-query";
+import { Center, Loader, ScrollArea, Stack } from "@mantine/core";
 import { RoomCard } from "./RoomCard";
-import { ErrorAlert } from "../../components/ErrorAlert";
+import { Alert } from "../../components/Alert";
 import { c } from "../../utils/constants";
 
 export const Rooms = () => {
-  const { data, isLoading, isError } = useSocketQuery("rooms", undefined, {
-    refetchOnMount: "always",
-    retry: 3
+  const { data, isLoading, isError } = useSocketQuery({
+    event: "rooms",
+    payload: {},
+    options: { refetchOnMount: "always" }
   });
 
   if (isLoading)
@@ -17,21 +18,23 @@ export const Rooms = () => {
       </Center>
     );
 
-  if (!data && !isLoading && isError)
-    return <ErrorAlert message="failed to fetch rooms" />;
+  if (isError) return <Alert type="error" message="failed to fetch rooms" />;
 
-  return (
-    <ScrollArea
-      style={{ height: 600 }}
-      type="auto"
-      offsetScrollbars
-      styles={{ thumb: { backgroundColor: c.colors.indigo } }}
-    >
-      <Group direction="column" grow style={{}}>
-        {data?.rooms.map((room) => (
-          <RoomCard key={room._id} room={room} />
-        ))}
-      </Group>
-    </ScrollArea>
-  );
+  if (data)
+    return (
+      <ScrollArea
+        style={{ height: 600 }}
+        type="auto"
+        offsetScrollbars
+        styles={{ thumb: { backgroundColor: c.colors.indigo } }}
+      >
+        <Stack>
+          {data.rooms.map((room) => (
+            <RoomCard key={room._id} room={room} />
+          ))}
+        </Stack>
+      </ScrollArea>
+    );
+
+  return null;
 };

@@ -17,12 +17,12 @@ export const useRoomStore = create(
         state: "idle" as RoomState,
         active_speakers: {} as Record<string, boolean>,
         error_message: "",
-        warn_message: "",
-        show_warning: false
+        warn_message: ""
       },
       (set) => ({
         set,
         setState: (state: RoomState) => set({ state }),
+
         setActiveSpeaker: (peer_id: string, value: boolean) =>
           set((state) => {
             return {
@@ -32,13 +32,13 @@ export const useRoomStore = create(
               }
             };
           }),
+
         reset: () =>
           set({
             state: "disconnected",
             active_speakers: {},
             error_message: "",
-            warn_message: "",
-            show_warning: false
+            warn_message: ""
           })
       })
     ),

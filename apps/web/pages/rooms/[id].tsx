@@ -1,17 +1,17 @@
+import type { Room } from "types";
+import { api } from "../../lib/api";
+import { ssQuery } from "../../utils/ss-query";
+
 export { RoomPage as default } from "../../modules/room/RoomPage";
 
-// export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-//   const queryClient = new QueryClient();
-//   const _id = typeof params.id === "string" ? params.id : "";
-//
-//   await queryClient.prefetchQuery({
-//     queryFn: async () => (await api.get(`/rooms/${_id}`)).data,
-//     queryKey: ["room", _id]
-//   });
-//
-//   return {
-//     props: {
-//       dehydrateState: dehydrate(queryClient)
-//     }
-//   };
-// };
+export const getServerSideProps = ssQuery(async ({ params }) => {
+  const id = typeof params.id === "string" ? params.id : "";
+
+  const room = (await api.get<Room>(`/rooms/${id}`)).data;
+
+  return {
+    props: {
+      room
+    }
+  };
+});

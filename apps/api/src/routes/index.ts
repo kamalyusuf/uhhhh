@@ -1,11 +1,14 @@
 import { Router } from "express";
-import listRoutes from "@kamalyb/express-list-routes";
-import { router as RoomRouter } from "../modules/room/room.route";
 import { useGlobalErrorHandler } from "../middlewares/error";
 import { NotFoundError } from "@kamalyb/errors";
-import * as Sentry from "@sentry/node";
+import { Sentry } from "../lib/sentry";
+import { router as RoomRouter } from "../modules/room/room.route";
 
 export const router = Router();
+
+router.get(["/", "/api", "/health", "/api/health"], (_req, res) =>
+  res.send({ ok: true })
+);
 
 router.use("/api/rooms", RoomRouter);
 
@@ -17,4 +20,4 @@ router.use((_, __, ___) => {
 
 router.use(useGlobalErrorHandler);
 
-listRoutes(router);
+require("express-list-routes")(router);

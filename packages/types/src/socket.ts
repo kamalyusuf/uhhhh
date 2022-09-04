@@ -1,6 +1,6 @@
-import { Room, ChatMessage, RoomVisibility } from "./room";
-import { User } from "./user";
-import { ErrorProps } from "./error";
+import type { Room, ChatMessage, RoomVisibility } from "./room";
+import type { User } from "./user";
+import type { ErrorProps } from "./error";
 
 type Cb<T> = (t: T) => void;
 
@@ -11,7 +11,7 @@ export type Direction = "send" | "receive";
 export type EventError = {
   event?: Exclude<
     keyof ServerToClientEvents<{}, {}, {}, {}, {}>,
-    "event error"
+    "request error"
   >;
   errors: Omit<ErrorProps, "location">[];
 };
@@ -23,6 +23,10 @@ export interface ServerToClientEvents<
   RtpParameters,
   ConsumerType
 > {
+  "request error": (t: EventError) => void;
+
+  error: (t: EventError) => void;
+
   "rtp capabilities": (t: { rtp_capabilities: RtpCapabilities }) => void;
 
   "create transport": (t: { transport: OutgoingTransport }) => void;
@@ -32,10 +36,6 @@ export interface ServerToClientEvents<
   produce: (t: { id: string }) => void;
 
   join: (t: { peers: User[] }) => void;
-
-  "event error": (t: EventError) => void;
-
-  error: (t: { errors: EventError["errors"] }) => void;
 
   rooms: (t: { rooms: Room[] }) => void;
 

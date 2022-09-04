@@ -1,8 +1,10 @@
 import create from "zustand";
 import { combine, devtools } from "zustand/middleware";
 import { nanoid } from "nanoid";
-import { User } from "types";
+import type { User } from "types";
 import Joi from "joi";
+
+// todo: should generate the id on the server
 
 const schema = Joi.object<User, true>({
   _id: Joi.string(),
@@ -15,7 +17,7 @@ const initial = (): User | null => {
   const who = typeof localStorage !== "undefined" && localStorage.getItem("me");
 
   if (remember === "true" && who) {
-    let me;
+    let me: User;
 
     try {
       me = JSON.parse(who);
@@ -27,9 +29,7 @@ const initial = (): User | null => {
 
     if (error) return null;
     else return me as User;
-  } else {
-    return null;
-  }
+  } else return null;
 };
 
 export const useMeStore = create(
@@ -50,17 +50,15 @@ export const useMeStore = create(
 
             return { me };
           }),
+
         update: (display_name: string, remember: boolean) =>
           set((state) => {
             const me = { _id: state.me._id, display_name };
 
             localStorage.setItem("remember me", JSON.stringify(remember));
 
-            if (remember) {
-              localStorage.setItem("me", JSON.stringify(me));
-            } else {
-              localStorage.removeItem("me");
-            }
+            if (remember) localStorage.setItem("me", JSON.stringify(me));
+            else localStorage.removeItem("me");
 
             return { me };
           })

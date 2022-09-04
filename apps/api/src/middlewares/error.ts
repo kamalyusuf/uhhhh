@@ -1,5 +1,4 @@
 import { NextFunction, Request, Response } from "express";
-import { env } from "../lib/env";
 import { CustomError } from "@kamalyb/errors";
 
 export const useGlobalErrorHandler = (
@@ -14,7 +13,7 @@ export const useGlobalErrorHandler = (
   res.status(500).send({
     errors: [
       {
-        message: env.isProduction ? "internal server error" : error.message
+        message: error.message
       }
     ]
   });

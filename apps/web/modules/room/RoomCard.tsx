@@ -1,17 +1,9 @@
-import {
-  Group,
-  Text,
-  ThemeIcon,
-  Button,
-  Modal,
-  TextInput
-} from "@mantine/core";
-import { Room } from "types";
+import { Group, Text, ThemeIcon, Button, Stack } from "@mantine/core";
+import type { Room } from "types";
 import { Heading } from "../../components/Heading";
 import { MdRoom } from "react-icons/md";
 import { GoPrimitiveDot } from "react-icons/go";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
 
 interface Props {
   room: Room;
@@ -19,7 +11,6 @@ interface Props {
 
 export const RoomCard = ({ room }: Props) => {
   const router = useRouter();
-  const [opened, setOpened] = useState(false);
 
   return (
     <Group position="apart" align="center">
@@ -31,7 +22,7 @@ export const RoomCard = ({ room }: Props) => {
         >
           <MdRoom />
         </ThemeIcon>
-        <Group direction="column" spacing={0}>
+        <Stack spacing={0}>
           <Heading title={room.name} order={3} />
           <Text color="indigo" size="sm">
             {room.description}
@@ -52,7 +43,7 @@ export const RoomCard = ({ room }: Props) => {
           <Text color="indigo" size="sm" style={{ fontStyle: "italic" }}>
             created by: {room.creator.display_name}
           </Text>
-        </Group>
+        </Stack>
       </Group>
       <Button
         size="sm"

@@ -6,26 +6,21 @@ import {
 } from "types";
 import { MongooseProps } from "../../types/types";
 import { HydratedDocument } from "mongoose";
-import { buildEntity } from "../shared/utils";
+import { ModelBuilder } from "../shared/model-builder";
 import argon2 from "argon2";
 
 export type RoomProps = Omit<MongooseProps<RoomType>, "members_count"> & {
   password?: string;
   span: RoomSpan;
 };
+
 export type RoomDoc = HydratedDocument<RoomProps>;
 
 export interface RoomMethods {
   verifyPassword: (password: string) => Promise<boolean>;
 }
 
-const builder = buildEntity<RoomProps, RoomMethods, {}>();
-
-const span = Object.values(RoomSpan) as Readonly<RoomSpan[]>;
-
-const status = Object.values(RoomStatus) as Readonly<RoomStatus[]>;
-
-const visibility = Object.values(RoomVisibility) as Readonly<RoomVisibility[]>;
+const builder = new ModelBuilder<RoomProps, RoomMethods>();
 
 const RoomSchema = builder.schema({
   name: {
@@ -46,12 +41,12 @@ const RoomSchema = builder.schema({
   status: {
     type: String,
     required: [true, "status is required"],
-    enum: status
+    enum: Object.values(RoomStatus)
   },
   visibility: {
     type: String,
     required: [true, "visibility is required"],
-    enum: visibility,
+    enum: Object.values(RoomVisibility),
     index: true
   },
   description: {
@@ -72,7 +67,7 @@ const RoomSchema = builder.schema({
   span: {
     type: String,
     required: [true, "span is required"],
-    enum: span,
+    enum: Object.values(RoomSpan),
     default: RoomSpan.TEMPORARY
   }
 });

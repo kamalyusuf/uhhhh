@@ -8,14 +8,8 @@ export const ip = () => {
 
   Object.keys(ifaces).forEach((ifname) => {
     const faces = ifaces[ifname];
-    if (!faces) {
-      logger.log({
-        level: "warn",
-        message: `no ifaces[ifname] - ${ifname}`
-      });
 
-      return;
-    }
+    if (!faces) return logger.warn(`no ifaces[ifname] - ${ifname}`);
 
     for (const iface of faces) {
       if (iface.family !== "IPv4" || iface.internal !== false) continue;

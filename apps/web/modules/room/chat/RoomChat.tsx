@@ -1,5 +1,5 @@
-import { Group, Box } from "@mantine/core";
-import React, { useRef, useEffect } from "react";
+import { Box, Stack } from "@mantine/core";
+import { useRef, useEffect } from "react";
 import { RoomChatInput } from "./RoomChatInput";
 import { Virtuoso } from "react-virtuoso";
 import { RoomChatMessageCard } from "./RoomChatMessageCard";
@@ -29,6 +29,7 @@ const useForceScrollToBottom = (messages: Message[]) => {
   useEffect(() => {
     if (messages.length && !focus.current) {
       focus.current = true;
+
       check();
     }
   }, [messages, messages.length]);
@@ -53,37 +54,27 @@ export const RoomChat = () => {
         minWidth: 350
       })}
     >
-      <Group
-        direction="column"
-        grow
-        style={{ height: "100%", justifyContent: "space-between" }}
-      >
-        <Box>
-          <Virtuoso
-            ref={virtuoso}
-            data={messages}
-            alignToBottom
-            className={"virtuoso"}
-            totalCount={messages.length}
-            initialTopMostItemIndex={
-              messages.length > 0 ? messages.length - 1 : 0
-            }
-            overscan={0}
-            itemContent={(index, item) => (
-              <RoomChatMessageCard key={item._id} message={item} />
-            )}
-            style={{
-              height: "100%"
-            }}
-            followOutput={(bottom) => {
-              if (force()) return "smooth";
+      <Stack justify="space-between" style={{ height: "100%" }}>
+        <Virtuoso
+          ref={virtuoso}
+          alignToBottom
+          style={{ height: "100%" }}
+          data={messages}
+          initialTopMostItemIndex={
+            messages.length > 0 ? messages.length - 1 : 0
+          }
+          overscan={0}
+          itemContent={(_, item) => (
+            <RoomChatMessageCard key={item._id} message={item} />
+          )}
+          followOutput={(bottom) => {
+            if (force()) return "smooth";
 
-              return bottom ? "smooth" : false;
-            }}
-          />
-        </Box>
+            return bottom ? "smooth" : false;
+          }}
+        />
         <RoomChatInput />
-      </Group>
+      </Stack>
     </Box>
   );
 };

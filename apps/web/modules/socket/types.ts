@@ -1,11 +1,11 @@
-import {
+import type {
   DtlsParameters,
   MediaKind,
   RtpCapabilities,
   RtpParameters,
   TransportOptions as TTransportOptions
 } from "mediasoup-client/lib/types";
-import {
+import type {
   ServerToClientEvents as TServerToClientEvents,
   ClientToServerEvents as TClientToServerEvents
 } from "types";
