@@ -1,10 +1,10 @@
 import { Group, Text, ThemeIcon, Button, Stack } from "@mantine/core";
-import type { Room } from "types";
+import { type Room, RoomStatus } from "types";
 import { Heading } from "../../components/Heading";
 import { MdRoom } from "react-icons/md";
 import { GoPrimitiveDot } from "react-icons/go";
 import { useRouter } from "next/router";
-
+import { IoMdLock } from "react-icons/io";
 interface Props {
   room: Room;
 }
@@ -23,7 +23,21 @@ export const RoomCard = ({ room }: Props) => {
           <MdRoom />
         </ThemeIcon>
         <Stack spacing={0}>
-          <Heading title={room.name} order={3} />
+          <Group align="center">
+            <Heading title={room.name} order={3} />
+            {room.status === RoomStatus.PROTECTED && (
+              <ThemeIcon
+                variant="light"
+                style={{
+                  backgroundColor: "transparent",
+                  color: "gold"
+                }}
+                size="sm"
+              >
+                <IoMdLock />
+              </ThemeIcon>
+            )}
+          </Group>
           <Text color="indigo" size="sm">
             {room.description}
           </Text>
@@ -45,6 +59,7 @@ export const RoomCard = ({ room }: Props) => {
           </Text>
         </Stack>
       </Group>
+
       <Button
         size="sm"
         radius="xl"

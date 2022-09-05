@@ -30,7 +30,7 @@ export const MePage: PageComponent = () => {
 
   return (
     <>
-      <Layout title={`uhhhh | ${me.display_name ?? "user"}`}>
+      <Layout title={me.display_name ?? "uhhhh"}>
         <Box>
           <Center>
             <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>

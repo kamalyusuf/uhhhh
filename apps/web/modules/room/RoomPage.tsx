@@ -59,7 +59,7 @@ export const RoomPage: PageComponent = ({ room }: Props) => {
 
   if (roomStore.state === "connected")
     return (
-      <Layout title={`uhhhh | ${room.name}`}>
+      <Layout title={room.name}>
         <Container style={{ width: "100%", height: "100%" }}>
           <Group style={{ height: "97%" }} align="start">
             <RoomPanel room={room} actions={{ leave, mute, unmute }} />
