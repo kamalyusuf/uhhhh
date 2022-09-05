@@ -8,7 +8,7 @@ export const useActiveSpeaker = (): null => {
   const { stream } = useMicStore();
 
   useEffect(() => {
-    if (!stream) return;
+    if (!stream || !socket) return;
 
     const harker = hark(stream, { threshold: -65, interval: 75 });
 
@@ -23,7 +23,7 @@ export const useActiveSpeaker = (): null => {
     return () => {
       harker.stop();
     };
-  }, [stream]);
+  }, [stream, socket]);
 
   return null;
 };

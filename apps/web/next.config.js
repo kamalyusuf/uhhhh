@@ -1,6 +1,10 @@
 const withTM = require("next-transpile-modules")(["types"]);
 
-module.exports = withTM({
+/** @type {import("next").NextConfig} */
+const config = {
   reactStrictMode: true,
   outputFileTracing: false
-});
+  // optimizeFonts: false
+};
+
+module.exports = withTM(config);

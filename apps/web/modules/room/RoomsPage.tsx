@@ -39,12 +39,10 @@ export const RoomsPage: PageComponent = () => {
           </Container>
         </Box>
 
-        {opened && (
-          <CreateRoomModal
-            opened={opened}
-            setOpened={(value) => setOpened(value)}
-          />
-        )}
+        <CreateRoomModal
+          opened={opened}
+          setOpened={(value) => setOpened(value)}
+        />
       </Layout>
     </>
   );
