@@ -1,5 +1,5 @@
 import type { CallbackEvent } from "../types";
-import { MediasoupRoom } from "../../../mediasoup/room";
+import { MediasoupRoom } from "../../mediasoup/room";
 import { RoomVisibility, RoomSpan, type Room } from "types";
 import { BadRequestError } from "@kamalyb/errors";
 

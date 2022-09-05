@@ -6,7 +6,7 @@ import { createAdapter } from "@socket.io/redis-adapter";
 import type { ServerEvent, TypedIO, Payload, EventCb, E } from "./types";
 import fs from "node:fs";
 import path from "node:path";
-import { Peer } from "../../mediasoup/peer";
+import { Peer } from "../mediasoup/peer";
 import type { User } from "types";
 import { onDisconnect } from "./events/disconnect";
 import { env } from "../../lib/env";

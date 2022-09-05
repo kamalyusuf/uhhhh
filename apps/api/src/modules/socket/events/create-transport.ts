@@ -1,4 +1,4 @@
-import { MediasoupRoom } from "../../../mediasoup/room";
+import { MediasoupRoom } from "../../mediasoup/room";
 import type { CallbackEvent } from "../types";
 import { env } from "../../../lib/env";
 

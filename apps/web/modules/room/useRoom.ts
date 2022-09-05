@@ -53,8 +53,6 @@ export const useRoom = (room_id: string) => {
     try {
       roomStore.setState("connecting");
 
-      if (roomStore.state === "connected") await leave();
-
       if (producerStore.producer) producerStore.reset();
 
       if (transportStore.send_transport) transportStore.resetSendTransport();
@@ -265,7 +263,6 @@ export const useRoom = (room_id: string) => {
   }, [
     room_id,
     socket,
-    roomStore.state,
     producerStore.producer,
     transportStore.send_transport,
     transportStore.receive_transport,

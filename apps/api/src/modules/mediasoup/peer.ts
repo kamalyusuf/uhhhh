@@ -5,7 +5,7 @@ import {
   type RtpCapabilities
 } from "mediasoup/node/lib/types";
 import type { User } from "types";
-import type { TypedSocket } from "../modules/socket/types";
+import type { TypedSocket } from "../socket/types";
 
 export class Peer {
   private static _peers: Map<string, Peer> = new Map();

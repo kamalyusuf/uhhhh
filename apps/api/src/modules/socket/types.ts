@@ -13,7 +13,7 @@ import type {
   SocketData
 } from "types";
 import { Socket, Server as SocketServer } from "socket.io";
-import { Peer } from "../../mediasoup/peer";
+import { Peer } from "../mediasoup/peer";
 
 interface OutgoingTransportOptions {
   id: WebRtcTransport["id"];
@@ -59,7 +59,7 @@ export type TypedSocket = Socket<
 export type Payload<E extends ServerEvent> = Parameters<
   ClientToServerEvents[E]
 >[0] extends Function
-  ? undefined
+  ? never
   : Parameters<ClientToServerEvents[E]>[0];
 
 export type EventCb<E extends ServerEvent> = Parameters<

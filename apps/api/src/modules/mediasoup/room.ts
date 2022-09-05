@@ -8,10 +8,10 @@ import {
 import { EventEmitter } from "events";
 import { workers } from "./workers";
 import { NotFoundError } from "@kamalyb/errors";
-import type { TypedIO } from "../modules/socket/types";
-import { logger } from "../lib/logger";
+import type { TypedIO } from "../socket/types";
+import { logger } from "../../lib/logger";
 import { RoomVisibility } from "types";
-import type { RoomDoc } from "../modules/room/room.model";
+import type { RoomDoc } from "../room/room.model";
 
 export class MediasoupRoom extends EventEmitter {
   private static _rooms: Map<string, MediasoupRoom> = new Map();

@@ -1,4 +1,4 @@
-import { Peer } from "../../mediasoup/peer";
+import { Peer } from "../mediasoup/peer";
 import { logger } from "./../../lib/logger";
 import { SocketEventError } from "./../../utils/socket-event-error";
 import { CustomError, NotAuthorizedError } from "@kamalyb/errors";
@@ -18,7 +18,7 @@ type Arg = "payload" | "callback";
 const overload = `
   (payload: object, cb: Function); 
   (payload: object); 
-  (payload: undefined, cb: Function)
+  (payload: {}, cb: Function)
   (cb: Function); 
   ();
 `;
@@ -38,14 +38,14 @@ export const isFunctionOrThrow = (t: any, arg: Arg) => {
 };
 
 export const validateArgs = (...args: any[]) => {
-  if (!args.length) return { payload: undefined, cb: undefined };
+  if (!args.length) return { payload: {}, cb: undefined };
 
   if (args.length > 2) throw error;
 
   const [payload, cb] = args;
 
   let callbackFn: (() => void) | undefined;
-  let data: Payload<ServerEvent> | undefined;
+  let data: Payload<ServerEvent> | {};
   let __request__ = false;
 
   const set = (payload: { __request__?: boolean } & { [key: string]: any }) => {
@@ -70,15 +70,15 @@ export const validateArgs = (...args: any[]) => {
     data = payload;
     callbackFn = undefined;
   } else if (payload && !cb && typeof payload === "function") {
-    data = undefined;
+    data = {};
     callbackFn = payload;
   } else if (!payload && !cb) {
-    data = undefined;
+    data = {};
     callbackFn = undefined;
   } else if (!payload && cb) {
     isFunctionOrThrow(cb, "callback");
 
-    data = undefined;
+    data = {};
     callbackFn = cb;
   } else throw error;
 

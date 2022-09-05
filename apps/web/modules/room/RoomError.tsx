@@ -20,7 +20,7 @@ export const RoomError = ({ room }: { room: Room }) => {
           ? "microphone access is denied"
           : isDeviceMissingError
           ? "no microphone(s) detected"
-          : "could not join room"
+          : "could not join room. try refreshing the page"
       }
       wrap
     />

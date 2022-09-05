@@ -1,4 +1,4 @@
-import { MediasoupRoom } from "../../../mediasoup/room";
+import { MediasoupRoom } from "../../mediasoup/room";
 import type { Event } from "../types";
 import { NotJoinedError } from "../utils";
 

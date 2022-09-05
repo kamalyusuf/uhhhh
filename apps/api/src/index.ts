@@ -2,7 +2,7 @@ import "colors";
 import "./lib/misc";
 import { Server } from "http";
 import { app } from "./app";
-import { workers } from "./mediasoup/workers";
+import { workers } from "./modules/mediasoup/workers";
 import { logger } from "./lib/logger";
 import { exitHandler } from "./utils/exit-handler";
 

@@ -30,8 +30,16 @@ export const request = async <E extends ServerEvent>({
   if (!socket.connected) throw new Error("socket not connected");
 
   return new Promise<Return<E>>(async (resolve, reject) => {
+    const timeout = setTimeout(() => {
+      toast.error("request took too long");
+
+      reject(new Error("request timed out"));
+    }, 10000);
+
     socket.on("request error", (error) => {
       error.errors.forEach((e) => toast.error(e.message));
+
+      clearTimeout(timeout);
 
       reject(error);
     });
@@ -39,8 +47,10 @@ export const request = async <E extends ServerEvent>({
     socket.emit(
       event,
       // @ts-ignore
-      { ...payload, __request__: true },
+      { ...(payload || {}), __request__: true },
       (response: Return<E>) => {
+        clearTimeout(timeout);
+
         resolve(response);
       }
     );

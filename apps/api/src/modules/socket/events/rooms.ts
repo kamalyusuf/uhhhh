@@ -1,5 +1,5 @@
 import type { CallbackEvent } from "../types";
-import { MediasoupRoom } from "../../../mediasoup/room";
+import { MediasoupRoom } from "../../mediasoup/room";
 import type { Room } from "types";
 
 export const handler: CallbackEvent<"rooms"> = {

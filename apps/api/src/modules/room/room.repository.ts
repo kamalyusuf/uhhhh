@@ -1,5 +1,5 @@
 import { BaseRepository } from "../shared/base.repository";
-import { RoomProps, Room, RoomMethods } from "./room.model";
+import { type RoomProps, Room, type RoomMethods } from "./room.model";
 
 export class RoomRepository extends BaseRepository<
   RoomProps,

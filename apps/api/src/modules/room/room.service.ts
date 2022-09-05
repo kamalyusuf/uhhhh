@@ -2,7 +2,7 @@ import type { Id } from "../../types/types";
 import { RoomRepository } from "./room.repository";
 import { NotFoundError } from "@kamalyb/errors";
 import { env } from "../../lib/env";
-import { RoomVisibility, User, RoomSpan, RoomStatus } from "types";
+import { RoomVisibility, type User, RoomSpan, RoomStatus } from "types";
 import argon2 from "argon2";
 
 export class RoomService {
