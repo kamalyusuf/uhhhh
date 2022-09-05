@@ -1,10 +1,19 @@
-import { Button, Group, TextInput, Text, Checkbox, Stack } from "@mantine/core";
+import {
+  Button,
+  Group,
+  TextInput,
+  Text,
+  Checkbox,
+  Stack,
+  PasswordInput
+} from "@mantine/core";
 import { Field, FieldProps, Form, Formik } from "formik";
 import { useRouter } from "next/router";
 import { useSocket } from "../../hooks/use-socket";
 import { request } from "../../utils/request";
 import { RoomVisibility } from "types";
 import { analytics } from "../../lib/analytics";
+import { toast } from "react-toastify";
 
 interface Props {
   onCancel: () => void;
@@ -24,6 +33,8 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
         password: ""
       }}
       onSubmit={async (values) => {
+        if (!socket) return toast.error("webserver is down");
+
         const { room } = await request({
           socket,
           event: "create room",
@@ -60,10 +71,11 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
               {({ field }: FieldProps) => (
                 <TextInput
                   label="name"
-                  placeholder="room name"
+                  placeholder="name"
                   required
                   {...field}
                   data-autofocus
+                  autoComplete="off"
                 />
               )}
             </Field>
@@ -72,9 +84,10 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
               {({ field }: FieldProps) => (
                 <TextInput
                   label="description"
-                  placeholder="room description"
+                  placeholder="description"
                   required
                   {...field}
+                  autoComplete="off"
                 />
               )}
             </Field>
@@ -94,10 +107,9 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
             {values.require_password && (
               <Field name="password">
                 {({ field }: FieldProps) => (
-                  <TextInput
-                    type="password"
+                  <PasswordInput
                     label="password"
-                    placeholder="room password"
+                    placeholder="password"
                     {...field}
                   />
                 )}

@@ -34,6 +34,21 @@ export const useRoom = (room_id: string) => {
   const chatStore = useRoomChatStore();
   const router = useRouter();
 
+  const leave = useCallback(async () => {
+    await request({
+      socket,
+      event: "leave",
+      payload: {}
+    });
+
+    micStore.reset();
+    transportStore.reset();
+    producerStore.reset();
+    peerStore.reset();
+    roomStore.reset();
+    chatStore.reset();
+  }, [socket]);
+
   const join = useCallback(async () => {
     try {
       roomStore.setState("connecting");
@@ -253,23 +268,9 @@ export const useRoom = (room_id: string) => {
     roomStore.state,
     producerStore.producer,
     transportStore.send_transport,
-    transportStore.receive_transport
+    transportStore.receive_transport,
+    leave
   ]);
-
-  const leave = useCallback(async () => {
-    await request({
-      socket,
-      event: "leave",
-      payload: {}
-    });
-
-    micStore.reset();
-    transportStore.reset();
-    producerStore.reset();
-    peerStore.reset();
-    roomStore.reset();
-    chatStore.reset();
-  }, [socket]);
 
   const mute = useCallback(async () => {
     const producer = producerStore.producer;

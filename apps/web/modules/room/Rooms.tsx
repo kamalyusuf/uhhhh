@@ -3,13 +3,34 @@ import { Center, Loader, ScrollArea, Stack } from "@mantine/core";
 import { RoomCard } from "./RoomCard";
 import { Alert } from "../../components/Alert";
 import { c } from "../../utils/constants";
+import { useSocket } from "../../hooks/use-socket";
 
 export const Rooms = () => {
-  const { data, isLoading, isError } = useSocketQuery({
+  const { connected, connecting } = useSocket();
+  const {
+    data,
+    isFetching: isLoading,
+    isError
+  } = useSocketQuery({
     event: "rooms",
-    payload: {},
-    options: { refetchOnMount: "always" }
+    payload: {}
   });
+
+  if (connecting)
+    return (
+      <Center>
+        <Loader size="lg" />
+      </Center>
+    );
+
+  if (!connected)
+    return (
+      <Alert
+        type="error"
+        message="webserver is down"
+        style={{ marginTop: 20 }}
+      />
+    );
 
   if (isLoading)
     return (
@@ -18,7 +39,14 @@ export const Rooms = () => {
       </Center>
     );
 
-  if (isError) return <Alert type="error" message="failed to fetch rooms" />;
+  if (isError)
+    return (
+      <Alert
+        type="error"
+        message="failed to fetch rooms"
+        style={{ marginTop: 20 }}
+      />
+    );
 
   if (data)
     return (

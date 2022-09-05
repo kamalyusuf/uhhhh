@@ -80,6 +80,15 @@ export class MediasoupRoom extends EventEmitter {
     return room;
   }
 
+  static find() {
+    const rooms = [];
+
+    for (const room of this._rooms.values())
+      rooms.push({ ...room._doc.toJSON(), members: room.users() });
+
+    return rooms;
+  }
+
   static findById(room_id: string) {
     const room = this._rooms.get(room_id);
 

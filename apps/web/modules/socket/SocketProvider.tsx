@@ -11,21 +11,29 @@ import {
 import type { TypedSocket } from "./types";
 import { useMeStore } from "../../store/me";
 import type { User } from "types";
+import { toast } from "react-toastify";
 
 type V = TypedSocket | null;
 
-type SocketState = "idle" | "connected" | "error" | "disconnected";
+type SocketState =
+  | "idle"
+  | "connected"
+  | "error"
+  | "disconnected"
+  | "connecting";
 
 type Context = {
   socket: TypedSocket;
   state: SocketState;
   connected: boolean;
+  connecting: boolean;
 };
 
 export const SocketContext = createContext<Context>({
   socket: null,
   state: "idle",
-  connected: false
+  connected: false,
+  connecting: false
 });
 
 const connect = (me: User): Promise<TypedSocket> => {
@@ -62,6 +70,8 @@ export const SocketProvider = ({ children }: PropsWithChildren<{}>) => {
 
   const initialize = useCallback(async () => {
     try {
+      setState("connecting");
+
       const s = await connect(me);
 
       setSocket(s);
@@ -71,6 +81,8 @@ export const SocketProvider = ({ children }: PropsWithChildren<{}>) => {
 
       if (e.message === "socket disconnected") setState("disconnected");
       else setState("error");
+
+      toast.error(e.message);
     }
   }, [me]);
 
@@ -93,7 +105,12 @@ export const SocketProvider = ({ children }: PropsWithChildren<{}>) => {
   return (
     <SocketContext.Provider
       value={useMemo(
-        () => ({ socket, state, connected: state === "connected" }),
+        () => ({
+          socket,
+          state,
+          connected: state === "connected",
+          connecting: state === "connecting"
+        }),
         [socket, state]
       )}
     >

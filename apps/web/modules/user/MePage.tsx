@@ -11,7 +11,7 @@ import {
 import { Layout } from "../../components/Layout";
 import { PageComponent } from "../../types";
 import { toast } from "react-toastify";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useMeStore } from "../../store/me";
 import { useSocket } from "../../hooks/use-socket";
 import { DefaultMicSelector } from "../audio/DefaultMicSelector";
@@ -51,6 +51,8 @@ export const MePage: PageComponent = () => {
                   />
                   <Button
                     onClick={() => {
+                      if (!socket) return toast.error("webserver is down");
+
                       if (!name.trim()) return toast.warn("where yo name at?");
 
                       if (name.trim().length < 3)

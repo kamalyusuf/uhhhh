@@ -65,12 +65,13 @@ export function useSocketQuery<K extends ServerEvent>(
 
   return useQuery<Return<K>, EventError>(
     Array.isArray(event) ? event : [event],
-    () =>
-      request({
+    () => {
+      return request({
         socket,
         event: typeof event === "string" ? event : event[0],
         payload: data
-      }),
+      });
+    },
     {
       enabled:
         typeof window !== "undefined" &&

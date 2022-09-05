@@ -17,7 +17,7 @@ export const ssQuery =
 
       const { status } = parse(error);
 
-      if (status === 500) throw e;
+      if (!status || (status && status === 500)) throw e;
 
       return {
         notFound: true

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Group } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { type Room, RoomStatus } from "types";
@@ -28,12 +28,18 @@ export const RoomPage: PageComponent = ({ room }: Props) => {
   const { connected } = useSocket();
   const [ok, setOk] = useState(false);
   const matches = useMediaQuery("(max-width: 768px)");
+  const [locked] = useState(room.status === RoomStatus.PROTECTED);
+  const called = useRef(false);
 
-  const locked = room.status === RoomStatus.PROTECTED;
+  // const locked = room.status === RoomStatus.PROTECTED;
 
   useEffect(() => {
-    if (((locked && ok) || !locked) && connected) join();
-  }, [connected, ok]);
+    if (((locked && ok) || !locked) && connected && !called.current) {
+      called.current = true;
+
+      join();
+    }
+  }, [connected, ok, locked]);
 
   if (!mounted) return null;
 
