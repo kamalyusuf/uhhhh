@@ -4,7 +4,7 @@ import { logger } from "./logger";
 const ifaces = os.networkInterfaces();
 
 export const ip = () => {
-  let localIp = "127.0.0.1";
+  let local = "127.0.0.1";
 
   Object.keys(ifaces).forEach((ifname) => {
     const faces = ifaces[ifname];
@@ -14,13 +14,13 @@ export const ip = () => {
     for (const iface of faces) {
       if (iface.family !== "IPv4" || iface.internal !== false) continue;
 
-      localIp = iface.address;
+      local = iface.address;
 
       return;
     }
   });
 
-  return localIp;
+  return local;
 };
 
 console.log({ ip: ip() });

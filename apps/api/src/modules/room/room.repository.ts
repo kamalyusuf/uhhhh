@@ -8,4 +8,4 @@ export class RoomRepository extends BaseRepository<
   {}
 > {}
 
-export const roomRepo = new RoomRepository(Room);
+export const repo = new RoomRepository(Room);

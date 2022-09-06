@@ -1,5 +1,5 @@
 import { RoomService } from "./room/room.service";
-import { roomRepo } from "./room/room.repository";
+import { repo as roomRepo } from "./room/room.repository";
 
 export interface Deps {
   room: RoomService;

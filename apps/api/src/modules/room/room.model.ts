@@ -4,8 +4,8 @@ import {
   RoomStatus,
   RoomVisibility
 } from "types";
-import { MongooseProps } from "../../types/types";
-import { HydratedDocument } from "mongoose";
+import type { MongooseProps } from "../../types/types";
+import { type HydratedDocument } from "mongoose";
 import { ModelBuilder } from "../shared/model-builder";
 import argon2 from "argon2";
 
