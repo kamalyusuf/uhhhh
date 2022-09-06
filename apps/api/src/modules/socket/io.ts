@@ -1,8 +1,6 @@
-import { redis } from "../../lib/redis";
 import { logger } from "../../lib/logger";
 import { Server } from "node:http";
 import { Server as SocketServer } from "socket.io";
-import { createAdapter } from "@socket.io/redis-adapter";
 import type { ServerEvent, TypedIO, Payload, EventCb, E } from "./types";
 import fs from "node:fs";
 import path from "node:path";
@@ -31,8 +29,6 @@ class SocketIO {
       path: "/ws",
       transports: ["websocket", "polling"]
     });
-
-    this._io.adapter(createAdapter(redis.duplicate(), redis.duplicate()));
 
     const dir = path.resolve(__dirname, "events");
     const files = fs.readdirSync(dir);

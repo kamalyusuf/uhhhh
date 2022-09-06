@@ -10,7 +10,6 @@ export interface Env {
   NODE_ENV: string;
   MEDIASOUP_MIN_PORT: number;
   MEDIASOUP_MAX_PORT: number;
-  REDIS_URL: string;
 }
 
 export const env = envalid.cleanEnv<Env>(process.env, {
@@ -22,6 +21,7 @@ export const env = envalid.cleanEnv<Env>(process.env, {
   SENTRY_DSN: envalid.str({ devDefault: undefined }),
   NODE_ENV: envalid.str({ choices: ["development", "production"] }),
   MEDIASOUP_MIN_PORT: envalid.port(),
-  MEDIASOUP_MAX_PORT: envalid.port(),
-  REDIS_URL: envalid.url({ devDefault: "redis://localhost:6379" })
+  MEDIASOUP_MAX_PORT: envalid.port()
 });
+
+console.log(env);

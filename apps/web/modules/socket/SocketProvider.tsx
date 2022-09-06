@@ -11,7 +11,6 @@ import {
 import type { TypedSocket } from "./types";
 import { useMeStore } from "../../store/me";
 import type { User } from "types";
-import { toast } from "react-toastify";
 
 type V = TypedSocket | null;
 
@@ -23,7 +22,7 @@ type SocketState =
   | "connecting";
 
 type Context = {
-  socket: TypedSocket;
+  socket: V;
   state: SocketState;
   connected: boolean;
   connecting: boolean;
@@ -81,8 +80,6 @@ export const SocketProvider = ({ children }: PropsWithChildren<{}>) => {
 
       if (e.message === "socket disconnected") setState("disconnected");
       else setState("error");
-
-      toast.error(e.message);
     }
   }, [me]);
 

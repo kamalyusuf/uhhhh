@@ -19,6 +19,7 @@ WORKDIR /app
 
 #ENV NEXT_PUBLIC_API_URL http://host.docker.internal:5000
 ENV NEXT_PUBLIC_API_URL http://localhost:5000
+ENV ENV docker
 
 COPY --from=installer /app/ .
 COPY --from=builder /app/out/full/ .
