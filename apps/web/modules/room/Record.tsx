@@ -1,6 +1,7 @@
 import { Group } from "@mantine/core";
 import { useRef, useState, memo } from "react";
 import type { Room } from "types";
+import { useMicStore } from "../../store/mic";
 import { type RecordState, RecordActions } from "./RecordActions";
 
 interface Props {
@@ -12,13 +13,10 @@ export const Record = memo(({ room }: Props) => {
   const blobs = useRef<Blob[]>([]);
   const recorder = useRef<MediaRecorder>(null);
   const stream = useRef<MediaStream>(null);
+  const micStore = useMicStore();
 
   const record = async () => {
-    const s = await navigator.mediaDevices.getUserMedia({
-      audio: true
-    });
-
-    const track = s.getAudioTracks()[0];
+    const track = micStore.stream.getAudioTracks()[0];
 
     stream.current = new MediaStream([track]);
 
@@ -77,7 +75,7 @@ export const Record = memo(({ room }: Props) => {
             }
 
             if (stream.current) {
-              stream.current.getTracks().forEach((track) => track.stop());
+              // stream.current.getTracks().forEach((track) => track.stop());
               stream.current = null;
             }
 
