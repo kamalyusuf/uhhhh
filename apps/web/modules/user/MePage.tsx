@@ -11,7 +11,7 @@ import {
 import { Layout } from "../../components/Layout";
 import { PageComponent } from "../../types";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useMeStore } from "../../store/me";
 import { useSocket } from "../../hooks/use-socket";
 import { DefaultMicSelector } from "../audio/DefaultMicSelector";
@@ -28,6 +28,23 @@ export const MePage: PageComponent = () => {
 
   if (!mounted) return null;
 
+  const onSubmit = () => {
+    if (!socket) return toast.error("webserver is down");
+
+    if (!name.trim()) return toast.warn("where yo name at?");
+
+    if (name.trim().length < 3)
+      return toast.warn("name should be at least 3 characters");
+
+    update(name, remember);
+
+    socket.emit("update display name", {
+      new_display_name: name
+    });
+
+    toast.success("saved");
+  };
+
   return (
     <>
       <Layout title={me.display_name ?? "uhhhh"}>
@@ -35,45 +52,31 @@ export const MePage: PageComponent = () => {
           <Center>
             <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>
               <Stack spacing={10}>
-                <Stack>
-                  <TextInput
-                    placeholder="display name"
-                    label="display name"
-                    required
-                    value={name}
-                    onChange={(event) => setName(event.currentTarget.value)}
-                  />
-                  <Checkbox
-                    label="remember me"
-                    size="xs"
-                    checked={remember}
-                    onChange={(e) => setRemember(e.currentTarget.checked)}
-                  />
-                  <Button
-                    onClick={() => {
-                      if (!socket) return toast.error("webserver is down");
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
 
-                      if (!name.trim()) return toast.warn("where yo name at?");
-
-                      if (name.trim().length < 3)
-                        return toast.warn(
-                          "name should be at least 3 characters"
-                        );
-
-                      update(name, remember);
-
-                      socket.emit("update display name", {
-                        new_display_name: name
-                      });
-
-                      toast.success("saved");
-                    }}
-                  >
-                    update
-                  </Button>
-                </Stack>
+                    onSubmit();
+                  }}
+                >
+                  <Stack>
+                    <TextInput
+                      placeholder="display name"
+                      label="display name"
+                      required
+                      value={name}
+                      onChange={(event) => setName(event.currentTarget.value)}
+                    />
+                    <Checkbox
+                      label="remember me"
+                      size="xs"
+                      checked={remember}
+                      onChange={(e) => setRemember(e.currentTarget.checked)}
+                    />
+                    <Button>update</Button>
+                  </Stack>
+                </form>
                 <Divider size="xs" color="indigo" />
-
                 <DefaultMicSelector />
               </Stack>
             </Paper>

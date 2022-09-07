@@ -8,6 +8,7 @@ import { CreateRoomModal } from "./CreateRoomModal";
 import { Rooms } from "./Rooms";
 import type { PageComponent } from "../../types";
 import { useMounted } from "../../hooks/use-mounted";
+import { Testing } from "../../components/Testing";
 
 export const RoomsPage: PageComponent = () => {
   const [opened, setOpened] = useState(false);
@@ -36,6 +37,7 @@ export const RoomsPage: PageComponent = () => {
             <Divider variant="solid" color="indigo" />
             <Space h="sm" />
             <Rooms />
+            <Testing />
           </Container>
         </Box>
 

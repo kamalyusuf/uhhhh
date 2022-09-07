@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import { Group } from "@mantine/core";
+import { Group, Loader } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { type Room, RoomStatus } from "types";
 import { useRoom } from "./useRoom";
@@ -15,6 +15,7 @@ import { RoomError } from "./RoomError";
 import { useMounted } from "../../hooks/use-mounted";
 import { useActiveSpeaker } from "../../hooks/use-active-speaker";
 import { Alert } from "../../components/Alert";
+import { AbsoluteCenter } from "../../components/AbsoluteCenter";
 
 interface Props {
   room: Room;
@@ -25,7 +26,7 @@ export const RoomPage: PageComponent = ({ room }: Props) => {
   const mounted = useMounted();
   const { join, leave, mute, unmute } = useRoom(room._id);
   const roomStore = useRoomStore();
-  const { connected } = useSocket();
+  const { connected, connecting } = useSocket();
   const [ok, setOk] = useState(false);
   const matches = useMediaQuery("(max-width: 768px)");
   const [locked] = useState(room.status === RoomStatus.PROTECTED);
@@ -42,6 +43,13 @@ export const RoomPage: PageComponent = ({ room }: Props) => {
   }, [connected, ok, locked]);
 
   if (!mounted) return null;
+
+  if (connecting)
+    return (
+      <AbsoluteCenter>
+        <Loader size="lg" />
+      </AbsoluteCenter>
+    );
 
   if (!connected)
     return (
