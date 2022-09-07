@@ -11,7 +11,7 @@ import {
 import { Layout } from "../../components/Layout";
 import { PageComponent } from "../../types";
 import { toast } from "react-toastify";
-import { useCallback, useState } from "react";
+import { useState } from "react";
 import { useMeStore } from "../../store/me";
 import { useSocket } from "../../hooks/use-socket";
 import { DefaultMicSelector } from "../audio/DefaultMicSelector";
@@ -73,7 +73,7 @@ export const MePage: PageComponent = () => {
                       checked={remember}
                       onChange={(e) => setRemember(e.currentTarget.checked)}
                     />
-                    <Button>update</Button>
+                    <Button type="submit">update</Button>
                   </Stack>
                 </form>
                 <Divider size="xs" color="indigo" />

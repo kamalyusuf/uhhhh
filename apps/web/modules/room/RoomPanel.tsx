@@ -20,7 +20,6 @@ import { useRoomStore } from "../../store/room";
 import { useClipboard } from "@mantine/hooks";
 import { AiOutlineShareAlt } from "react-icons/ai";
 import { IoExitOutline } from "react-icons/io5";
-import { Record } from "./Record";
 
 interface Props {
   room: Room;
@@ -74,7 +73,6 @@ export const RoomPanel = ({ room, actions }: Props) => {
       <Group position="apart" style={{ width: "100%" }}>
         <ToggleMuteButton mute={actions.mute} unmute={actions.unmute} />
         <Group spacing={20}>
-          <Record room={room} />
           <Button
             size="xs"
             radius="xl"
