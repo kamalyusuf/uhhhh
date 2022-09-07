@@ -1,3 +1,2 @@
-room timer
-record room
-notify others in the room if someone is recording
+room timer - ish
+track the start on the server if first person joins

@@ -20,6 +20,7 @@ import { useRoomStore } from "../../store/room";
 import { useClipboard } from "@mantine/hooks";
 import { AiOutlineShareAlt } from "react-icons/ai";
 import { IoExitOutline } from "react-icons/io5";
+import { useTimeElapsed } from "../../hooks/use-time-elapsed";
 
 interface Props {
   room: Room;
@@ -36,6 +37,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
   const { me } = useMeStore();
   const roomStore = useRoomStore();
   const clipboard = useClipboard({ timeout: 1500 });
+  const { elapsed } = useTimeElapsed(new Date(room.created_at));
 
   const leaving = roomStore.state === "disconnecting";
 
@@ -62,10 +64,18 @@ export const RoomPanel = ({ room, actions }: Props) => {
 
         <Space h="md" />
 
-        <Heading title={room.name} order={3} />
-        <Text color="indigo" size="xs">
-          {room.description}
-        </Text>
+        <Group position="apart">
+          <Stack spacing={0}>
+            <Heading title={room.name} order={3} />
+            <Text color="indigo" size="xs">
+              {room.description}
+            </Text>
+          </Stack>
+
+          <Text color="white" size="sm" italic>
+            {elapsed}
+          </Text>
+        </Group>
       </Stack>
 
       <Divider variant="solid" color="indigo" style={{ width: "100%" }} />
