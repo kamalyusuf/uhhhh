@@ -19,6 +19,7 @@ export class MediasoupRoom extends EventEmitter {
   public id: string; // = _doc._id.toString()
   public peers: Map<string, Peer>;
   public router: Router;
+  public in_session_at?: Date;
 
   private _io: TypedIO;
   private _doc: RoomDoc;
@@ -119,6 +120,12 @@ export class MediasoupRoom extends EventEmitter {
 
   join(peer: Peer) {
     if (this.peers.has(peer.user._id)) throw new Error("peer already joined");
+
+    if (!this.count()) this.in_session_at = new Date();
+
+    peer.socket.emit("room session at", {
+      in_session_at: this.in_session_at?.toISOString() || ""
+    });
 
     this.peers.set(peer.user._id, peer);
 

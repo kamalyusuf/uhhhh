@@ -94,6 +94,8 @@ export interface ServerToClientEvents<
   }) => void;
 
   "room login": (t: { ok: boolean }) => void;
+
+  "room session at": (t: { in_session_at: string }) => void;
 }
 
 export interface ClientToServerEvents<

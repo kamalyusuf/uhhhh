@@ -1,13 +1,15 @@
 import { type Duration, intervalToDuration } from "date-fns";
 import { useEffect, useState } from "react";
 
-export const useTimeElapsed = (start: Date) => {
+export const useTimeElapsed = (start: string) => {
   const [duration, setDuration] = useState<Duration>();
 
-  const update = (start: Date) => {
+  const update = (start: string) => {
+    if (!start) return;
+
     setDuration(
       intervalToDuration({
-        start,
+        start: new Date(start),
         end: new Date()
       })
     );

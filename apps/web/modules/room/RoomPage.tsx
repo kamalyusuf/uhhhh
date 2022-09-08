@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Group, Loader } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { type Room, RoomStatus } from "types";
-import { useRoom } from "./useRoom";
+import { useRoom } from "./use-room";
 import { Layout } from "../../components/Layout";
 import { Container } from "../../components/Container";
 import { RoomChat } from "./chat/RoomChat";

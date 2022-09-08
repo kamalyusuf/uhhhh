@@ -127,6 +127,10 @@ export const SocketHandler = () => {
       );
     });
 
+    socket.on("room session at", ({ in_session_at }) => {
+      roomStore.set({ in_session_at });
+    });
+
     return () => {
       socket.removeAllListeners();
     };
