@@ -2,7 +2,7 @@ import { logger } from "../../../lib/logger";
 import { Peer } from "../../mediasoup/peer";
 import { MediasoupRoom } from "../../mediasoup/room";
 
-export const onDisconnect =
+export const ondisconnect =
   ({ peer }: { peer: Peer }) =>
   async (reason: string) => {
     logger.cinfo(
@@ -14,7 +14,7 @@ export const onDisconnect =
     const rid = peer.active_room_id;
 
     try {
-      const room = MediasoupRoom.findById(rid);
+      const room = MediasoupRoom.findbyid(rid);
 
       await room.leave(peer);
     } catch (e) {

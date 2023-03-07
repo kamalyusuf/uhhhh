@@ -5,7 +5,7 @@ import { env } from "./env";
 
 export { Sentry, Tracing };
 
-export const useSentry = (app: Express) => {
+export const usesentry = (app: Express) => {
   Sentry.init({
     dsn: env.SENTRY_DSN,
     integrations: [

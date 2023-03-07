@@ -1,17 +1,31 @@
 import type { CallbackEvent } from "../types";
 import { MediasoupRoom } from "../../mediasoup/room";
-import type { Room } from "types";
+import { Room as IRoom, RoomVisibility } from "types";
+import { Room } from "../../room/room.model";
 
 export const handler: CallbackEvent<"rooms"> = {
   on: "rooms",
   invoke: async ({ cb }) => {
-    const data = await deps.room.find();
+    const data = await Room.find(
+      {
+        visibility: {
+          $eq: RoomVisibility.PUBLIC
+        }
+      },
+      {},
+      {
+        sort: {
+          created_at: -1
+        },
+        lean: true
+      }
+    );
 
-    const rooms: Room[] = data.map((room) => {
+    const rooms: IRoom[] = data.map((room) => {
       let r;
 
       try {
-        r = MediasoupRoom.findById(room._id.toString());
+        r = MediasoupRoom.findbyid(room._id.toString());
       } catch (e) {}
 
       return {

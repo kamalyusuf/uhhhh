@@ -6,14 +6,14 @@ export const handler: CallbackEvent<"produce"> = {
   on: "produce",
   invoke: async ({
     peer,
-    payload: { room_id, transport_id, kind, rtp_parameters, app_data },
+    data: { room_id, transport_id, kind, rtp_parameters, app_data },
     cb
   }) => {
     if (!peer.active_room_id) throw new NotJoinedError();
 
-    const room = MediasoupRoom.findById(room_id);
+    const room = MediasoupRoom.findbyid(room_id);
 
-    if (!room.hasPeer(peer.user._id) || peer.active_room_id !== room.id)
+    if (!room.haspeer(peer.user._id) || peer.active_room_id !== room.id)
       throw new NotJoinedError();
 
     const transport = peer.transports.get(transport_id);
@@ -34,7 +34,7 @@ export const handler: CallbackEvent<"produce"> = {
     const peers = room._peers().filter((p) => p.user._id !== peer.user._id);
 
     for (const p of peers)
-      await room.createConsumer({
+      await room.createconsumer({
         consumer_peer: p,
         producer_peer: peer,
         producer: producer

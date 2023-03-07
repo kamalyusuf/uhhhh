@@ -1,88 +1,105 @@
 import { Peer } from "../mediasoup/peer";
 import { logger } from "./../../lib/logger";
-import { SocketEventError } from "./../../utils/socket-event-error";
-import { CustomError, NotAuthorizedError } from "@kamalyb/errors";
+import { SocketEventError } from "./socket-event-error";
+import {
+  CustomError,
+  JoiValidationError,
+  NotAuthorizedError
+} from "@kamalyb/errors";
 import type {
   E,
-  Payload,
+  EventData,
   ServerEvent,
   ServerToClientEvents,
   TypedIO,
   TypedSocket
 } from "./types";
-import Joi from "joi";
-import type { EventError, User } from "types";
-
-type Arg = "payload" | "callback";
+import type { EventError, User, Anything } from "types";
+import { isfunction, isobject } from "../../utils/is";
+import { s } from "../../utils/schema";
 
 const overload = `
-  (payload: object, cb: Function); 
-  (payload: object); 
-  (payload: {}, cb: Function)
+  (data: object, cb: Function); 
+  (data: object); 
+  (data: undefined | {}, cb: Function);
   (cb: Function); 
   ();
 `;
 
-const error = new Error(
+const overloaderror = new Error(
   `parameters must satisfy the following overload: ${overload}`
 );
 
-export const isObjectOrThrow = (t: any, arg: Arg) => {
-  if ((t && typeof t !== "object") || Array.isArray(t) || t instanceof Date)
-    throw new Error(`expected ${arg} to be an object`);
-};
+export const validateargs = (
+  ...args: Anything[]
+): {
+  eventdata: EventData<ServerEvent> | undefined;
+  cb: Function | undefined;
+  __request__?: boolean | undefined;
+} => {
+  if (!args.length) return { eventdata: undefined, cb: undefined };
 
-export const isFunctionOrThrow = (t: any, arg: Arg) => {
-  if (t && typeof t !== "function")
-    throw new Error(`expected ${arg} to be a function`);
-};
+  if (args.length > 2) throw overloaderror;
 
-export const validateArgs = (...args: any[]) => {
-  if (!args.length) return { payload: {}, cb: undefined };
+  const [data, cb] = args;
 
-  if (args.length > 2) throw error;
+  let callbackfn: (() => void) | undefined;
+  let eventdata: EventData<ServerEvent> | undefined;
 
-  const [payload, cb] = args;
-
-  let callbackFn: (() => void) | undefined;
-  let data: Payload<ServerEvent> | {};
   let __request__ = false;
 
-  const set = (payload: { __request__?: boolean } & { [key: string]: any }) => {
-    if (payload.__request__) __request__ = true;
+  const set = (p: { [key: string]: unknown }) => {
+    if (!isobject(p)) throw new Error("expected data to be an object");
 
-    delete payload.__request__;
+    if (typeof p.__request__ === "undefined")
+      return p as EventData<ServerEvent>;
+
+    if (!p.data)
+      throw new Error(
+        `expected data to be contained in 'data' property if __request__ (i.e the request is coming from 'socketrequest' function) is present [and must be true]`
+      );
+
+    const { error } = s.validate(
+      s.object<{}>({
+        __request__: s.boolean().valid(true),
+        data: s.anyobject()
+      }),
+      p
+    );
+
+    if (error) throw new JoiValidationError(error.details);
+
+    __request__ = true;
+
+    return p.data as EventData<ServerEvent>;
   };
 
-  if (payload && cb) {
-    isObjectOrThrow(payload, "payload");
-    isFunctionOrThrow(cb, "callback");
+  if (data && cb) {
+    if (!isobject(data)) throw new Error("expected data to be an object");
 
-    set(payload);
+    if (!isfunction(cb)) throw new Error("expected callback to be a function");
 
-    data = payload;
-    callbackFn = cb;
-  } else if (payload && !cb && typeof payload !== "function") {
-    isObjectOrThrow(payload, "payload");
+    eventdata = set(data);
+    callbackfn = cb;
+  } else if (data && !cb && typeof data !== "function") {
+    if (!isobject(data)) throw new Error("expected data to be an object");
 
-    set(payload);
+    eventdata = set(data);
+    callbackfn = undefined;
+  } else if (data && !cb && typeof data === "function") {
+    eventdata = undefined;
+    callbackfn = data;
+  } else if (!data && !cb) {
+    eventdata = undefined;
+    callbackfn = undefined;
+  } else if (!data && cb) {
+    if (!isfunction(cb)) throw new Error("expected callback to be a function");
 
-    data = payload;
-    callbackFn = undefined;
-  } else if (payload && !cb && typeof payload === "function") {
-    data = {};
-    callbackFn = payload;
-  } else if (!payload && !cb) {
-    data = {};
-    callbackFn = undefined;
-  } else if (!payload && cb) {
-    isFunctionOrThrow(cb, "callback");
+    eventdata = undefined;
+    callbackfn = cb;
+  } else throw overloaderror;
 
-    data = {};
-    callbackFn = cb;
-  } else throw error;
-
-  return { payload: data, cb: callbackFn, __request__ };
+  return { eventdata, cb: callbackfn, __request__ };
 };
 
 export class NotJoinedError extends Error {
@@ -109,9 +126,9 @@ export class NoConsumerFoundError extends Error {
   }
 }
 
-const schema = Joi.object<User, true>({
-  _id: Joi.string(),
-  display_name: Joi.string()
+const schema = s.object<User>({
+  _id: s.string(),
+  display_name: s.string()
 });
 
 export const authenticate: Parameters<TypedIO["use"]>[0] = (socket, next) => {
@@ -134,7 +151,7 @@ export const authenticate: Parameters<TypedIO["use"]>[0] = (socket, next) => {
   next();
 };
 
-export const onError = ({
+export const onerror = ({
   error,
   peer,
   socket,

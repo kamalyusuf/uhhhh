@@ -1,10 +1,10 @@
 import { CustomError } from "@kamalyb/errors";
 import consola from "consola";
+import Joi from "joi";
+import type { Anything, AnyObject } from "types";
 import winston, { format as f } from "winston";
 import { env } from "./env";
 import { Sentry } from "./sentry";
-
-type Extra = Record<string, any>;
 
 const format = f.printf(({ level, message, timestamp, stack, extra }) => {
   const log = `${timestamp} ${level}: ${message}`;
@@ -15,7 +15,19 @@ const format = f.printf(({ level, message, timestamp, stack, extra }) => {
 });
 
 const exclude = f((info) => {
-  if (info.custom || info.validation) return false;
+  if (info.force) return info;
+
+  if (info.custom || info.validation || info.joi) return false;
+
+  return info;
+});
+
+const prodformat = f((info) => {
+  if (info.dev) return false;
+
+  Object.keys(info).forEach((key) => {
+    if (!["level", "message"].includes(key)) delete info[key];
+  });
 
   return info;
 });
@@ -37,15 +49,7 @@ const dev = () =>
 const prod = () =>
   winston.createLogger({
     format: f.combine(
-      f((info) => {
-        if (info.dev || info.test) return false;
-
-        Object.keys(info).forEach((key) => {
-          if (!["level", "message"].includes(key)) delete info[key];
-        });
-
-        return info;
-      })(),
+      prodformat(),
       f.timestamp({
         format: "DD-MM-YYYY HH:mm:ss"
       }),
@@ -55,10 +59,10 @@ const prod = () =>
   });
 
 class Logger {
-  private _output: winston.Logger;
+  private output: winston.Logger;
 
   constructor() {
-    this._output = env.isProduction ? prod() : dev();
+    this.output = env.isProduction ? prod() : dev();
   }
 
   info(
@@ -69,15 +73,14 @@ class Logger {
       dev?: boolean;
     } = {}
   ) {
-    this._output.log({
+    this.output.log({
       level: "info",
       message,
-      dev: d,
-      test: env.isTest
+      dev: d
     });
   }
 
-  cinfo(message: string | object, ...args: any[]) {
+  cinfo(message: Anything, ...args: unknown[]) {
     if (env.isDevelopment)
       consola.info(
         typeof message === "string" ? `${message.blue}` : message,
@@ -85,7 +88,7 @@ class Logger {
       );
   }
 
-  cwarn(message: string | object, ...args: any[]) {
+  cwarn(message: Anything, ...args: unknown[]) {
     if (env.isDevelopment)
       consola.info(
         typeof message === "string" ? `${message.yellow}` : message,
@@ -93,7 +96,7 @@ class Logger {
       );
   }
 
-  csuccess(message: string | object, ...args: any[]) {
+  csuccess(message: Anything, ...args: unknown[]) {
     if (env.isDevelopment)
       consola.success(
         typeof message === "string" ? `${message.green}` : message,
@@ -101,7 +104,7 @@ class Logger {
       );
   }
 
-  warn(message: string, extra?: Extra) {
+  warn(message: string, extra?: AnyObject) {
     if (env.isProduction)
       Sentry.withScope((scope) => {
         scope.setLevel("warning");
@@ -111,7 +114,7 @@ class Logger {
         Sentry.captureMessage(message);
       });
 
-    this._output.log({
+    this.output.log({
       level: "warn",
       message,
       extra,
@@ -121,28 +124,60 @@ class Logger {
 
   error(
     message: string,
-    error: Error | CustomError,
+    error: Error,
     o?: {
       capture?: boolean;
-      extra?: { [key: string]: any };
+      extra?: AnyObject;
+      force?: boolean;
+    }
+  ): void;
+  error(
+    error: Error,
+    o?: {
+      capture?: boolean;
+      extra?: AnyObject;
+      force?: boolean;
+    }
+  ): void;
+  error(
+    a: string | Error,
+    b?:
+      | Error
+      | {
+          capture?: boolean;
+          extra?: AnyObject;
+          force?: boolean;
+        },
+    c?: {
+      capture?: boolean;
+      extra?: AnyObject;
       force?: boolean;
     }
   ) {
+    const e = typeof a === "string" ? (b as Error) : a;
+    const o = (typeof a === "string" ? c : b) as {
+      capture?: boolean;
+      extra?: AnyObject;
+      force?: boolean;
+    };
+
     if (o?.capture && env.isProduction)
-      Sentry.captureException(error, (scope) => {
+      Sentry.captureException(e, (scope) => {
         if (o?.extra) scope.setExtras(o.extra);
 
         return scope;
       });
 
-    this._output.log({
+    this.output.log({
       level: "error",
-      message,
-      stack: error.stack,
+      message: typeof a === "string" ? a : a.message,
+      stack: typeof a === "string" ? (b as Error).stack : a.stack,
       dev: true,
-      custom: error instanceof CustomError,
-      validation: error.name === "ValidationError",
-      extra: o?.extra
+      custom: e instanceof CustomError,
+      validation: e.name === "ValidationError",
+      extra: o?.extra,
+      force: o?.force,
+      joi: Joi.isError(e)
     });
   }
 }

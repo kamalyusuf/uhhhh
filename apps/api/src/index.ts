@@ -1,17 +1,24 @@
 import "colors";
 import "./lib/ip";
-import { Server } from "http";
+import type { Server } from "http";
 import { app } from "./app";
 import { workers } from "./modules/mediasoup/workers";
 import { logger } from "./lib/logger";
-import { exitHandler } from "./utils/exit-handler";
+import { exithandler } from "./utils/exit-handler";
+import { mongo } from "./lib/mongo";
+import { env } from "./lib/env";
+import { io } from "./modules/socket/io";
 
 let server: Server;
 
 const bootstrap = async () => {
   await workers.run();
 
+  await mongo.connect(env.MONGO_URL);
+
   server = await app.serve();
+
+  io.initialize(server);
 };
 
 bootstrap().catch((e) => {
@@ -23,13 +30,13 @@ bootstrap().catch((e) => {
 process.on("uncaughtException", (error: Error) => {
   logger.error(error.message, error);
 
-  exitHandler(server);
+  exithandler(server);
 });
 
 process.on("unhandledRejection", (error: Error) => {
   logger.error(error.message, error);
 
-  exitHandler(server);
+  exithandler(server);
 });
 
 process.on("SIGTERM", () => {

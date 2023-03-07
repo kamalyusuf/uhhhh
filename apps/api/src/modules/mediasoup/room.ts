@@ -5,56 +5,42 @@ import {
   Producer,
   Consumer
 } from "mediasoup/node/lib/types";
-import { EventEmitter } from "events";
 import { workers } from "./workers";
 import { NotFoundError } from "@kamalyb/errors";
 import type { TypedIO } from "../socket/types";
 import { logger } from "../../lib/logger";
 import { RoomVisibility } from "types";
-import type { RoomDoc } from "../room/room.model";
+import { Room, type RoomDocument } from "../room/room.model";
 
-export class MediasoupRoom extends EventEmitter {
-  private static _rooms: Map<string, MediasoupRoom> = new Map();
+export class MediasoupRoom {
+  private static rooms: Map<string, MediasoupRoom> = new Map();
 
-  public id: string; // = _doc._id.toString()
+  public id: string;
   public peers: Map<string, Peer>;
   public router: Router;
   public in_session_at?: Date;
 
-  private _io: TypedIO;
-  private _doc: RoomDoc;
+  private io: TypedIO;
+  private doc: RoomDocument;
 
   private constructor({
-    id,
     router,
     io,
     doc
   }: {
-    id: string;
     router: Router;
     io: TypedIO;
-    doc: RoomDoc;
+    doc: RoomDocument;
   }) {
-    super();
-    this.setMaxListeners(Infinity);
-
-    this.id = id;
+    this.id = doc._id.toString();
     this.router = router;
-    this._io = io;
-    this._doc = doc;
+    this.io = io;
+    this.doc = doc;
 
     this.peers = new Map<string, Peer>();
   }
 
-  static async create({
-    id,
-    io,
-    doc
-  }: {
-    id: string;
-    io: TypedIO;
-    doc: RoomDoc;
-  }) {
+  static async create({ io, doc }: { io: TypedIO; doc: RoomDocument }) {
     const router = await workers.next().createRouter({
       mediaCodecs: [
         {
@@ -74,9 +60,9 @@ export class MediasoupRoom extends EventEmitter {
       ]
     });
 
-    const room = new MediasoupRoom({ id, router, io, doc });
+    const room = new MediasoupRoom({ router, io, doc });
 
-    this._rooms.set(room.id, room);
+    this.rooms.set(room.id, room);
 
     return room;
   }
@@ -84,37 +70,36 @@ export class MediasoupRoom extends EventEmitter {
   static find() {
     const rooms = [];
 
-    for (const room of this._rooms.values())
-      rooms.push({ ...room._doc.toJSON(), members: room.users() });
+    for (const room of this.rooms.values())
+      rooms.push({ ...room.doc.toJSON(), members: room.users() });
 
     return rooms;
   }
 
-  static findById(room_id: string) {
-    const room = this._rooms.get(room_id);
+  static findbyid(room_id: string) {
+    const room = this.rooms.get(room_id);
 
     if (!room) throw new NotFoundError("no mediasoup room found");
 
     return room;
   }
 
-  static async findOrCreate(
-    room_id: string,
+  static async findorcreate(
     io: TypedIO,
-    doc: RoomDoc
+    doc: RoomDocument
   ): Promise<MediasoupRoom> {
-    const room = this._rooms.get(room_id);
+    const room = this.rooms.get(doc._id.toString());
 
     if (room) return room;
 
-    return this.create({ id: room_id, io, doc });
+    return this.create({ io, doc });
   }
 
   static remove(room_id: string) {
-    this._rooms.delete(room_id);
+    this.rooms.delete(room_id);
   }
 
-  get rtpCapabilities(): RtpCapabilities {
+  get rtpcapabilities(): RtpCapabilities {
     return this.router.rtpCapabilities;
   }
 
@@ -129,8 +114,8 @@ export class MediasoupRoom extends EventEmitter {
 
     this.peers.set(peer.user._id, peer);
 
-    if (this._doc.visibility === RoomVisibility.PUBLIC)
-      this._io.emit("update room members count", {
+    if (this.doc.visibility === RoomVisibility.PUBLIC)
+      this.io.emit("update room members count", {
         room_id: this.id,
         members_count: this.count()
       });
@@ -144,11 +129,11 @@ export class MediasoupRoom extends EventEmitter {
     return Array.from(this.peers.values());
   }
 
-  hasPeer(id: string) {
+  haspeer(id: string) {
     return this.peers.has(id);
   }
 
-  async createConsumer({
+  async createconsumer({
     consumer_peer,
     producer_peer,
     producer
@@ -191,11 +176,9 @@ export class MediasoupRoom extends EventEmitter {
     } catch (e) {
       const error = e as Error;
 
-      logger.warn(
+      return logger.warn(
         `[createConsumer() -> transport.consume()] ${error.message} for consumer_peer ${consumer_peer.user.display_name} and producer_peer ${producer_peer.user.display_name}`
       );
-
-      return;
     }
 
     consumer_peer.consumers.set(consumer.id, consumer);
@@ -259,8 +242,8 @@ export class MediasoupRoom extends EventEmitter {
     peer.reset();
     this.peers.delete(peer.user._id);
 
-    if (this._doc.visibility === RoomVisibility.PUBLIC)
-      this._io.emit("update room members count", {
+    if (!this.doc.isprivate())
+      this.io.emit("update room members count", {
         room_id: this.id,
         members_count: this.count()
       });
@@ -268,10 +251,10 @@ export class MediasoupRoom extends EventEmitter {
     if (this._peers().length === 0) {
       this.router.close();
 
-      const deleted = await deps.room.delete(this.id);
+      const deleted = await Room.delete(this.id);
 
-      if (deleted && this._doc.visibility === RoomVisibility.PUBLIC)
-        this._io.emit("delete room", { room_id: this.id });
+      if (deleted && !this.doc.isprivate())
+        this.io.emit("delete room", { room_id: this.id });
 
       MediasoupRoom.remove(this.id);
     }

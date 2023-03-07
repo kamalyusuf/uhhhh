@@ -8,16 +8,15 @@
     ]
   },
   "scripts": {
-    "dev": "turbo run dev --no-cache --parallel --include-dependencies --continue",
-    "api:dev": "turbo run dev --scope=api --include-dependencies --no-cache",
-    "api:build": "turbo run build --scope=api",
-    "api:start": "turbo run start --scope=api",
-    "web:dev": "turbo run dev --scope=web --include-dependencies --no-cache",
-    "web:build": "turbo run build --scope=web",
-    "web:start": "turbo run start --scope=web"
+    "dev": "turbo run dev --no-cache --continue",
+    "api:dev": "turbo run dev --filter=api... --no-cache",
+    "api:build": "turbo run build --filter=api",
+    "api:start": "turbo run start --filter=api",
+    "web:dev": "turbo run dev --filter=web... --no-cache",
+    "web:build": "turbo run build --filter=web",
+    "web:start": "turbo run start --filter=web"
   },
   "devDependencies": {
-    "lerna": "^6.5.1",
     "prettier": "^2.8.4",
     "rimraf": "^4.3.1",
     "ts-node": "^10.9.1",

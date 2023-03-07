@@ -4,69 +4,93 @@ import mongoose, {
   type SchemaDefinitionType,
   Schema,
   type Model as MongooseModel,
-  model
+  type HydratedDocument
 } from "mongoose";
-import { type MongooseSchemaProps } from "../../types/types";
+import uniquevalidator from "mongoose-unique-validator";
+import type { MongooseSchemaProps, Timestamp } from "../../types/types";
 
-export class ModelBuilder<Props, Methods = {}, Statics = {}, Virtuals = {}> {
-  readonly schema = (
-    definition: Required<
-      SchemaDefinition<SchemaDefinitionType<MongooseSchemaProps<Props>>>
-    >,
-    options: Omit<SchemaOptions, "toObject" | "toJSON" | "collection"> & {
-      exclude?: Array<keyof Props | keyof Virtuals>;
-      public?: Array<keyof Props | keyof Virtuals>;
-    } = {}
-  ): Schema<
+export class ModelBuilder<
+  Props extends Timestamp & { _id: mongoose.Types.ObjectId },
+  Methods extends {} = {},
+  Virtuals extends {} = {},
+  Statics extends {} = {}
+> {
+  private _schema?: Schema<
     Props,
     MongooseModel<Props, {}, Methods, Virtuals>,
     Methods,
     {},
     Virtuals,
     Statics
-  > => {
-    const schemaOptions: SchemaOptions = {
-      ...options,
-      id: false,
-      versionKey: false,
-      timestamps: {
-        createdAt: "created_at",
-        updatedAt: "updated_at"
-      },
-      strict: "throw",
-      toObject: {
-        virtuals: true
-      },
-      toJSON: {
-        virtuals: true,
-        transform(_: any, ret: any) {
-          if (options.public?.length) {
-            const fields = options.public.filter(Boolean);
+  >;
 
-            if (!fields.length) return;
+  private _model?: MongooseModel<Props, {}, Methods, Virtuals> & Statics;
 
-            Object.keys(ret).forEach((key) => {
-              const k = key as keyof Props | keyof Virtuals;
+  constructor(public name: string, public collection: string) {}
 
-              if (!fields.includes(k)) delete ret[key];
-            });
+  schema(
+    definition: (
+      t: typeof Schema.Types
+    ) => Required<
+      SchemaDefinition<SchemaDefinitionType<MongooseSchemaProps<Props>>>
+    >,
+    options: Omit<
+      SchemaOptions<Props, Methods, {}, Statics, Virtuals>,
+      "toObject" | "toJSON" | "collection"
+    > & {
+      to_json_exclude?: Array<keyof Props | keyof Virtuals>;
+      to_json_fields?: Array<keyof Props | keyof Virtuals>;
+    } = {}
+  ) {
+    const schemaoptions: SchemaOptions<Props, Methods, {}, Statics, Virtuals> =
+      {
+        ...options,
+        id: false,
+        versionKey: false,
+        timestamps: {
+          createdAt: "created_at",
+          updatedAt: "updated_at"
+        },
+        strict: "throw",
+        toObject: {
+          virtuals: true
+        },
+        toJSON: {
+          virtuals: true,
+          transform(
+            _: HydratedDocument<Props, Methods, Virtuals>,
+            ret: HydratedDocument<Props, Methods, Virtuals>
+          ) {
+            if (options.to_json_fields?.length)
+              return Object.keys(ret).forEach((key) => {
+                const k = key as keyof Props | keyof Virtuals;
 
-            return;
-          }
+                // @ts-ignore
+                if (!options.to_json_fields.includes(k) && ret[key])
+                  // @ts-ignore
+                  delete ret[key];
+              });
 
-          if (options.exclude?.length) {
-            const fields = options.exclude.filter(Boolean);
-
-            if (!fields.length) return;
-
-            for (const field of fields) delete ret[field];
+            if (options.to_json_exclude?.length)
+              // @ts-ignore
+              for (const field of options.to_json_exclude) {
+                // @ts-ignore
+                if (ret[field]) delete ret[field];
+              }
           }
         }
-      }
-    };
+      };
 
     // @ts-ignore
-    const schema = new Schema(definition, schemaOptions) as Schema<
+    this._schema = new Schema(definition(Schema.Types), schemaoptions);
+
+    if (!this._schema) throw new Error("schema not defined");
+
+    this._schema.plugin(uniquevalidator, {
+      message: "{PATH} already exists"
+    });
+
+    return this._schema as Schema<
       Props,
       MongooseModel<Props, {}, Methods, Virtuals>,
       Methods,
@@ -74,59 +98,23 @@ export class ModelBuilder<Props, Methods = {}, Statics = {}, Virtuals = {}> {
       Virtuals,
       Statics
     >;
+  }
 
-    schema.plugin(require("mongoose-unique-validator"), {
-      message: "expected {PATH} to be unique"
-    });
+  model() {
+    if (!this._schema)
+      throw new Error(`${this.name} cannot call model before defining schema`);
 
-    return schema;
-  };
+    if (this._model) throw new Error(`[${this.name}] already modelled`);
 
-  readonly model = (
-    name: string,
-    schema: Schema<Props>,
-    collection: string
-  ): MongooseModel<
-    Props,
-    {},
-    Methods,
-    Virtuals,
-    Schema<
-      Props,
-      MongooseModel<
+    this._model =
+      (mongoose.models[this.name] as unknown as MongooseModel<
         Props,
         {},
         Methods,
-        Virtuals,
-        Schema<
-          Props,
-          MongooseModel<Props, {}, Methods, Virtuals>,
-          Methods,
-          {},
-          Virtuals,
-          Statics
-        >
-      >,
-      Methods,
-      {},
-      Virtuals,
-      Statics
-    >
-  > &
-    Statics =>
-    (mongoose.models[name] as MongooseModel<
-      Props,
-      {},
-      Methods,
-      Virtuals,
-      Schema<
-        Props,
-        MongooseModel<Props, {}, Methods, Virtuals>,
-        Methods,
-        {},
-        Virtuals,
-        Statics
-      >
-    > &
-      Statics) || model(name, schema, collection);
+        Virtuals
+      > &
+        Statics) || mongoose.model(this.name, this._schema, this.collection);
+
+    return this._model;
+  }
 }

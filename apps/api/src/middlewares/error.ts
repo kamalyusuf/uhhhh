@@ -1,11 +1,11 @@
 import type { NextFunction, Request, Response } from "express";
 import { CustomError } from "@kamalyb/errors";
 
-export const useGlobalErrorHandler = (
+export const useglobalerrorhandler = (
   error: Error,
-  req: Request,
+  _req: Request,
   res: Response,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   if (error instanceof CustomError)
     return res.status(error.status).send({ errors: error.serialize() });

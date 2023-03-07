@@ -1,6 +1,7 @@
 import { UnprocessableEntityError } from "@kamalyb/errors";
 import { Router } from "express";
-import { isValidObjectId } from "../../utils/mongo";
+import { isvalidobjectid } from "../../utils/mongo";
+import { Room } from "./room.model";
 
 export const router = Router();
 
@@ -13,9 +14,11 @@ export const router = Router();
 router.get("/:id", async (req, res) => {
   const id = req.params.id;
 
-  if (!isValidObjectId(id)) throw new UnprocessableEntityError("invalid id");
+  if (!isvalidobjectid(id)) throw new UnprocessableEntityError("invalid id");
 
-  const room = await deps.room.findById(id);
+  const room = await Room.findById(id);
+
+  if (!room) throw new Error("no room found");
 
   res.send(room);
 });

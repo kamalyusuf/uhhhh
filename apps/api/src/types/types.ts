@@ -20,5 +20,3 @@ export type MongooseSchemaProps<T> = Omit<
   T,
   "_id" | "created_at" | "updated_at"
 >;
-
-export type Id = string | mongoose.Types.ObjectId;

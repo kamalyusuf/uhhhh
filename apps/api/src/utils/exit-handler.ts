@@ -1,6 +1,6 @@
 import { Server } from "http";
 
-export const exitHandler = (server?: Server) => {
+export const exithandler = (server?: Server) => {
   if (server)
     server.close(() => {
       process.exit(1);

@@ -24,11 +24,6 @@ export enum RoomVisibility {
   PUBLIC = "public"
 }
 
-export enum RoomSpan {
-  TEMPORARY = "temporary",
-  PERMANENT = "permanent"
-}
-
 export enum RoomStatus {
   PROTECTED = "protected",
   UNPROTECTED = "unprotected"

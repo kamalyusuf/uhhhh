@@ -1,14 +1,14 @@
-import {
+import type {
   Producer,
   Consumer,
   Transport,
-  type RtpCapabilities
+  RtpCapabilities
 } from "mediasoup/node/lib/types";
 import type { User } from "types";
 import type { TypedSocket } from "../socket/types";
 
 export class Peer {
-  private static _peers: Map<string, Peer> = new Map();
+  private static peers: Map<string, Peer> = new Map();
 
   public user: User;
   public socket: TypedSocket;
@@ -30,39 +30,39 @@ export class Peer {
   static create(t: { user: User; socket: TypedSocket }) {
     const peer = new Peer(t);
 
-    this._peers.set(peer.user._id, peer);
+    this.peers.set(peer.user._id, peer);
 
     return peer;
   }
 
   static remove(peer: Peer) {
-    if (!this._peers.has(peer.user._id)) return;
+    if (!this.peers.has(peer.user._id)) return;
 
-    this._peers.delete(peer.user._id);
+    this.peers.delete(peer.user._id);
   }
 
-  private closeProducers() {
+  private closeproducers() {
     for (const producer of this.producers.values()) producer.close();
 
     this.producers.clear();
   }
 
-  private closeTransports() {
+  private closetransports() {
     for (const transport of this.transports.values()) transport.close();
 
     this.transports.clear();
   }
 
-  private closeConsumers() {
+  private closeconsumers() {
     for (const consumer of this.consumers.values()) consumer.close();
 
     this.consumers.clear();
   }
 
   reset() {
-    this.closeProducers();
-    this.closeTransports();
-    this.closeConsumers();
+    this.closeproducers();
+    this.closetransports();
+    this.closeconsumers();
 
     this.active_room_id = undefined;
     this.rtp_capabilities = undefined;

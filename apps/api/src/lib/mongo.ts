@@ -11,7 +11,7 @@ mongoose.SchemaTypes.String.cast(false);
 mongoose.SchemaTypes.Number.cast(false);
 mongoose.SchemaTypes.Boolean.cast(false);
 
-const maxAttempts = 5;
+const maxattempts = 5;
 
 const connect = async (url: string) => {
   let attempts = 1;
@@ -23,7 +23,7 @@ const connect = async (url: string) => {
       logger.info(`mongodb connected on '${mongoose.connection.host}'`);
     },
     {
-      maxAttempts,
+      maxAttempts: maxattempts,
       factor: 2,
       jitter: true,
       delay: 200,
@@ -36,7 +36,7 @@ const connect = async (url: string) => {
         if (done) throw error;
         else
           logger.warn(
-            `mongodb connection failed. re-attempting connection. attempt ${attempts} / ${maxAttempts}. reason: ${error.message}`
+            `mongodb connection failed. re-attempting connection. attempt ${attempts} / ${maxattempts}. reason: ${error.message}`
           );
       }
     }

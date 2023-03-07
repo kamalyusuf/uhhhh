@@ -1,84 +1,116 @@
-import {
-  type Room as RoomType,
-  RoomSpan,
-  RoomStatus,
-  RoomVisibility
-} from "types";
+import { type Room as IRoom, RoomStatus, RoomVisibility } from "types";
 import type { MongooseProps } from "../../types/types";
-import { type HydratedDocument } from "mongoose";
+import { Types, type HydratedDocument } from "mongoose";
 import { ModelBuilder } from "../shared/model-builder";
 import argon2 from "argon2";
+import { env } from "../../lib/env";
 
-export type RoomProps = Omit<MongooseProps<RoomType>, "members_count"> & {
+export type RoomProps = Omit<MongooseProps<IRoom>, "members_count"> & {
   password?: string;
-  span: RoomSpan;
 };
 
-export type RoomDoc = HydratedDocument<RoomProps>;
+export type RoomDocument = HydratedDocument<RoomProps, RoomMethods>;
 
-export interface RoomMethods {
-  verifyPassword: (password: string) => Promise<boolean>;
+interface RoomMethods {
+  isprivate: () => boolean;
+  verifypassword: (plain: string) => Promise<boolean>;
 }
 
-const builder = new ModelBuilder<RoomProps, RoomMethods>();
+interface RoomStatics {
+  delete: (id: string | Types.ObjectId) => Promise<boolean>;
+}
 
-const RoomSchema = builder.schema({
-  name: {
-    type: String,
-    required: [true, "name is required"],
-    trim: true
-  },
-  creator: {
-    _id: {
-      type: String,
-      required: [true, "creator's id is required"]
+const builder = new ModelBuilder<RoomProps, RoomMethods, {}, RoomStatics>(
+  "User",
+  "users"
+);
+
+const schema = builder.schema(
+  (t) => ({
+    name: {
+      type: t.String,
+      required: [true, "name is required"],
+      trim: true
     },
-    display_name: {
-      type: String,
-      required: [true, "creator's display name is required"]
-    }
-  },
-  status: {
-    type: String,
-    required: [true, "status is required"],
-    enum: Object.values(RoomStatus)
-  },
-  visibility: {
-    type: String,
-    required: [true, "visibility is required"],
-    enum: Object.values(RoomVisibility),
-    index: true
-  },
-  description: {
-    type: String,
-    required: [true, "description is required"],
-    trim: true
-  },
-  password: {
-    type: String,
-    required: [
-      function () {
-        // @ts-ignore
-        return (this as RoomDoc).status === RoomStatus.PROTECTED;
+    creator: {
+      _id: {
+        type: t.String,
+        required: [true, "creator's id is required"]
       },
-      "password is required if status is protected"
-    ]
-  },
-  span: {
-    type: String,
-    required: [true, "span is required"],
-    enum: Object.values(RoomSpan),
-    default: RoomSpan.TEMPORARY
-  }
-});
+      display_name: {
+        type: t.String,
+        required: [true, "creator's display name is required"]
+      }
+    },
+    status: {
+      type: t.String,
+      required: [true, "status is required"],
+      enum: Object.values(RoomStatus)
+    },
+    visibility: {
+      type: t.String,
+      required: [true, "visibility is required"],
+      enum: Object.values(RoomVisibility),
+      index: true
+    },
+    description: {
+      type: t.String,
+      required: [true, "description is required"],
+      trim: true
+    },
+    password: {
+      type: t.String,
+      required: [
+        function () {
+          // @ts-ignore
+          const room = this as RoomDocument;
 
-RoomSchema.methods = {
-  verifyPassword: function (password: string) {
-    return argon2.verify(
-      (this as unknown as RoomDoc).get("password") || "",
-      password
-    );
+          return room.status === RoomStatus.PROTECTED;
+        },
+        "password is required if status is protected"
+      ]
+    }
+  }),
+  { to_json_exclude: ["password"] }
+);
+
+schema.methods = {
+  verifypassword(plain) {
+    return argon2.verify((this as RoomDocument).get("password"), plain);
+  },
+
+  isprivate() {
+    return (this as RoomDocument).visibility === RoomVisibility.PRIVATE;
   }
 };
 
-export const Room = builder.model("Room", RoomSchema, "rooms");
+schema.statics = {
+  async delete(id) {
+    let room;
+
+    try {
+      room = await Room.findById(id);
+    } catch (e) {
+      return false;
+    }
+
+    if (!room || (env.isDevelopment && room?.name === "test")) return false;
+
+    await room.deleteOne();
+
+    return true;
+  }
+};
+
+schema.pre("save", async function (next) {
+  if (!this.isModified("password")) return next();
+
+  if (!this.password)
+    throw new Error(`password not set for ${JSON.stringify(this.toJSON())}`);
+
+  this.set({ password: await argon2.hash(this.password) });
+
+  next();
+});
+
+export const Room = builder.model();

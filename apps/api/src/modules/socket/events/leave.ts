@@ -7,7 +7,7 @@ export const handler: CallbackEvent<"leave"> = {
     if (!peer.active_room_id) return cb();
 
     const rid = peer.active_room_id;
-    const room = MediasoupRoom.findById(rid);
+    const room = MediasoupRoom.findbyid(rid);
 
     await room.leave(peer);
 
