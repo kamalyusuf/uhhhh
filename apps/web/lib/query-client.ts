@@ -6,7 +6,7 @@ export const defaultQueryFn: QueryFunction = async ({ queryKey }) =>
     await api.get(`${queryKey}`)
   ).data;
 
-export const queryClient = () => {
+export const createQueryClient = () => {
   return new QueryClient({
     defaultOptions: {
       queries: {

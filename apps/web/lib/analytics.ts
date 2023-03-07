@@ -1,4 +1,5 @@
 import splitbee from "@splitbee/web";
+import { isProd } from "../utils/is-prod";
 
 class Analytics {
   private _enabled: boolean;
@@ -8,12 +9,12 @@ class Analytics {
   }
 
   enable() {
-    if (window.location.origin === "https://uhhhh.xyz") {
-      splitbee.init();
-      splitbee.enableCookie();
+    if (!isProd()) return;
 
-      this._enabled = true;
-    }
+    splitbee.init();
+    splitbee.enableCookie();
+
+    this._enabled = true;
   }
 
   disable() {

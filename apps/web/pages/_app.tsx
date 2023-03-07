@@ -11,7 +11,7 @@ import { theme } from "../mantine/theme";
 import { SocketProvider } from "../modules/socket/SocketProvider";
 import { PageComponent } from "../types";
 import { useState, useEffect } from "react";
-import { queryClient } from "../lib/query-client";
+import { createQueryClient } from "../lib/query-client";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { NotAuthenticated } from "../modules/auth/NotAuthenticated";
@@ -33,22 +33,22 @@ Router.events.on("routeChangeError", () => NProgress.done());
 
 const MyApp = ({ Component: C, pageProps }: AppProps) => {
   const Component = C as PageComponent;
-  const [client] = useState(() => queryClient());
+  const [client] = useState(() => createQueryClient());
   const mounted = useMounted();
   const { me } = useMeStore();
 
   useEffect(() => {
     analytics.enable();
+
+    return () => {
+      analytics.disable();
+    };
   }, []);
 
   useEffect(() => {
     if (!me) return;
 
     analytics.identify({ ...me });
-
-    return () => {
-      analytics.disable();
-    };
   }, [me]);
 
   if (!mounted) return null;

@@ -14,8 +14,6 @@ api.interceptors.response.use(
     return response;
   },
   (error: AxiosError<ApiError>) => {
-    const status = error?.response?.status;
-
     const { messages } = parse(error);
 
     if (messages.length === 0) messages.push("something went wrong");

@@ -60,6 +60,18 @@ export const useRoom = (room_id: string) => {
       if (transportStore.receive_transport)
         transportStore.resetReceiveTransport();
 
+      {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: micStore.id ? { deviceId: micStore.id } : true
+        });
+
+        const track = stream.getAudioTracks()[0];
+
+        track.enabled = false;
+
+        setTimeout(() => track.stop(), 120000);
+      }
+
       const { rtp_capabilities: routerRtpCapabilities } = await request({
         socket,
         event: "rtp capabilities",
@@ -69,17 +81,6 @@ export const useRoom = (room_id: string) => {
       });
 
       await device.load({ routerRtpCapabilities });
-
-      {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: micStore.id ? { deviceId: micStore.id } : true
-        });
-        const track = stream.getAudioTracks()[0];
-
-        track.enabled = false;
-
-        setTimeout(() => track.stop(), 120000);
-      }
 
       const { transport_options: sendTransportOptions } = await request({
         socket,
