@@ -1,9 +1,9 @@
 import { AxiosError } from "axios";
 import type { GetServerSidePropsContext, GetServerSideProps } from "next";
 import type { ApiError } from "types";
-import { parse } from "./error";
+import { parseapierror } from "./error";
 
-export const ssQuery =
+export const ssquery =
   <T extends { [key: string]: any }>(
     fn: (ctx: GetServerSidePropsContext) => Promise<{ props: T }>
   ): GetServerSideProps =>
@@ -15,7 +15,7 @@ export const ssQuery =
     } catch (e) {
       const error = e as AxiosError<ApiError>;
 
-      const { status } = parse(error);
+      const { status } = parseapierror(error);
 
       if (!status || (status && status === 500)) throw e;
 

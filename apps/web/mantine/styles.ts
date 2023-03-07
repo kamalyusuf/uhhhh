@@ -7,11 +7,12 @@ interface ThemeComponent {
     | Record<string, CSSObject>
     | ((theme: MantineTheme, params: any) => Record<string, CSSObject>);
 }
+
 export const styles: Record<string, ThemeComponent> = {
   TextInput: {
     styles: (theme: MantineTheme) => ({
       input: {
-        "&:focus": {
+        ":focus": {
           borderColor: theme.colors.indigo[6]
         }
       },
@@ -23,7 +24,7 @@ export const styles: Record<string, ThemeComponent> = {
   PasswordInput: {
     styles: (theme: MantineTheme) => ({
       input: {
-        "&:focus": {
+        ":focus": {
           borderColor: theme.colors.indigo[6]
         }
       },
@@ -40,11 +41,18 @@ export const styles: Record<string, ThemeComponent> = {
     })
   },
   Title: {
-    defaultProps: {},
+    defaultProps: {
+      order: 2
+    },
     styles: () => ({
       root: {
         fontFamily: "Finlandica, sans-serif"
       }
     })
+  },
+  Text: {
+    defaultProps: {
+      color: "white"
+    }
   }
 };

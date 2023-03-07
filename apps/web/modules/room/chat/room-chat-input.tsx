@@ -5,19 +5,19 @@ import { c } from "../../../utils/constants";
 import { useSocket } from "../../../hooks/use-socket";
 
 export const RoomChatInput = () => {
-  const [content, setContent] = useState("");
-  const [count, setCount] = useState(0);
+  const [content, setcontent] = useState("");
+  const [count, setcount] = useState(0);
   const { socket } = useSocket();
 
   useEffect(() => {
-    setCount(content.length);
+    setcount(content.length);
   }, [content]);
 
   const send = useCallback(() => {
-    if (!content.trim()) return;
+    if (!content.trim() || !socket) return;
 
     socket.emit("chat message", { content });
-    setContent("");
+    setcontent("");
   }, [content, socket]);
 
   return (
@@ -41,7 +41,7 @@ export const RoomChatInput = () => {
 
           if (!value.trim()) return;
 
-          setContent(e.currentTarget.value.slice(0, c.chat.text_limit));
+          setcontent(e.currentTarget.value.slice(0, c.chat.text_limit));
         }}
         onKeyDown={(e) => {
           switch (e.key) {

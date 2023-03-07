@@ -1,19 +1,20 @@
 import { Button, Container, Paper, PasswordInput, Stack } from "@mantine/core";
 import { useState } from "react";
 import type { Room } from "types";
-import { Layout } from "../../components/Layout";
+import { Layout } from "../../components/layout";
 import { useSocket } from "../../hooks/use-socket";
 import { request } from "../../utils/request";
+import { toast } from "react-toastify";
 
 interface Props {
   room: Room;
-  onSuccess: (success: boolean) => void;
+  onsuccess: (success: boolean) => void;
 }
 
-export const RoomLogin = ({ room, onSuccess }: Props) => {
+export const RoomLogin = ({ room, onsuccess }: Props) => {
   const { socket } = useSocket();
-  const [password, setPassword] = useState("");
-  const [oking, setOking] = useState(false);
+  const [password, setpassword] = useState("");
+  const [oking, setoking] = useState(false);
 
   return (
     <Layout>
@@ -23,22 +24,24 @@ export const RoomLogin = ({ room, onSuccess }: Props) => {
             onSubmit={async (e) => {
               e.preventDefault();
 
-              setOking(true);
+              if (!socket) return toast.error("web server is down");
+
+              setoking(true);
 
               try {
                 const { ok: success } = await request({
                   socket,
                   event: "room login",
-                  payload: {
+                  data: {
                     room_id: room._id,
                     password
                   }
                 });
 
-                onSuccess(success);
+                onsuccess(success);
               } catch (e) {
               } finally {
-                setOking(false);
+                setoking(false);
               }
             }}
           >
@@ -48,7 +51,7 @@ export const RoomLogin = ({ room, onSuccess }: Props) => {
                 placeholder="password"
                 required
                 value={password}
-                onChange={(e) => setPassword(e.currentTarget.value)}
+                onChange={(e) => setpassword(e.currentTarget.value)}
               />
 
               <Button type="submit" disabled={oking} loading={oking}>

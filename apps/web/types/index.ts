@@ -1,16 +1,6 @@
 import type { NextPage } from "next";
 import type { ChatMessage, User } from "types";
 
-export type Color =
-  | "white"
-  | "black"
-  | "red"
-  | "primary"
-  | "dark"
-  | "secondary"
-  | "indigo"
-  | "tertiary";
-
 export type PageComponent<T = {}> = NextPage<T> & {
   authenticate?: "yes" | "not";
 };

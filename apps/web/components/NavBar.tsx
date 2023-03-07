@@ -1,20 +1,19 @@
-import { Group, Box, Button } from "@mantine/core";
-import { Heading } from "./Heading";
+import { Group, Box, Button, Title } from "@mantine/core";
 import Link from "next/link";
-import { Container } from "./Container";
+import { Container } from "./container";
 import { HiUser } from "react-icons/hi";
-import { useMeStore } from "../store/me";
+import { useUserStore } from "../store/user";
 import { useRouter } from "next/router";
 import { useRoomStore } from "../store/room";
 
 export const NavBar = () => {
-  const { me } = useMeStore();
+  const user = useUserStore((state) => state.user);
   const router = useRouter();
-  const { state } = useRoomStore();
+  const state = useRoomStore((state) => state.state);
 
   return (
     <Box
-      sx={(theme) => ({
+      sx={() => ({
         width: "100%",
         paddingTop: 20,
         paddingBottom: 20
@@ -22,18 +21,19 @@ export const NavBar = () => {
     >
       <Container>
         <Group position="apart" align="center">
-          <Link href="/">
-            <Heading
-              title="uhhhh"
-              color="indigo"
+          <Link href="/" legacyBehavior passHref scroll={false}>
+            <Title
+              order={2}
               style={{
                 cursor: "pointer",
                 pointerEvents: state === "connected" ? "none" : undefined
               }}
-            />
+            >
+              uhhhh
+            </Title>
           </Link>
 
-          {me && (
+          {user ? (
             <Button
               rightIcon={<HiUser />}
               size="sm"
@@ -42,9 +42,9 @@ export const NavBar = () => {
                 pointerEvents: state === "connected" ? "none" : undefined
               }}
             >
-              {me.display_name}
+              {user.display_name}
             </Button>
-          )}
+          ) : null}
         </Group>
       </Container>
     </Box>

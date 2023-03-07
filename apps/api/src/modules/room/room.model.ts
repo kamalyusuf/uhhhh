@@ -5,7 +5,10 @@ import { ModelBuilder } from "../shared/model-builder";
 import argon2 from "argon2";
 import { env } from "../../lib/env";
 
-export type RoomProps = Omit<MongooseProps<IRoom>, "members_count"> & {
+export type RoomProps = Omit<
+  MongooseProps<IRoom>,
+  "members_count" | "status"
+> & {
   password?: string;
 };
 
@@ -20,10 +23,16 @@ interface RoomStatics {
   delete: (id: string | Types.ObjectId) => Promise<boolean>;
 }
 
-const builder = new ModelBuilder<RoomProps, RoomMethods, {}, RoomStatics>(
-  "User",
-  "users"
-);
+interface RoomVirtuals {
+  status: RoomStatus;
+}
+
+const builder = new ModelBuilder<
+  RoomProps,
+  RoomMethods,
+  RoomVirtuals,
+  RoomStatics
+>("Room", "rooms");
 
 const schema = builder.schema(
   (t) => ({
@@ -42,11 +51,6 @@ const schema = builder.schema(
         required: [true, "creator's display name is required"]
       }
     },
-    status: {
-      type: t.String,
-      required: [true, "status is required"],
-      enum: Object.values(RoomStatus)
-    },
     visibility: {
       type: t.String,
       required: [true, "visibility is required"],
@@ -60,15 +64,7 @@ const schema = builder.schema(
     },
     password: {
       type: t.String,
-      required: [
-        function () {
-          // @ts-ignore
-          const room = this as RoomDocument;
-
-          return room.status === RoomStatus.PROTECTED;
-        },
-        "password is required if status is protected"
-      ]
+      minlength: 5
     }
   }),
   { to_json_exclude: ["password"] }
@@ -111,6 +107,10 @@ schema.pre("save", async function (next) {
   this.set({ password: await argon2.hash(this.password) });
 
   next();
+});
+
+schema.virtual("status").get(function () {
+  return this.password ? RoomStatus.PROTECTED : RoomStatus.UNPROTECTED;
 });
 
 export const Room = builder.model();

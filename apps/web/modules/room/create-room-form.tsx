@@ -12,14 +12,13 @@ import { useRouter } from "next/router";
 import { useSocket } from "../../hooks/use-socket";
 import { request } from "../../utils/request";
 import { RoomVisibility } from "types";
-import { analytics } from "../../lib/analytics";
 import { toast } from "react-toastify";
 
 interface Props {
-  onCancel: () => void;
+  oncancel: () => void;
 }
 
-export const CreateRoomForm = ({ onCancel }: Props) => {
+export const CreateRoomForm = ({ oncancel }: Props) => {
   const { socket } = useSocket();
   const router = useRouter();
 
@@ -38,7 +37,7 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
         const { room } = await request({
           socket,
           event: "create room",
-          payload: {
+          data: {
             name: values.name,
             description: values.description,
             visibility: values.private
@@ -51,13 +50,7 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
           }
         });
 
-        analytics.track("create room", {
-          ...room,
-          room_creator_name: room.creator.display_name,
-          creator: undefined
-        });
-
-        onCancel();
+        oncancel();
         router.push(`/rooms/${room._id}`);
       }}
     >
@@ -127,7 +120,7 @@ export const CreateRoomForm = ({ onCancel }: Props) => {
               >
                 create
               </Button>
-              <Button variant="default" onClick={onCancel}>
+              <Button variant="default" onClick={oncancel}>
                 cancel
               </Button>
             </Group>

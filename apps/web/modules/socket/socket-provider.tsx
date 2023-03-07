@@ -1,18 +1,17 @@
 import { io } from "socket.io-client";
 import {
   createContext,
-  type PropsWithChildren,
   useEffect,
   useMemo,
   useState,
   useRef,
-  useCallback
+  useCallback,
+  type ReactNode
 } from "react";
 import type { TypedSocket } from "./types";
-import { useMeStore } from "../../store/me";
+import { useUserStore } from "../../store/user";
 import type { User } from "types";
-
-type V = TypedSocket | null;
+import { toast } from "react-toastify";
 
 type SocketState =
   | "idle"
@@ -22,22 +21,18 @@ type SocketState =
   | "connecting";
 
 type Context = {
-  socket: V;
+  socket: TypedSocket | null;
   state: SocketState;
-  connected: boolean;
-  connecting: boolean;
 };
 
 export const SocketContext = createContext<Context>({
   socket: null,
-  state: "idle",
-  connected: false,
-  connecting: false
+  state: "idle"
 });
 
-const connect = (me: User): Promise<TypedSocket> => {
+const connect = (me: User | null): Promise<TypedSocket> => {
   return new Promise<TypedSocket>((resolve, reject) => {
-    const socket: TypedSocket = io(process.env.NEXT_PUBLIC_API_URL, {
+    const socket: TypedSocket = io(process.env.NEXT_PUBLIC_API_URL as string, {
       rememberUpgrade: true,
       path: "/ws",
       autoConnect: true,
@@ -55,41 +50,48 @@ const connect = (me: User): Promise<TypedSocket> => {
 
     socket.io.on("error", reject);
 
-    socket.on("disconnect", () => {
-      reject(new Error("socket disconnected"));
-    });
+    socket.on("disconnect", () => reject(new Error("socket disconnected")));
   });
 };
 
-export const SocketProvider = ({ children }: PropsWithChildren<{}>) => {
-  const [socket, setSocket] = useState<V>(null);
-  const { me } = useMeStore();
-  const [state, setState] = useState<SocketState>("idle");
+interface Props {
+  children: ReactNode;
+}
+
+export const SocketProvider = ({ children }: Props) => {
+  const [socket, setsocket] = useState<TypedSocket | null>(null);
+  const user = useUserStore((state) => state.user);
+  const [state, setstate] = useState<SocketState>("idle");
   const called = useRef(false);
 
-  const initialize = useCallback(async () => {
-    try {
-      setState("connecting");
+  const load = useCallback(() => {
+    setstate("connecting");
 
-      const s = await connect(me);
+    connect(user)
+      .then((s) => {
+        setsocket(s);
+        setstate("connected");
+      })
+      .catch((e) => {
+        const error = e as Error;
+        console.log(error);
 
-      setSocket(s);
-      setState("connected");
-    } catch (e) {
-      console.log(e);
+        if (error.message === "socket disconnected") setstate("disconnected");
+        else setstate("error");
 
-      if (e.message === "socket disconnected") setState("disconnected");
-      else setState("error");
-    }
-  }, [me]);
+        toast.error("socket connection failed. try reloading the page", {
+          autoClose: false
+        });
+      });
+  }, [user]);
 
   useEffect(() => {
-    if (!!me && !socket && !called.current) {
+    if (user && !socket && !called.current) {
       called.current = true;
 
-      initialize();
+      load();
     }
-  }, [me, socket, initialize]);
+  }, [user, socket, load]);
 
   useEffect(() => {
     if (!socket) return;
@@ -104,9 +106,7 @@ export const SocketProvider = ({ children }: PropsWithChildren<{}>) => {
       value={useMemo(
         () => ({
           socket,
-          state,
-          connected: state === "connected",
-          connecting: state === "connecting"
+          state
         }),
         [socket, state]
       )}

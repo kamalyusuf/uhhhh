@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { combine, devtools } from "zustand/middleware";
 
 type RoomState =
@@ -22,9 +22,9 @@ export const useRoomStore = create(
       },
       (set) => ({
         set,
-        setState: (state: RoomState) => set({ state }),
+        setstate: (state: RoomState) => set({ state }),
 
-        setActiveSpeaker: (peer_id: string, value: boolean) =>
+        setactivespeaker: (peer_id: string, value: boolean) =>
           set((state) => {
             return {
               active_speakers: {
@@ -44,6 +44,6 @@ export const useRoomStore = create(
           })
       })
     ),
-    { name: "RoomStore" }
+    { name: "Room" }
   )
 );

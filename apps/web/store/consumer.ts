@@ -1,6 +1,6 @@
-import create from "zustand";
+import { create } from "zustand";
 import { combine, devtools } from "zustand/middleware";
-import { Consumer } from "mediasoup-client/lib/types";
+import type { Consumer } from "mediasoup-client/lib/types";
 
 export const useConsumerStore = create(
   devtools(
@@ -23,7 +23,10 @@ export const useConsumerStore = create(
           }),
 
         remove: (peer_id: string) =>
+          // @ts-ignore
           set((state) => {
+            if (!state.consumers[peer_id]) return state;
+
             return {
               consumers: {
                 ...state.consumers,
@@ -35,6 +38,7 @@ export const useConsumerStore = create(
         pause: (peer_id: string) =>
           set((state) => {
             const c = state.consumers[peer_id];
+
             if (!c) return state;
 
             c.consumer.pause();
@@ -53,6 +57,7 @@ export const useConsumerStore = create(
         resume: (peer_id: string) =>
           set((state) => {
             const c = state.consumers[peer_id];
+
             if (!c) return state;
 
             c.consumer.resume();
@@ -69,6 +74,6 @@ export const useConsumerStore = create(
           })
       })
     ),
-    { name: "ConsumerStore" }
+    { name: "Consumer" }
   )
 );

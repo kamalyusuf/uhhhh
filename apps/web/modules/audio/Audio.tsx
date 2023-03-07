@@ -1,15 +1,15 @@
 import { useEffect, useRef } from "react";
-import { Consumer } from "mediasoup-client/lib/types";
+import type { Consumer } from "mediasoup-client/lib/types";
 
 interface Props {
   consumer: Consumer;
 }
 
 export const Audio = ({ consumer }: Props) => {
-  const ref = useRef<HTMLAudioElement | null>();
+  const ref = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
-    if (!consumer) return;
+    if (!consumer || !ref.current) return;
 
     ref.current.srcObject = new MediaStream([consumer.track]);
     ref.current.play().catch(console.log);

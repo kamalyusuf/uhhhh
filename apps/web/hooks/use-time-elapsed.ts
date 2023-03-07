@@ -2,12 +2,12 @@ import { type Duration, intervalToDuration } from "date-fns";
 import { useEffect, useState } from "react";
 
 export const useTimeElapsed = (start: string) => {
-  const [duration, setDuration] = useState<Duration>();
+  const [duration, setduration] = useState<Duration>();
 
   const update = (start: string) => {
     if (!start) return;
 
-    setDuration(
+    setduration(
       intervalToDuration({
         start: new Date(start),
         end: new Date()

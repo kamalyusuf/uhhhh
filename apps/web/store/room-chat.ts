@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { combine, devtools } from "zustand/middleware";
 import type { Message } from "../types";
 import type { ChatMessage } from "types";
@@ -18,7 +18,7 @@ const colors = [
   "#D97706",
   "#DC2626",
   "#4B5563"
-] as const;
+];
 
 const color = (str: string) => {
   let sum = 0;

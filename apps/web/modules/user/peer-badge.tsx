@@ -1,10 +1,10 @@
 import { Badge } from "@mantine/core";
 import type { User } from "types";
 import { c } from "../../utils/constants";
-import { Audio } from "../audio/Audio";
+import { Audio } from "../audio/audio";
 import { useConsumerStore } from "../../store/consumer";
 import { AiOutlineAudioMuted } from "react-icons/ai";
-import { Icon } from "../../components/Icon";
+import { Icon } from "../../components/icon";
 
 export const PeerBadge = ({
   peer,
@@ -23,7 +23,8 @@ export const PeerBadge = ({
     <>
       <Badge
         variant="dot"
-        size="md"
+        p={15}
+        size="lg"
         color={me ? "red" : "indigo"}
         styles={{
           inner: {

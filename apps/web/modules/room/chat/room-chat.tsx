@@ -1,26 +1,29 @@
 import { Box, Stack } from "@mantine/core";
 import { useRef, useEffect } from "react";
-import { RoomChatInput } from "./RoomChatInput";
+import { RoomChatInput } from "./room-chat-input";
 import { Virtuoso } from "react-virtuoso";
-import { RoomChatMessageCard } from "./RoomChatMessageCard";
+import { RoomChatMessageCard } from "./room-chat-message-card";
 import { useRoomChatStore } from "../../../store/room-chat";
 import { Message } from "../../../types";
-import { useMeStore } from "../../../store/me";
+import { useUserStore } from "../../../store/user";
 
 const useForceScrollToBottom = (messages: Message[]) => {
-  const { me } = useMeStore();
+  const user = useUserStore((state) => state.user);
   const focus = useRef(false);
-  const lastFocusedOwnMessage = useRef("");
+  const lastfocused = useRef("");
 
   const check = () => {
     if (messages.length > 0) {
-      const lastMessage = messages[messages.length - 1];
+      const lastmessage = messages[messages.length - 1];
 
       if (
-        lastMessage.creator._id === me._id &&
-        lastFocusedOwnMessage.current !== lastMessage._id
-      )
+        lastmessage.creator._id === user?._id &&
+        lastfocused.current !== lastmessage._id
+      ) {
+        lastfocused.current = lastmessage._id;
+
         return true;
+      }
     }
 
     return false;

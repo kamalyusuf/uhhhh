@@ -7,9 +7,10 @@ import type {
 } from "mediasoup-client/lib/types";
 import type {
   ServerToClientEvents as TServerToClientEvents,
-  ClientToServerEvents as TClientToServerEvents
+  ClientToServerEvents as TClientToServerEvents,
+  Anything
 } from "types";
-import { Socket } from "socket.io-client";
+import type { Socket } from "socket.io-client";
 
 type TransportOptions = {
   id: TTransportOptions["id"];
@@ -19,9 +20,9 @@ type TransportOptions = {
   sctp_parameters: TTransportOptions["sctpParameters"];
   ice_servers?: TTransportOptions["iceServers"];
   ice_transport_policy?: TTransportOptions["iceTransportPolicy"];
-  additional_settings?: any;
-  proprietary_constraints?: any;
-  app_data?: Record<string, any>;
+  additional_settings?: Anything;
+  proprietary_constraints?: Anything;
+  app_data?: Record<string, Anything>;
 };
 
 export type ServerToClientEvents = TServerToClientEvents<
@@ -29,7 +30,7 @@ export type ServerToClientEvents = TServerToClientEvents<
   TransportOptions,
   MediaKind,
   RtpParameters,
-  any
+  Anything
 >;
 
 export type ClientToServerEvents = TClientToServerEvents<

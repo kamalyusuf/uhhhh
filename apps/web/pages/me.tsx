@@ -1,1 +1,1 @@
-export { MePage as default } from "../modules/user/MePage";
+export { UserPage as default } from "../modules/user/user-page";

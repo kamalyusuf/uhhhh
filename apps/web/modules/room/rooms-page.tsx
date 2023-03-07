@@ -1,17 +1,15 @@
 import { useState } from "react";
-import { Layout } from "../../components/Layout";
-import { Box, Group, Divider, Space, ActionIcon } from "@mantine/core";
-import { Container } from "../../components/Container";
-import { Heading } from "../../components/Heading";
+import { Layout } from "../../components/layout";
+import { Box, Group, Divider, Space, ActionIcon, Title } from "@mantine/core";
+import { Container } from "../../components/container";
 import { MdOutlineAdd } from "react-icons/md";
-import { CreateRoomModal } from "./CreateRoomModal";
-import { Rooms } from "./Rooms";
+import { CreateRoomModal } from "./create-room-modal";
 import type { PageComponent } from "../../types";
 import { useMounted } from "../../hooks/use-mounted";
-import { Testing } from "../../components/Testing";
+import { Rooms } from "./rooms";
 
 export const RoomsPage: PageComponent = () => {
-  const [opened, setOpened] = useState(false);
+  const [opened, setopened] = useState(false);
   const mounted = useMounted();
 
   if (!mounted) return null;
@@ -22,13 +20,13 @@ export const RoomsPage: PageComponent = () => {
         <Box sx={{ width: "100%" }}>
           <Container>
             <Group position="apart">
-              <Heading title="rooms" />
+              <Title>rooms</Title>
               <ActionIcon
                 variant="filled"
                 color="indigo"
                 radius="xl"
                 size="md"
-                onClick={() => setOpened(true)}
+                onClick={() => setopened(true)}
               >
                 <MdOutlineAdd />
               </ActionIcon>
@@ -37,13 +35,12 @@ export const RoomsPage: PageComponent = () => {
             <Divider variant="solid" color="indigo" />
             <Space h="sm" />
             <Rooms />
-            <Testing />
           </Container>
         </Box>
 
         <CreateRoomModal
           opened={opened}
-          setOpened={(value) => setOpened(value)}
+          setopened={(value) => setopened(value)}
         />
       </Layout>
     </>

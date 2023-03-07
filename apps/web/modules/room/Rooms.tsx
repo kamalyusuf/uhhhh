@@ -1,29 +1,22 @@
 import { useSocketQuery } from "../../hooks/use-socket-query";
 import { Center, Loader, ScrollArea, Stack } from "@mantine/core";
-import { RoomCard } from "./RoomCard";
-import { Alert } from "../../components/Alert";
+import { RoomCard } from "./room-card";
+import { Alert } from "../../components/alert";
 import { c } from "../../utils/constants";
 import { useSocket } from "../../hooks/use-socket";
 
 export const Rooms = () => {
-  const { connected, connecting } = useSocket();
-  const {
-    data,
-    isFetching: isLoading,
-    isError
-  } = useSocketQuery({
-    event: "rooms",
-    payload: {}
-  });
+  const { state } = useSocket();
+  const { data, isFetching, isError } = useSocketQuery("rooms");
 
-  if (connecting)
+  if (state === "connecting")
     return (
       <Center>
         <Loader size="lg" />
       </Center>
     );
 
-  if (!connected)
+  if (state !== "connected")
     return (
       <Alert
         type="error"
@@ -32,7 +25,7 @@ export const Rooms = () => {
       />
     );
 
-  if (isLoading)
+  if (isFetching)
     return (
       <Center>
         <Loader size="lg" />

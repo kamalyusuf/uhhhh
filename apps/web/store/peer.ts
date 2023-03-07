@@ -1,6 +1,6 @@
-import create from "zustand";
+import { create } from "zustand";
 import { combine, devtools } from "zustand/middleware";
-import { User } from "types";
+import type { User } from "types";
 
 export const usePeerStore = create(
   devtools(
@@ -8,7 +8,7 @@ export const usePeerStore = create(
       {
         peers: {} as Record<string, User>
       },
-      (set, get) => ({
+      (set) => ({
         add: (peer: User) =>
           set((state) => {
             return {
@@ -20,6 +20,7 @@ export const usePeerStore = create(
           }),
 
         remove: (peer_id: string) =>
+          // @ts-ignore
           set((state) => {
             if (!state.peers[peer_id]) return state;
 
@@ -34,6 +35,6 @@ export const usePeerStore = create(
         reset: () => set({ peers: {} })
       })
     ),
-    { name: "PeerStore" }
+    { name: "Peer" }
   )
 );

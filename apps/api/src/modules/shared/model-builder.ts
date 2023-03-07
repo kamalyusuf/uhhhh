@@ -6,7 +6,6 @@ import mongoose, {
   type Model as MongooseModel,
   type HydratedDocument
 } from "mongoose";
-import uniquevalidator from "mongoose-unique-validator";
 import type { MongooseSchemaProps, Timestamp } from "../../types/types";
 
 export class ModelBuilder<
@@ -85,10 +84,6 @@ export class ModelBuilder<
     this._schema = new Schema(definition(Schema.Types), schemaoptions);
 
     if (!this._schema) throw new Error("schema not defined");
-
-    this._schema.plugin(uniquevalidator, {
-      message: "{PATH} already exists"
-    });
 
     return this._schema as Schema<
       Props,

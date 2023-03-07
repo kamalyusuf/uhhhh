@@ -48,8 +48,7 @@ class MediasoupWorkers {
   }
 
   next(): Worker {
-    if (this.workers.length === 0)
-      throw new Error("workers not running. call 'run()'");
+    if (this.workers.length === 0) throw new Error("workers not running");
 
     const worker = this.workers[this.worker_idx];
     if (++this.worker_idx === this.workers.length) this.worker_idx = 0;

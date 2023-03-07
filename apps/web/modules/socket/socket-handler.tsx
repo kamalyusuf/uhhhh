@@ -11,12 +11,25 @@ import { useRoomChatStore } from "../../store/room-chat";
 
 export const SocketHandler = () => {
   const { socket } = useSocket();
-  const transportStore = useTransportStore();
-  const consumerStore = useConsumerStore();
-  const peerStore = usePeerStore();
-  const roomStore = useRoomStore();
   const client = useQueryClient();
-  const chatStore = useRoomChatStore();
+  const chatstore = useRoomChatStore((state) => ({ add: state.add }));
+  const consumerstore = useConsumerStore((state) => ({
+    add: state.add,
+    remove: state.remove,
+    pause: state.pause,
+    resume: state.resume
+  }));
+  const peerstore = usePeerStore((state) => ({
+    add: state.add,
+    remove: state.remove
+  }));
+  const roomstore = useRoomStore((state) => ({
+    setactivespeaker: state.setactivespeaker,
+    set: state.set
+  }));
+  const transportstore = useTransportStore((state) => ({
+    receive_transport: state.receive_transport
+  }));
 
   useEffect(() => {
     if (!socket) return;
@@ -36,9 +49,9 @@ export const SocketHandler = () => {
         app_data,
         producer_paused
       }) => {
-        if (!transportStore.receive_transport) return;
+        if (!transportstore.receive_transport) return;
 
-        const consumer = await transportStore.receive_transport.consume({
+        const consumer = await transportstore.receive_transport.consume({
           id,
           producerId: producer_id,
           kind,
@@ -49,7 +62,7 @@ export const SocketHandler = () => {
           }
         });
 
-        consumerStore.add(peer_id, consumer, producer_paused);
+        consumerstore.add(peer_id, consumer, producer_paused);
 
         socket.emit("consumer consumed", {
           consumer_id: consumer.id
@@ -58,29 +71,29 @@ export const SocketHandler = () => {
     );
 
     socket.on("new peer", ({ peer }) => {
-      peerStore.add(peer);
+      peerstore.add(peer);
 
       toast.info(`${peer.display_name} has joined the room`);
     });
 
     socket.on("consumer closed", ({ peer_id }) => {
-      consumerStore.remove(peer_id);
+      consumerstore.remove(peer_id);
     });
 
     socket.on("consumer paused", ({ peer_id }) => {
-      consumerStore.pause(peer_id);
+      consumerstore.pause(peer_id);
     });
 
     socket.on("consumer resumed", ({ peer_id }) => {
-      consumerStore.resume(peer_id);
+      consumerstore.resume(peer_id);
     });
 
     socket.on("peer left", ({ peer }) => {
-      peerStore.remove(peer._id);
+      peerstore.remove(peer._id);
     });
 
     socket.on("active speaker", ({ peer_id, speaking }) => {
-      roomStore.setActiveSpeaker(peer_id, speaking);
+      roomstore.setactivespeaker(peer_id, speaking);
     });
 
     socket.on("delete room", ({ room_id }) => {
@@ -104,7 +117,7 @@ export const SocketHandler = () => {
     });
 
     socket.on("chat message", ({ message }) => {
-      chatStore.add(message);
+      chatstore.add(message);
     });
 
     socket.on("update room members count", ({ room_id, members_count }) => {
@@ -128,13 +141,13 @@ export const SocketHandler = () => {
     });
 
     socket.on("room session at", ({ in_session_at }) => {
-      roomStore.set({ in_session_at });
+      roomstore.set({ in_session_at });
     });
 
     return () => {
       socket.removeAllListeners();
     };
-  }, [socket, transportStore.receive_transport]);
+  }, [socket, transportstore.receive_transport]);
 
   return null;
 };

@@ -1,7 +1,6 @@
 import { useState } from "react";
 import {
   Button,
-  Group,
   Paper,
   TextInput,
   Box,
@@ -9,16 +8,15 @@ import {
   Checkbox,
   Stack
 } from "@mantine/core";
-import { useMeStore } from "../store/me";
+import { useUserStore } from "../store/user";
 import { toast } from "react-toastify";
-import { Layout } from "../components/Layout";
+import { Layout } from "../components/layout";
 import { PageComponent } from "../types";
-import { analytics } from "../lib/analytics";
 
 const HomePage: PageComponent = () => {
-  const [name, setName] = useState("");
-  const [remember, setRemember] = useState(false);
-  const { load } = useMeStore();
+  const [name, setname] = useState("");
+  const [remember, setremember] = useState(false);
+  const load = useUserStore((state) => state.load);
 
   return (
     <>
@@ -32,13 +30,13 @@ const HomePage: PageComponent = () => {
                   label="display name"
                   required
                   value={name}
-                  onChange={(event) => setName(event.currentTarget.value)}
+                  onChange={(event) => setname(event.currentTarget.value)}
                 />
                 <Checkbox
                   label="remember me"
                   size="xs"
                   checked={remember}
-                  onChange={(e) => setRemember(e.currentTarget.checked)}
+                  onChange={(e) => setremember(e.currentTarget.checked)}
                 />
                 <Button
                   onClick={() => {
@@ -46,8 +44,6 @@ const HomePage: PageComponent = () => {
 
                     if (name.trim().length < 3)
                       return toast.warn("name should be at least 3 characters");
-
-                    analytics.track("login", { name });
 
                     load(name, remember);
                   }}

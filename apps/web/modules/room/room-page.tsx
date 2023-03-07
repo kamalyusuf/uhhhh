@@ -3,55 +3,58 @@ import { Group, Loader } from "@mantine/core";
 import { useMediaQuery } from "@mantine/hooks";
 import { type Room, RoomStatus } from "types";
 import { useRoom } from "./use-room";
-import { Layout } from "../../components/Layout";
-import { Container } from "../../components/Container";
-import { RoomChat } from "./chat/RoomChat";
-import { RoomPanel } from "./RoomPanel";
+import { Layout } from "../../components/layout";
+import { Container } from "../../components/container";
+import { RoomChat } from "./chat/room-chat";
+import { RoomPanel } from "./room-panel";
 import type { PageComponent } from "../../types";
 import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../hooks/use-socket";
-import { RoomLogin } from "./RoomLogin";
-import { RoomError } from "./RoomError";
+import { RoomLogin } from "./room-login";
+import { RoomError } from "./room-error";
 import { useMounted } from "../../hooks/use-mounted";
 import { useActiveSpeaker } from "../../hooks/use-active-speaker";
-import { Alert } from "../../components/Alert";
-import { AbsoluteCenter } from "../../components/AbsoluteCenter";
+import { Alert } from "../../components/alert";
+import { AbsoluteCenter } from "../../components/absolute-center";
 
 interface Props {
   room: Room;
 }
 
-export const RoomPage: PageComponent = ({ room }: Props) => {
+export const RoomPage: PageComponent<Props> = ({ room }) => {
   useActiveSpeaker();
   const mounted = useMounted();
   const { join, leave, mute, unmute } = useRoom(room._id);
-  const roomStore = useRoomStore();
-  const { connected, connecting } = useSocket();
-  const [ok, setOk] = useState(false);
+  const roomstore = useRoomStore();
+  const { state } = useSocket();
+  const [ok, setok] = useState(false);
   const matches = useMediaQuery("(max-width: 768px)");
-  const [locked] = useState(room.status === RoomStatus.PROTECTED);
   const called = useRef(false);
 
-  // const locked = room.status === RoomStatus.PROTECTED;
+  const locked = room.status === RoomStatus.PROTECTED;
 
   useEffect(() => {
-    if (((locked && ok) || !locked) && connected && !called.current) {
+    if (
+      ((locked && ok) || !locked) &&
+      state === "connected" &&
+      !called.current
+    ) {
       called.current = true;
 
       join();
     }
-  }, [connected, ok, locked]);
+  }, [state, ok, locked]);
 
   if (!mounted) return null;
 
-  if (connecting)
+  if (state === "connecting")
     return (
       <AbsoluteCenter>
         <Loader size="lg" />
       </AbsoluteCenter>
     );
 
-  if (!connected)
+  if (state !== "connected")
     return (
       <Alert
         type="error"
@@ -61,11 +64,11 @@ export const RoomPage: PageComponent = ({ room }: Props) => {
     );
 
   if (locked && !ok)
-    return <RoomLogin room={room} onSuccess={(success) => setOk(success)} />;
+    return <RoomLogin room={room} onsuccess={(success) => setok(success)} />;
 
-  if (roomStore.state === "error") return <RoomError room={room} />;
+  if (roomstore.state === "error") return <RoomError />;
 
-  if (roomStore.state === "connected")
+  if (roomstore.state === "connected")
     return (
       <Layout title={room.name}>
         <Container style={{ width: "100%", height: "100%" }}>

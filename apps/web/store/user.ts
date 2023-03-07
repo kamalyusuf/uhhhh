@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { combine, devtools } from "zustand/middleware";
 import { nanoid } from "nanoid";
 import type { User } from "types";
@@ -12,56 +12,60 @@ const schema = Joi.object<User, true>({
 const initial = (): User | null => {
   const remember =
     typeof localStorage !== "undefined" && localStorage.getItem("remember me");
-  const who = typeof localStorage !== "undefined" && localStorage.getItem("me");
+  const who =
+    typeof localStorage !== "undefined" && localStorage.getItem("user");
 
   if (remember === "true" && who) {
-    let me: User;
+    let user: User | null = null;
 
     try {
-      me = JSON.parse(who);
+      user = JSON.parse(who);
     } catch (e) {}
 
-    if (!me) return null;
+    if (!user) return null;
 
-    const { error } = schema.validate(me);
+    const { error } = schema.validate(user);
 
     if (error) return null;
-    else return me as User;
+
+    return user as User;
   } else return null;
 };
 
-export const useMeStore = create(
+export const useUserStore = create(
   devtools(
     combine(
       {
-        me: initial() as User | null
+        user: initial() as User | null
       },
       (set) => ({
         load: (display_name: string, remember: boolean) =>
-          set((state) => {
-            const me = { _id: nanoid(24), display_name };
+          set(() => {
+            const user = { _id: nanoid(24), display_name };
 
             if (remember) {
               localStorage.setItem("remember me", JSON.stringify(true));
-              localStorage.setItem("me", JSON.stringify(me));
+              localStorage.setItem("user", JSON.stringify(user));
             }
 
-            return { me };
+            return { user };
           }),
 
         update: (display_name: string, remember: boolean) =>
           set((state) => {
-            const me = { _id: state.me._id, display_name };
+            if (!state.user) throw new Error("thou shalt not");
+
+            const user = { _id: state.user._id, display_name };
 
             localStorage.setItem("remember me", JSON.stringify(remember));
 
-            if (remember) localStorage.setItem("me", JSON.stringify(me));
-            else localStorage.removeItem("me");
+            if (remember) localStorage.setItem("user", JSON.stringify(user));
+            else localStorage.removeItem("user");
 
-            return { me };
+            return { user };
           })
       })
     ),
-    { name: "MeStore" }
+    { name: "User" }
   )
 );

@@ -9,21 +9,23 @@ interface Props {
 }
 
 export const ToggleMuteButton = ({ mute, unmute }: Props) => {
-  const { producer } = useProducerStore();
+  const producer = useProducerStore((state) => state.producer);
 
   const toggle = useCallback(async () => {
+    if (!producer) return;
+
     if (producer.paused) await unmute();
     else await mute();
-  }, [producer.paused]);
+  }, [producer?.paused]);
 
   return (
     <>
       <ActionIcon
         onClick={toggle}
         variant="filled"
-        color={producer.paused ? "red" : "indigo"}
+        color={producer?.paused ? "red" : "indigo"}
       >
-        {producer.paused ? <IoMdMicOff /> : <IoMdMic />}
+        {producer?.paused ? <IoMdMicOff /> : <IoMdMic />}
       </ActionIcon>
     </>
   );

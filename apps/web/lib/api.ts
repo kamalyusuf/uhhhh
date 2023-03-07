@@ -1,5 +1,5 @@
 import axios, { AxiosError } from "axios";
-import { parse } from "../utils/error";
+import { parseapierror } from "../utils/error";
 import { toast } from "react-toastify";
 import type { ApiError } from "types";
 
@@ -14,7 +14,7 @@ api.interceptors.response.use(
     return response;
   },
   (error: AxiosError<ApiError>) => {
-    const { messages } = parse(error);
+    const { messages } = parseapierror(error);
 
     if (messages.length === 0) messages.push("something went wrong");
 

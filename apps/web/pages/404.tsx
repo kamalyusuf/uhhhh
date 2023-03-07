@@ -67,7 +67,7 @@ const useStyles = createStyles((theme) => ({
     maxWidth: 540,
     margin: "auto",
     marginTop: theme.spacing.xl,
-    marginBottom: theme.spacing.xl * 1.5
+    marginBottom: `calc(${theme.spacing.lg} * 1.5)`
   }
 }));
 

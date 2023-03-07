@@ -8,27 +8,30 @@ import {
   Divider,
   Stack
 } from "@mantine/core";
-import { Layout } from "../../components/Layout";
+import { Layout } from "../../components/layout";
 import { PageComponent } from "../../types";
 import { toast } from "react-toastify";
 import { useState } from "react";
-import { useMeStore } from "../../store/me";
+import { useUserStore } from "../../store/user";
 import { useSocket } from "../../hooks/use-socket";
-import { DefaultMicSelector } from "../audio/DefaultMicSelector";
+import { DefaultMicSelector } from "../audio/default-mic-selector";
 import { useMounted } from "../../hooks/use-mounted";
 
-export const MePage: PageComponent = () => {
-  const { me, update } = useMeStore();
-  const [name, setName] = useState(me.display_name);
-  const [remember, setRemember] = useState(
-    localStorage.getItem("remember me") === "true"
-  );
+export const UserPage: PageComponent = () => {
+  const { user, update } = useUserStore((state) => ({
+    user: state.user,
+    update: state.update
+  }));
+  const [name, setname] = useState<string>(user?.display_name ?? "");
   const mounted = useMounted();
   const { socket } = useSocket();
+  const [remember, setremember] = useState(
+    localStorage.getItem("remember me") === "true"
+  );
 
   if (!mounted) return null;
 
-  const onSubmit = () => {
+  const onsubmit = () => {
     if (!socket) return toast.error("webserver is down");
 
     if (!name.trim()) return toast.warn("where yo name at?");
@@ -47,7 +50,7 @@ export const MePage: PageComponent = () => {
 
   return (
     <>
-      <Layout title={me.display_name ?? "uhhhh"}>
+      <Layout title={user?.display_name ?? "uhhhh"}>
         <Box>
           <Center>
             <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>
@@ -56,7 +59,7 @@ export const MePage: PageComponent = () => {
                   onSubmit={(e) => {
                     e.preventDefault();
 
-                    onSubmit();
+                    onsubmit();
                   }}
                 >
                   <Stack>
@@ -65,13 +68,13 @@ export const MePage: PageComponent = () => {
                       label="display name"
                       required
                       value={name}
-                      onChange={(event) => setName(event.currentTarget.value)}
+                      onChange={(event) => setname(event.currentTarget.value)}
                     />
                     <Checkbox
                       label="remember me"
                       size="xs"
                       checked={remember}
-                      onChange={(e) => setRemember(e.currentTarget.checked)}
+                      onChange={(e) => setremember(e.currentTarget.checked)}
                     />
                     <Button type="submit">update</Button>
                   </Stack>
@@ -87,4 +90,4 @@ export const MePage: PageComponent = () => {
   );
 };
 
-MePage.authenticate = "yes";
+UserPage.authenticate = "yes";

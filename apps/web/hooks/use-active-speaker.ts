@@ -3,7 +3,7 @@ import hark from "hark";
 import { useMicStore } from "../store/mic";
 import { useSocket } from "./use-socket";
 
-export const useActiveSpeaker = (): null => {
+export const useActiveSpeaker = () => {
   const { socket } = useSocket();
   const { stream } = useMicStore();
 

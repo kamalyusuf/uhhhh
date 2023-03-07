@@ -1,16 +1,15 @@
-import type { Room } from "types";
 import { api } from "../../lib/api";
-import { ssQuery } from "../../utils/ss-query";
+import { ssquery } from "../../utils/ss-query";
 import axios from "axios";
 
-export { RoomPage as default } from "../../modules/room/RoomPage";
+export { RoomPage as default } from "../../modules/room/room-page";
 
-export const getServerSideProps = ssQuery(async ({ params }) => {
-  const id = typeof params.id === "string" ? params.id : "";
+export const getServerSideProps = ssquery(async ({ params }) => {
+  const id = typeof params?.id === "string" ? params.id : "";
 
-  const isDocker = process.env.ENV === "docker";
+  const isdocker = process.env.ENV === "docker";
 
-  const room: Room = isDocker
+  const room = isdocker
     ? (
         await axios({
           url: `http://host.docker.internal:5000/api/rooms/${id}`

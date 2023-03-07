@@ -1,4 +1,4 @@
-import create from "zustand";
+import { create } from "zustand";
 import { combine, devtools } from "zustand/middleware";
 
 const key = "default_mic_id";
@@ -20,16 +20,15 @@ export const useMicStore = create(
         id: initial()
       },
       (set) => ({
-        setTrack: (track: MediaStreamTrack) => set({ track }),
+        settrack: (track: MediaStreamTrack) => set({ track }),
 
-        setStream: (stream: MediaStream) => set({ stream }),
+        setstream: (stream: MediaStream) => set({ stream }),
 
-        setDefaultMicId: (id: string) => {
+        setdefaultmicid: (id: string) => {
           if (id === "-") {
             localStorage.removeItem(key);
-            set({ id: "" });
 
-            return;
+            return set({ id: "" });
           }
 
           try {
@@ -50,6 +49,6 @@ export const useMicStore = create(
           })
       })
     ),
-    { name: "MicStore" }
+    { name: "Mic" }
   )
 );

@@ -6,16 +6,16 @@ import {
   ScrollArea,
   Notification,
   Space,
-  Stack
+  Stack,
+  Title
 } from "@mantine/core";
-import { Heading } from "../../components/Heading";
-import { ToggleMuteButton } from "../audio/ToggleMuteButton";
+import { ToggleMuteButton } from "../audio/toggle-mute-button";
 import { c } from "../../utils/constants";
-import { PeerBadge } from "../user/PeerBadge";
+import { PeerBadge } from "../user/peer-badge";
 import { useRouter } from "next/router";
 import type { Room } from "types";
 import { usePeerStore } from "../../store/peer";
-import { useMeStore } from "../../store/me";
+import { useUserStore } from "../../store/user";
 import { useRoomStore } from "../../store/room";
 import { useClipboard } from "@mantine/hooks";
 import { AiOutlineShareAlt } from "react-icons/ai";
@@ -33,32 +33,34 @@ interface Props {
 
 export const RoomPanel = ({ room, actions }: Props) => {
   const router = useRouter();
-  const peerStore = usePeerStore();
-  const { me } = useMeStore();
-  const roomStore = useRoomStore();
+  const peerstore = usePeerStore();
+  const user = useUserStore((state) => state.user);
+  const roomstore = useRoomStore();
   const clipboard = useClipboard({ timeout: 1500 });
   const elapsed = useRoomTimeElapsed();
 
-  const leaving = roomStore.state === "disconnecting";
+  const leaving = roomstore.state === "disconnecting";
 
   const leave = async () => {
-    roomStore.setState("disconnecting");
+    roomstore.setstate("disconnecting");
 
     await actions.leave();
 
     router.replace("/rooms");
   };
 
+  if (!user) return null;
+
   return (
     <Group style={{ flex: 1 }}>
       <Stack spacing={0} style={{ width: "100%" }}>
-        {roomStore.warn_message && (
+        {roomstore.warn_message && (
           <Notification
             color="yellow"
             sx={{ width: "100%" }}
-            onClose={() => roomStore.set({ warn_message: "" })}
+            onClose={() => roomstore.set({ warn_message: "" })}
           >
-            {roomStore.warn_message}
+            {roomstore.warn_message}
           </Notification>
         )}
 
@@ -66,7 +68,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
 
         <Group position="apart">
           <Stack spacing={0}>
-            <Heading title={room.name} order={3} />
+            <Title order={3}>{room.name}</Title>
             <Text color="indigo" size="xs">
               {room.description}
             </Text>
@@ -86,13 +88,8 @@ export const RoomPanel = ({ room, actions }: Props) => {
           <Button
             size="xs"
             radius="xl"
-            variant="outline"
+            variant="subtle"
             color="indigo"
-            sx={(theme) => ({
-              "&:hover": {
-                backgroundColor: theme.colors.dark[8]
-              }
-            })}
             leftIcon={<AiOutlineShareAlt />}
             onClick={() => {
               clipboard.copy(window.location);
@@ -104,13 +101,8 @@ export const RoomPanel = ({ room, actions }: Props) => {
           <Button
             size="xs"
             radius="xl"
-            variant="outline"
+            variant="subtle"
             color="red"
-            sx={(theme) => ({
-              "&:hover": {
-                backgroundColor: theme.colors.dark[8]
-              }
-            })}
             onClick={leave}
             disabled={leaving}
             loading={leaving}
@@ -134,25 +126,24 @@ export const RoomPanel = ({ room, actions }: Props) => {
       >
         <Group
           spacing={25}
-          grow
           style={{
             paddingTop: 5,
             paddingBottom: 5
           }}
         >
           <PeerBadge
-            peer={me}
-            speaker={roomStore.active_speakers[me._id]}
+            peer={user}
+            speaker={roomstore.active_speakers[user._id]}
             me={true}
           />
 
-          {Object.values(peerStore.peers)
+          {Object.values(peerstore.peers)
             .filter(Boolean)
             .map((peer) => (
               <PeerBadge
                 key={peer._id}
                 peer={peer}
-                speaker={roomStore.active_speakers[peer._id]}
+                speaker={roomstore.active_speakers[peer._id]}
                 me={false}
               />
             ))}

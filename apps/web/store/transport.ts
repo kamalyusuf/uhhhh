@@ -1,5 +1,5 @@
-import { Transport } from "mediasoup-client/lib/types";
-import create from "zustand";
+import type { Transport } from "mediasoup-client/lib/types";
+import { create } from "zustand";
 import { combine, devtools } from "zustand/middleware";
 
 export const useTransportStore = create(
@@ -10,20 +10,20 @@ export const useTransportStore = create(
         receive_transport: null as Transport | null
       },
       (set) => ({
-        setSendTransport: (send_transport: Transport | null) =>
+        setsendtransport: (send_transport: Transport | null) =>
           set({ send_transport }),
 
-        setReceiveTransport: (receive_transport: Transport | null) =>
+        setreceivetransport: (receive_transport: Transport | null) =>
           set({ receive_transport }),
 
-        resetSendTransport: () =>
+        resetsendtransport: () =>
           set((state) => {
             state.send_transport?.close();
 
             return { send_transport: null };
           }),
 
-        resetReceiveTransport: () =>
+        resetreceivetransport: () =>
           set((state) => {
             state.receive_transport?.close();
 
@@ -39,6 +39,6 @@ export const useTransportStore = create(
           })
       })
     ),
-    { name: "TransportStore" }
+    { name: "Transport" }
   )
 );

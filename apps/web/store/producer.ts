@@ -1,5 +1,5 @@
-import { Producer } from "mediasoup-client/lib/types";
-import create from "zustand";
+import type { Producer } from "mediasoup-client/lib/types";
+import { create } from "zustand";
 import { combine, devtools } from "zustand/middleware";
 
 export const useProducerStore = create(
@@ -13,9 +13,8 @@ export const useProducerStore = create(
         set,
         add: (producer: Producer) =>
           set((state) => {
-            if (state.producer && !state.producer.closed) {
+            if (state.producer && !state.producer.closed)
               state.producer.close();
-            }
 
             return { producer };
           }),
@@ -27,7 +26,7 @@ export const useProducerStore = create(
             return { producer: null, paused: false };
           }),
 
-        setPaused: (paused: boolean) => set({ paused }),
+        setpaused: (paused: boolean) => set({ paused }),
 
         remove: () => set({ producer: null, paused: false })
       })
