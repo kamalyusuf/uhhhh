@@ -44,7 +44,6 @@
     "@types/node": "^18.14.6",
     "@types/nprogress": "^0.2.0",
     "@types/react": "^18.0.28",
-    "next-transpile-modules": "^10.0.0",
     "tsconfig": "*"
   }
 }

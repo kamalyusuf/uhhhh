@@ -1,10 +1,6 @@
-const withTM = require("next-transpile-modules")(["types"]);
-
 /** @type {import("next").NextConfig} */
-const config = {
+module.exports = {
   reactStrictMode: true,
-  outputFileTracing: false
-  // optimizeFonts: false
+  outputFileTracing: false,
+  transpilePackages: ["types"]
 };
-
-module.exports = withTM(config);

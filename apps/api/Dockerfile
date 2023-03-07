@@ -1,4 +1,6 @@
 FROM node:alpine AS builder
+
+RUN apk add --no-cache libc6-compat
 RUN apk update
 
 WORKDIR /app
@@ -22,7 +24,7 @@ RUN \
 
 RUN \
     apt install -y curl dirmngr apt-transport-https lsb-release ca-certificates && \
-    curl -sL https://deb.nodesource.com/setup_14.x | bash - && \
+    curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
     apt-get install -y nodejs
 
 RUN npm install -g yarn
@@ -32,10 +34,12 @@ COPY --from=builder /app/out/yarn.lock ./yarn.lock
 RUN yarn install
 
 COPY --from=builder /app/out/full/ .
+COPY turbo.json turbo.json
 
-RUN yarn turbo run build --scope=api --include-dependencies --no-deps
+RUN yarn turbo run build --filter=api...
 
 ENV NODE_ENV production
 
 WORKDIR /app/apps/api
+
 CMD ["node", "dist/index.js"]

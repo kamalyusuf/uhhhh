@@ -18,13 +18,14 @@ RUN apk update
 WORKDIR /app
 
 #ENV NEXT_PUBLIC_API_URL http://host.docker.internal:5000
-ENV NEXT_PUBLIC_API_URL http://localhost:5000
+ENV NEXT_PUBLIC_API_URL http://localhost:2300
 ENV ENV docker
 
 COPY --from=installer /app/ .
 COPY --from=builder /app/out/full/ .
 COPY .gitignore .gitignore
-RUN yarn turbo run build --scope=web --include-dependencies --no-deps
+RUN yarn turbo run build --filter=web...
 
 WORKDIR /app/apps/web
+
 CMD ["yarn", "start"]
