@@ -9,7 +9,6 @@ import { workers } from "./workers";
 import { NotFoundError } from "@kamalyb/errors";
 import type { TypedIO } from "../socket/types";
 import { logger } from "../../lib/logger";
-import { RoomVisibility } from "types";
 import { Room, type RoomDocument } from "../room/room.model";
 
 export class MediasoupRoom {
@@ -114,7 +113,7 @@ export class MediasoupRoom {
 
     this.peers.set(peer.user._id, peer);
 
-    if (this.doc.visibility === RoomVisibility.PUBLIC)
+    if (!this.doc.isprivate())
       this.io.emit("update room members count", {
         room_id: this.id,
         members_count: this.count()

@@ -69,7 +69,7 @@ class SocketIO {
         });
       }
 
-      socket.on("disconnect", ondisconnect({ peer }));
+      socket.on("disconnect", ondisconnect(peer));
     });
   }
 

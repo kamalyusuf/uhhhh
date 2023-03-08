@@ -15,9 +15,7 @@ const format = f.printf(({ level, message, timestamp, stack, extra }) => {
 });
 
 const exclude = f((info) => {
-  if (info.force) return info;
-
-  if (info.custom || info.validation || info.joi) return false;
+  if (info.custom || info.joi) return false;
 
   return info;
 });
@@ -174,9 +172,7 @@ class Logger {
       stack: typeof a === "string" ? (b as Error).stack : a.stack,
       dev: true,
       custom: e instanceof CustomError,
-      validation: e.name === "ValidationError",
       extra: o?.extra,
-      force: o?.force,
       joi: Joi.isError(e)
     });
   }

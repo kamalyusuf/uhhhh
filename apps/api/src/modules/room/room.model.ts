@@ -86,7 +86,7 @@ schema.statics = {
 
     try {
       room = await Room.findById(id);
-    } catch (e) {
+    } catch {
       return false;
     }
 
