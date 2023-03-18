@@ -103,12 +103,12 @@ export class MediasoupRoom {
   }
 
   join(peer: Peer) {
-    if (this.peers.has(peer.user._id)) throw new Error("peer already joined");
+    if (this.peers.has(peer.user._id)) throw new Error("already joined");
 
     if (!this.count()) this.in_session_at = new Date();
 
     peer.socket.emit("room session at", {
-      in_session_at: this.in_session_at?.toISOString() || ""
+      in_session_at: this.in_session_at?.toISOString() ?? ""
     });
 
     this.peers.set(peer.user._id, peer);

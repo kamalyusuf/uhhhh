@@ -97,7 +97,7 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
               )}
             </Field>
 
-            {values.require_password && (
+            {values.require_password ? (
               <Field name="password">
                 {({ field }: FieldProps) => (
                   <PasswordInput
@@ -107,7 +107,7 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
                   />
                 )}
               </Field>
-            )}
+            ) : null}
             <Group position="right" grow style={{ marginTop: 10 }}>
               <Button
                 type="submit"

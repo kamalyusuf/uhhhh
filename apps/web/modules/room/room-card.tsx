@@ -25,7 +25,7 @@ export const RoomCard = ({ room }: Props) => {
         <Stack spacing={0}>
           <Group align="center">
             <Title order={3}>{room.name}</Title>
-            {room.status === RoomStatus.PROTECTED && (
+            {room.status === RoomStatus.PROTECTED ? (
               <ThemeIcon
                 variant="light"
                 style={{
@@ -36,7 +36,7 @@ export const RoomCard = ({ room }: Props) => {
               >
                 <IoMdLock />
               </ThemeIcon>
-            )}
+            ) : null}
           </Group>
           <Text color="indigo" size="sm">
             {room.description}

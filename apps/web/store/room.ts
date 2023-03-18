@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { combine, devtools } from "zustand/middleware";
 
-type RoomState =
+type State =
   | "idle"
   | "connecting"
   | "connected"
@@ -14,22 +14,22 @@ export const useRoomStore = create(
   devtools(
     combine(
       {
-        state: "idle" as RoomState,
+        state: "idle" as State,
         active_speakers: {} as Record<string, boolean>,
-        error_message: "",
-        warn_message: "",
-        in_session_at: ""
+        error_message: undefined as string | undefined,
+        warn_message: undefined as string | undefined,
+        in_session_at: undefined as string | undefined
       },
       (set) => ({
         set,
-        setstate: (state: RoomState) => set({ state }),
+        setstate: (state: State) => set({ state }),
 
-        setactivespeaker: (peer_id: string, value: boolean) =>
+        setactivespeaker: (peer_id: string, speaking: boolean) =>
           set((state) => {
             return {
               active_speakers: {
                 ...state.active_speakers,
-                [peer_id]: value
+                [peer_id]: speaking
               }
             };
           }),
@@ -38,9 +38,9 @@ export const useRoomStore = create(
           set({
             state: "disconnected",
             active_speakers: {},
-            error_message: "",
-            warn_message: "",
-            in_session_at: ""
+            error_message: undefined,
+            warn_message: undefined,
+            in_session_at: undefined
           })
       })
     ),

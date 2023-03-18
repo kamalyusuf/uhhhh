@@ -31,6 +31,6 @@ export const useProducerStore = create(
         remove: () => set({ producer: null, paused: false })
       })
     ),
-    { name: "ProducerStore" }
+    { name: "Producer" }
   )
 );

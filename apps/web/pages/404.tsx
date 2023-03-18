@@ -28,11 +28,9 @@ const useStyles = createStyles((theme) => ({
     paddingTop: 80,
     paddingBottom: 80
   },
-
   inner: {
     position: "relative"
   },
-
   image: {
     position: "absolute",
     top: 0,
@@ -41,7 +39,6 @@ const useStyles = createStyles((theme) => ({
     zIndex: 0,
     opacity: 0.1
   },
-
   content: {
     paddingTop: 220,
     position: "relative",
@@ -51,18 +48,15 @@ const useStyles = createStyles((theme) => ({
       paddingTop: 120
     }
   },
-
   title: {
     textAlign: "center",
     fontWeight: 900,
     fontSize: 38,
     color: "white",
-
     [theme.fn.smallerThan("sm")]: {
       fontSize: 32
     }
   },
-
   description: {
     maxWidth: 540,
     margin: "auto",

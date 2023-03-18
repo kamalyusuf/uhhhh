@@ -36,7 +36,6 @@ export const Alert = ({ type, message, wrap, style }: Props) => {
     <Container my={wrap ? 20 : undefined} style={style}>
       <Center>
         <Paper
-          withBorder
           shadow="md"
           p={20}
           radius="md"

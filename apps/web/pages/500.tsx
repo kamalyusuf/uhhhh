@@ -12,7 +12,6 @@ const useStyles = createStyles((theme) => ({
     paddingTop: 80,
     paddingBottom: 120
   },
-
   label: {
     textAlign: "center",
     fontWeight: 900,
@@ -20,23 +19,19 @@ const useStyles = createStyles((theme) => ({
     lineHeight: 1,
     marginBottom: `calc(${theme.spacing.lg} * 1.5)`,
     color: theme.colors[theme.primaryColor][3],
-
     [theme.fn.smallerThan("sm")]: {
       fontSize: 120
     }
   },
-
   title: {
     textAlign: "center",
     fontWeight: 900,
     fontSize: 38,
     color: theme.white,
-
     [theme.fn.smallerThan("sm")]: {
       fontSize: 32
     }
   },
-
   description: {
     maxWidth: 540,
     margin: "auto",
