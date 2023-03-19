@@ -9,7 +9,7 @@ import {
   IconInfoCircle
 } from "@tabler/icons-react";
 import { parseapierror } from "../utils/error";
-import { AxiosError } from "axios";
+import type { AxiosError } from "axios";
 import type { ApiError, EventError } from "types";
 import { Container } from "./container";
 import { type CSSProperties } from "react";

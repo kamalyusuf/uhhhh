@@ -8,10 +8,10 @@ import { toast } from "react-toastify";
 
 interface Props {
   room: Room;
-  onsuccess: (success: boolean) => void;
+  onok: (ok: boolean) => void;
 }
 
-export const RoomLogin = ({ room, onsuccess }: Props) => {
+export const RoomLogin = ({ room, onok }: Props) => {
   const { socket } = useSocket();
   const [password, setpassword] = useState("");
   const [oking, setoking] = useState(false);
@@ -29,7 +29,7 @@ export const RoomLogin = ({ room, onsuccess }: Props) => {
               setoking(true);
 
               try {
-                const { ok: success } = await request({
+                const { ok } = await request({
                   socket,
                   event: "room login",
                   data: {
@@ -38,7 +38,7 @@ export const RoomLogin = ({ room, onsuccess }: Props) => {
                   }
                 });
 
-                onsuccess(success);
+                onok(ok);
               } catch (e) {
               } finally {
                 setoking(false);

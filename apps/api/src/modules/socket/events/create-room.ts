@@ -25,7 +25,7 @@ export const handler: CallbackEvent<"create room"> = {
       description: room.description,
       visibility: room.visibility,
       status: room.status,
-      members_count: msr.count()
+      members_count: msr.members_count
     };
 
     if (!room.isprivate()) io.emit("create room", { room: r });

@@ -35,8 +35,10 @@ class MediasoupWorkers {
         rtcMaxPort: env.MEDIASOUP_MAX_PORT
       });
 
-      worker.on("died", (e) => {
-        logger.error("mediasoup worker died", e, { capture: true });
+      worker.on("died", (error) => {
+        logger.error(`mediasoup worker died. reason: ${error.message}`, error, {
+          capture: true
+        });
 
         setTimeout(() => {
           process.exit(1);
@@ -47,7 +49,7 @@ class MediasoupWorkers {
     }
   }
 
-  next(): Worker {
+  next() {
     if (this.workers.length === 0) throw new Error("workers not running");
 
     const worker = this.workers[this.worker_idx];
@@ -56,7 +58,7 @@ class MediasoupWorkers {
     return worker;
   }
 
-  close(): void {
+  close() {
     for (const worker of this.workers) worker.close();
 
     this.workers = [];

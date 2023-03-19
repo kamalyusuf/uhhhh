@@ -34,7 +34,6 @@ export const useRoom = (room_id: string) => {
   }));
   const roomstore = useRoomStore((state) => ({
     reset: state.reset,
-    setstate: state.setstate,
     set: state.set
   }));
   const peerstore = usePeerStore((state) => ({
@@ -45,6 +44,8 @@ export const useRoom = (room_id: string) => {
 
   const leave = useCallback(async () => {
     if (!socket) return;
+
+    roomstore.set({ state: "disconnecting" });
 
     await request({
       socket,
@@ -63,16 +64,16 @@ export const useRoom = (room_id: string) => {
   const join = useCallback(async () => {
     if (!socket) return;
 
+    roomstore.set({ state: "connecting" });
+
+    if (producerstore.producer) producerstore.reset();
+
+    if (transportstore.send_transport) transportstore.resetsendtransport();
+
+    if (transportstore.receive_transport)
+      transportstore.resetreceivetransport();
+
     try {
-      roomstore.setstate("connecting");
-
-      if (producerstore.producer) producerstore.reset();
-
-      if (transportstore.send_transport) transportstore.resetsendtransport();
-
-      if (transportstore.receive_transport)
-        transportstore.resetreceivetransport();
-
       {
         const stream = await navigator.mediaDevices.getUserMedia({
           audio: micstore.id ? { deviceId: micstore.id } : true
@@ -106,7 +107,7 @@ export const useRoom = (room_id: string) => {
         }
       });
 
-      const sendTransport = device.createSendTransport({
+      const sendtransport = device.createSendTransport({
         id: sendtransportoptions.id,
         iceParameters: sendtransportoptions.ice_parameters,
         iceCandidates: sendtransportoptions.ice_candidates,
@@ -117,7 +118,7 @@ export const useRoom = (room_id: string) => {
         iceServers: []
       });
 
-      sendTransport.on(
+      sendtransport.on(
         "connect",
         ({ dtlsParameters: dtls_parameters }, callback, errorback) => {
           request({
@@ -125,7 +126,7 @@ export const useRoom = (room_id: string) => {
             event: "connect transport",
             data: {
               room_id,
-              transport_id: sendTransport.id,
+              transport_id: sendtransport.id,
               dtls_parameters
             }
           })
@@ -134,7 +135,7 @@ export const useRoom = (room_id: string) => {
         }
       );
 
-      sendTransport.on(
+      sendtransport.on(
         "produce",
         async (
           { kind, rtpParameters: rtp_parameters, appData: app_data },
@@ -147,7 +148,7 @@ export const useRoom = (room_id: string) => {
               event: "produce",
               data: {
                 room_id,
-                transport_id: sendTransport.id,
+                transport_id: sendtransport.id,
                 kind,
                 rtp_parameters,
                 app_data: app_data as Record<string, string>
@@ -161,7 +162,7 @@ export const useRoom = (room_id: string) => {
         }
       );
 
-      transportstore.setsendtransport(sendTransport);
+      transportstore.setsendtransport(sendtransport);
 
       const { transport_options: receivetransportoptions } = await request({
         socket,
@@ -174,7 +175,7 @@ export const useRoom = (room_id: string) => {
         }
       });
 
-      const receiveTransport = device.createRecvTransport({
+      const receivetransport = device.createRecvTransport({
         id: receivetransportoptions.id,
         iceParameters: receivetransportoptions.ice_parameters,
         iceCandidates: receivetransportoptions.ice_candidates,
@@ -185,9 +186,9 @@ export const useRoom = (room_id: string) => {
         iceServers: []
       });
 
-      transportstore.setreceivetransport(receiveTransport);
+      transportstore.setreceivetransport(receivetransport);
 
-      receiveTransport.on(
+      receivetransport.on(
         "connect",
         ({ dtlsParameters: dtls_parameters }, callback, errorback) => {
           request({
@@ -195,7 +196,7 @@ export const useRoom = (room_id: string) => {
             event: "connect transport",
             data: {
               room_id,
-              transport_id: receiveTransport.id,
+              transport_id: receivetransport.id,
               dtls_parameters
             }
           })
@@ -235,7 +236,7 @@ export const useRoom = (room_id: string) => {
       micstore.setstream(stream);
       micstore.settrack(track);
 
-      const producer = await sendTransport.produce({
+      const producer = await sendtransport.produce({
         track,
         codecOptions: {
           opusStereo: true,
@@ -257,7 +258,7 @@ export const useRoom = (room_id: string) => {
 
       producerstore.add(producer);
 
-      roomstore.setstate("connected");
+      roomstore.set({ state: "connected" });
     } catch (e) {
       const error = e as Error;
       console.log("[useRoom.join] error", error);
@@ -343,5 +344,11 @@ export const useRoom = (room_id: string) => {
     producerstore.remove();
   }, [producerstore.producer, socket]);
 
-  return { join, leave, mute, unmute, disable };
+  return {
+    join,
+    leave,
+    mute,
+    unmute,
+    disable
+  };
 };

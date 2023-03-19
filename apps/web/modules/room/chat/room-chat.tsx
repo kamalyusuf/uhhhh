@@ -42,7 +42,7 @@ const useForceScrollToBottom = (messages: Message[]) => {
 
 export const RoomChat = () => {
   const virtuoso = useRef(null);
-  const { messages } = useRoomChatStore();
+  const messages = useRoomChatStore((state) => state.messages);
   const force = useForceScrollToBottom(messages);
 
   return (

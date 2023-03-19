@@ -14,13 +14,13 @@ mongoose.SchemaTypes.Boolean.cast(false);
 const maxattempts = 5;
 
 const connect = async (url: string) => {
-  let attempts = 1;
-
   await retry(
     async () => {
-      await mongoose.connect(url);
+      await mongoose.connect(url, {
+        serverSelectionTimeoutMS: 5000
+      });
 
-      logger.info(`mongodb connected on '${mongoose.connection.host}'`);
+      logger.info(`[mongodb] connected on ${mongoose.connection.host}`);
     },
     {
       maxAttempts: maxattempts,
@@ -29,14 +29,14 @@ const connect = async (url: string) => {
       delay: 200,
       maxDelay: 2000,
       handleError: (error: Error, ctx) => {
-        attempts += 1;
-
         const done = ctx.attemptsRemaining === 0;
 
         if (done) throw error;
         else
           logger.warn(
-            `mongodb connection failed. re-attempting connection. attempt ${attempts} / ${maxattempts}. reason: ${error.message}`
+            `mongodb connection failed. re-attempting connection. attempt ${
+              ctx.attemptNum + 1
+            } / ${maxattempts}. [REASON]: ${error.message}`
           );
       }
     }

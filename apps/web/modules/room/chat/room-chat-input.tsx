@@ -1,20 +1,18 @@
 import { TextInput, ActionIcon, Stack } from "@mantine/core";
 import { AiOutlineSend } from "react-icons/ai";
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { c } from "../../../utils/constants";
 import { useSocket } from "../../../hooks/use-socket";
+import { toast } from "react-toastify";
 
 export const RoomChatInput = () => {
   const [content, setcontent] = useState("");
-  const [count, setcount] = useState(0);
   const { socket } = useSocket();
 
-  useEffect(() => {
-    setcount(content.length);
-  }, [content]);
-
   const send = useCallback(() => {
-    if (!content.trim() || !socket) return;
+    if (!socket) return toast.error("webserver is down");
+
+    if (!content.trim()) return;
 
     socket.emit("chat message", { content });
     setcontent("");
@@ -55,11 +53,14 @@ export const RoomChatInput = () => {
       />
       <span
         style={{
-          color: count >= c.chat.text_limit ? c.colors.red : c.colors.indigo,
+          color:
+            content.length >= c.chat.text_limit
+              ? c.colors.red
+              : c.colors.indigo,
           fontSize: 12
         }}
       >
-        character count: {count} (max {c.chat.text_limit})
+        character count: {content.length} (max {c.chat.text_limit})
       </span>
     </Stack>
   );

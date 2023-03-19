@@ -15,7 +15,7 @@ export const PeerBadge = ({
   speaker: boolean;
   me: boolean;
 }) => {
-  const { consumers } = useConsumerStore();
+  const consumers = useConsumerStore((state) => state.consumers);
   const consumer = consumers[peer._id]?.consumer;
   const paused = consumers[peer._id]?.paused;
 
@@ -47,7 +47,7 @@ export const PeerBadge = ({
         {me ? "you" : peer.display_name}
       </Badge>
 
-      {!me && <Audio consumer={consumer} />}
+      {me ? null : <Audio consumer={consumer} />}
     </>
   );
 };

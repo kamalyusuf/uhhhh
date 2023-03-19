@@ -1,6 +1,6 @@
 import type { CallbackEvent } from "../types";
 import { MediasoupRoom } from "../../mediasoup/room";
-import { Room as IRoom, RoomVisibility } from "types";
+import { RoomVisibility } from "types";
 import { Room } from "../../room/room.model";
 
 export const handler: CallbackEvent<"rooms"> = {
@@ -21,7 +21,7 @@ export const handler: CallbackEvent<"rooms"> = {
       }
     );
 
-    const rooms: IRoom[] = data.map((room) => {
+    const rooms = data.map((room) => {
       let r;
 
       try {
@@ -34,7 +34,7 @@ export const handler: CallbackEvent<"rooms"> = {
         description: room.description,
         created_at: room.created_at.toISOString(),
         updated_at: room.updated_at.toISOString(),
-        members_count: r?.count() ?? 0,
+        members_count: r?.members_count ?? 0,
         visibility: room.visibility,
         creator: room.creator,
         status: room.status

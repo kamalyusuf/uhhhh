@@ -5,7 +5,7 @@ import { useSocket } from "./use-socket";
 
 export const useActiveSpeaker = () => {
   const { socket } = useSocket();
-  const { stream } = useMicStore();
+  const stream = useMicStore((state) => state.stream);
 
   useEffect(() => {
     if (!stream || !socket) return;

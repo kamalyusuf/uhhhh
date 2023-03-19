@@ -5,18 +5,18 @@ import type {
   RtpCapabilities
 } from "mediasoup/node/lib/types";
 import type { User } from "types";
-import type { TypedSocket } from "../socket/types";
+import type { ServerToClientEvents, TypedSocket } from "../socket/types";
 
 export class Peer {
   private static peers: Map<string, Peer> = new Map();
 
   public user: User;
-  public socket: TypedSocket;
   public active_room_id?: string;
   public rtp_capabilities?: RtpCapabilities;
   public producers: Map<string, Producer>;
   public consumers: Map<string, Consumer>;
   public transports: Map<string, Transport>;
+  public socket: TypedSocket;
 
   private constructor({ user, socket }: { user: User; socket: TypedSocket }) {
     this.user = user;
@@ -57,6 +57,13 @@ export class Peer {
     for (const consumer of this.consumers.values()) consumer.close();
 
     this.consumers.clear();
+  }
+
+  notify<T extends keyof ServerToClientEvents>(
+    event: T,
+    data: Parameters<ServerToClientEvents[T]>
+  ) {
+    this.socket.emit(event, ...data);
   }
 
   reset() {

@@ -25,7 +25,7 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
   useActiveSpeaker();
   const mounted = useMounted();
   const { join, leave, mute, unmute } = useRoom(room._id);
-  const roomstore = useRoomStore();
+  const roomstore = useRoomStore((state) => ({ state: state.state }));
   const { state } = useSocket();
   const [ok, setok] = useState(false);
   const matches = useMediaQuery("(max-width: 768px)");
@@ -64,7 +64,7 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
     );
 
   if (locked && !ok)
-    return <RoomLogin room={room} onsuccess={(success) => setok(success)} />;
+    return <RoomLogin room={room} onok={(value) => setok(value)} />;
 
   if (roomstore.state === "error") return <RoomError />;
 
@@ -73,8 +73,15 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
       <Layout title={room.name}>
         <Container style={{ width: "100%", height: "100%" }}>
           <Group style={{ height: "97%" }} align="start">
-            <RoomPanel room={room} actions={{ leave, mute, unmute }} />
-            {!matches && <RoomChat />}
+            <RoomPanel
+              room={room}
+              actions={{
+                leave,
+                mute,
+                unmute
+              }}
+            />
+            {!matches ? <RoomChat /> : null}
           </Group>
         </Container>
       </Layout>

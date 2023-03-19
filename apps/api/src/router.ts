@@ -7,7 +7,7 @@ import { useglobalerrorhandler } from "./middlewares/error";
 export const router = Router();
 
 router.get(["/", "/api", "/health", "/api/health"], (_req, res) =>
-  res.send({ ok: true })
+  res.send({ ok: true, uptime: process.uptime() })
 );
 
 router.use("/api/rooms", roomrouter);

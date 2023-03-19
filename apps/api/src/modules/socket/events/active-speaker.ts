@@ -11,7 +11,7 @@ export const handler: Event<"active speaker"> = {
 
     const room = MediasoupRoom.findbyid(peer.active_room_id);
 
-    if (!room.haspeer(peer.user._id)) throw new NotJoinedError();
+    if (!room.has(peer.user._id)) throw new NotJoinedError();
 
     io.to(room.id).emit("active speaker", {
       peer_id: peer.user._id,

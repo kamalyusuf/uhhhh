@@ -4,9 +4,12 @@ import { Stack, Text, Select, Button, Loader, Center } from "@mantine/core";
 import { toast } from "react-toastify";
 
 export const DefaultMicSelector = () => {
-  const [options, setoptions] = useState<{ id: string; label: string }[]>([]);
-  const micstore = useMicStore();
+  const [mics, setmics] = useState<{ id: string; label: string }[]>([]);
   const [enumerating, setenumerating] = useState(true);
+  const micstore = useMicStore((state) => ({
+    id: state.id,
+    setdefaultmicid: state.setdefaultmicid
+  }));
 
   const enumerate = () => {
     setenumerating(true);
@@ -18,11 +21,10 @@ export const DefaultMicSelector = () => {
           .filter((device) => device.kind === "audioinput" && device.deviceId)
           .map((device) => ({ id: device.deviceId, label: device.label }));
 
-        setoptions(devices);
+        setmics(devices);
       })
       .catch((e) => {
         const error = e as Error;
-        console.log(error);
 
         toast.error(error.message);
       })
@@ -43,7 +45,7 @@ export const DefaultMicSelector = () => {
         ) : (
           <>
             <Stack>
-              {options.length === 0 ? (
+              {mics.length === 0 ? (
                 <Text color="red" size="sm" style={{ fontStyle: "italic" }}>
                   no microphone(s) detected
                 </Text>
@@ -57,9 +59,9 @@ export const DefaultMicSelector = () => {
                   placeholder="select"
                   size="xs"
                   data={[
-                    ...options.map((options) => ({
-                      value: options.id,
-                      label: options.label
+                    ...mics.map((mic) => ({
+                      value: mic.id,
+                      label: mic.label
                     })),
                     { value: "-", label: "-" }
                   ]}

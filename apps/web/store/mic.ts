@@ -1,13 +1,13 @@
 import { create } from "zustand";
 import { combine, devtools } from "zustand/middleware";
 
-const key = "default_mic_id";
+const DEFAULT_MIC_ID_KEY = "default_mic_id";
 
 const initial = () => {
   try {
-    return localStorage.getItem(key) ?? "";
+    return localStorage.getItem(DEFAULT_MIC_ID_KEY) ?? null;
   } catch {
-    return "";
+    return null;
   }
 };
 
@@ -26,13 +26,13 @@ export const useMicStore = create(
 
         setdefaultmicid: (id: string) => {
           if (id === "-") {
-            localStorage.removeItem(key);
+            localStorage.removeItem(DEFAULT_MIC_ID_KEY);
 
-            return set({ id: "" });
+            return set({ id: null });
           }
 
           try {
-            localStorage.setItem(key, id);
+            localStorage.setItem(DEFAULT_MIC_ID_KEY, id);
           } catch {}
 
           set({ id });

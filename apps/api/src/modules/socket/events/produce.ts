@@ -13,7 +13,7 @@ export const handler: CallbackEvent<"produce"> = {
 
     const room = MediasoupRoom.findbyid(room_id);
 
-    if (!room.haspeer(peer.user._id) || peer.active_room_id !== room.id)
+    if (!room.has(peer.user._id) || peer.active_room_id !== room.id)
       throw new NotJoinedError();
 
     const transport = peer.transports.get(transport_id);
@@ -31,11 +31,11 @@ export const handler: CallbackEvent<"produce"> = {
 
     peer.producers.set(producer.id, producer);
 
-    const peers = room._peers().filter((p) => p.user._id !== peer.user._id);
+    const peers = room.findpeers({ except: peer.user._id });
 
-    for (const p of peers)
+    for (const otherpeer of peers)
       await room.createconsumer({
-        consumer_peer: p,
+        consumer_peer: otherpeer,
         producer_peer: peer,
         producer: producer
       });

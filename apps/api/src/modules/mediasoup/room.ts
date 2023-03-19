@@ -1,10 +1,5 @@
-import { Peer } from "./peer";
-import {
-  Router,
-  type RtpCapabilities,
-  Producer,
-  Consumer
-} from "mediasoup/node/lib/types";
+import type { Peer } from "./peer";
+import type { Router, Producer, Consumer } from "mediasoup/node/lib/types";
 import { workers } from "./workers";
 import { NotFoundError } from "@kamalyb/errors";
 import type { TypedIO } from "../socket/types";
@@ -47,14 +42,6 @@ export class MediasoupRoom {
           mimeType: "audio/opus",
           clockRate: 48000,
           channels: 2
-        },
-        {
-          kind: "video",
-          mimeType: "video/VP8",
-          clockRate: 90000,
-          parameters: {
-            "x-google-start-bitrate": 1000
-          }
         }
       ]
     });
@@ -70,7 +57,10 @@ export class MediasoupRoom {
     const rooms = [];
 
     for (const room of this.rooms.values())
-      rooms.push({ ...room.doc.toJSON(), members: room.users() });
+      rooms.push({
+        ...room.doc.toJSON(),
+        members: room.findusers()
+      });
 
     return rooms;
   }
@@ -98,134 +88,153 @@ export class MediasoupRoom {
     this.rooms.delete(room_id);
   }
 
-  get rtpcapabilities(): RtpCapabilities {
+  get rtpcapabilities() {
     return this.router.rtpCapabilities;
+  }
+
+  get members_count() {
+    return this.peers.size;
   }
 
   join(peer: Peer) {
     if (this.peers.has(peer.user._id)) throw new Error("already joined");
 
-    if (!this.count()) this.in_session_at = new Date();
+    if (!this.members_count) this.in_session_at = new Date();
 
-    peer.socket.emit("room session at", {
-      in_session_at: this.in_session_at?.toISOString() ?? ""
-    });
+    peer.notify("room session at", [
+      {
+        in_session_at: this.in_session_at?.toISOString() ?? ""
+      }
+    ]);
 
     this.peers.set(peer.user._id, peer);
 
     if (!this.doc.isprivate())
       this.io.emit("update room members count", {
         room_id: this.id,
-        members_count: this.count()
+        members_count: this.members_count
       });
   }
 
-  users() {
-    return Array.from(this.peers.values()).map((peer) => peer.user);
+  findusers({ except }: { except?: string } = { except: undefined }) {
+    return Array.from(this.peers.values())
+      .map((peer) => peer.user)
+      .filter((peer) => peer._id !== except);
   }
 
-  _peers() {
-    return Array.from(this.peers.values());
+  findpeers({ except }: { except?: string } = { except: undefined }) {
+    return Array.from(this.peers.values()).filter(
+      (peer) => peer.user._id !== except
+    );
   }
 
-  haspeer(id: string) {
+  has(id: string) {
     return this.peers.has(id);
   }
 
   async createconsumer({
-    consumer_peer,
-    producer_peer,
+    consumer_peer: consumerpeer,
+    producer_peer: producerpeer,
     producer
   }: {
     consumer_peer: Peer;
     producer_peer: Peer;
     producer: Producer;
   }) {
-    if (!consumer_peer.rtp_capabilities)
+    if (!consumerpeer.rtp_capabilities)
       return logger.warn(
-        `[createConsumer()] ${consumer_peer.user.display_name} does not have rtpCapabilities. returning`
+        `[createconsumer()] ${consumerpeer.user.display_name} does not have rtp capabilities`
       );
 
     if (
       !this.router.canConsume({
         producerId: producer.id,
-        rtpCapabilities: consumer_peer.rtp_capabilities
+        rtpCapabilities: consumerpeer.rtp_capabilities
       })
     )
       return logger.warn(
-        `[createConsumer()] router cannot consume ${consumer_peer.user.display_name}'s rtpCapabilities or maybe the producer with id ${producer.id}. returning`
+        `[createconsumer()] router cannot consume rtp capabilities`
       );
 
-    const transports = Array.from(consumer_peer.transports.values());
+    const transports = Array.from(consumerpeer.transports.values());
     const transport = transports.find((t) => t.appData.direction === "receive");
 
     if (!transport)
-      return logger.warn(
-        `[createConsumer()] transport not found for consumer_peer ${consumer_peer.user.display_name}`
-      );
+      return logger.warn(`[createconsumer()] transport not found`);
 
     let consumer: Consumer;
 
     try {
       consumer = await transport.consume({
         producerId: producer.id,
-        rtpCapabilities: consumer_peer.rtp_capabilities,
-        paused: true
+        rtpCapabilities: consumerpeer.rtp_capabilities,
+        paused: true,
+        enableRtx: true
       });
     } catch (e) {
       const error = e as Error;
 
       return logger.warn(
-        `[createConsumer() -> transport.consume()] ${error.message} for consumer_peer ${consumer_peer.user.display_name} and producer_peer ${producer_peer.user.display_name}`
+        `[createconsumer()] cannot consume transport. ${error.message}`
       );
     }
 
-    consumer_peer.consumers.set(consumer.id, consumer);
+    consumerpeer.consumers.set(consumer.id, consumer);
 
     consumer.on("transportclose", () => {
-      consumer_peer.consumers.delete(consumer.id);
+      consumerpeer.consumers.delete(consumer.id);
     });
 
     consumer.on("producerclose", () => {
-      consumer_peer.consumers.delete(consumer.id);
-      consumer_peer.socket.emit("consumer closed", {
-        consumer_id: consumer.id,
-        peer_id: producer_peer.user._id
-      });
+      consumerpeer.consumers.delete(consumer.id);
+      consumerpeer.notify("consumer closed", [
+        {
+          consumer_id: consumer.id,
+          peer_id: producerpeer.user._id
+        }
+      ]);
     });
 
     consumer.on("producerpause", () => {
-      consumer_peer.socket.emit("consumer paused", {
-        consumer_id: consumer.id,
-        peer_id: producer_peer.user._id
-      });
+      consumerpeer.notify("consumer paused", [
+        {
+          consumer_id: consumer.id,
+          peer_id: producerpeer.user._id
+        }
+      ]);
     });
 
     consumer.on("producerresume", () => {
-      consumer_peer.socket.emit("consumer resumed", {
-        consumer_id: consumer.id,
-        peer_id: producer_peer.user._id
-      });
+      consumerpeer.notify("consumer resumed", [
+        {
+          consumer_id: consumer.id,
+          peer_id: producerpeer.user._id
+        }
+      ]);
     });
 
     consumer.on("score", (score) => {
-      consumer_peer.socket.emit("consumer score", {
-        consumer_id: consumer.id,
-        peer_id: producer_peer.user._id,
-        score
-      });
+      consumerpeer.notify("consumer score", [
+        {
+          consumer_id: consumer.id,
+          peer_id: producerpeer.user._id,
+          score
+        }
+      ]);
     });
 
-    consumer_peer.socket.emit("new consumer", {
-      peer_id: producer_peer.user._id,
-      producer_id: producer.id,
-      id: consumer.id,
-      kind: consumer.kind,
-      rtp_parameters: consumer.rtpParameters,
-      type: consumer.type,
-      app_data: producer.appData,
-      producer_paused: consumer.producerPaused
-    });
+    consumerpeer.notify("new consumer", [
+      {
+        peer_id: producerpeer.user._id,
+        producer_id: producer.id,
+        id: consumer.id,
+        kind: consumer.kind,
+        rtp_parameters: consumer.rtpParameters,
+        type: consumer.type,
+        app_data: producer.appData,
+        producer_paused: consumer.producerPaused
+      }
+    ]);
 
     // await consumer.resume(); // moved to "consumer consumed" event
   }
@@ -244,10 +253,10 @@ export class MediasoupRoom {
     if (!this.doc.isprivate())
       this.io.emit("update room members count", {
         room_id: this.id,
-        members_count: this.count()
+        members_count: this.members_count
       });
 
-    if (this._peers().length === 0) {
+    if (this.members_count === 0) {
       this.router.close();
 
       const deleted = await Room.delete(this.id);
@@ -257,9 +266,5 @@ export class MediasoupRoom {
 
       MediasoupRoom.remove(this.id);
     }
-  }
-
-  count() {
-    return this._peers().length;
   }
 }

@@ -81,9 +81,7 @@ const Custom404Page = () => {
             align="center"
             className={classes.description}
           >
-            page you are trying to open does not exist. you may have mistyped
-            the address, or the page has been moved to another URL. if you think
-            this is an error contact support
+            page you are trying to open does not exist
           </Text>
           <Group position="center">
             <Button size="md" onClick={() => router.replace("/")}>

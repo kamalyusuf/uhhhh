@@ -8,7 +8,7 @@ export const handler: CallbackEvent<"join"> = {
 
     const room = MediasoupRoom.findbyid(data.room_id);
 
-    if (room.haspeer(peer.user._id)) throw new Error("already joined room");
+    if (room.has(peer.user._id)) throw new Error("already joined");
 
     peer.rtp_capabilities = data.rtp_capabilities;
     room.join(peer);
@@ -16,18 +16,18 @@ export const handler: CallbackEvent<"join"> = {
     socket.join(room.id);
     peer.active_room_id = room.id;
 
-    const peers = room._peers().filter((p) => p.user._id !== peer.user._id);
+    const peers = room.findpeers({ except: peer.user._id });
 
-    for (const p of peers)
-      for (const producer of p.producers.values())
+    for (const otherpeer of peers)
+      for (const producer of otherpeer.producers.values())
         await room.createconsumer({
           consumer_peer: peer,
-          producer_peer: p,
+          producer_peer: otherpeer,
           producer
         });
 
     socket.to(data.room_id).emit("new peer", { peer: peer.user });
 
-    cb({ peers: room.users().filter((p) => p._id !== peer.user._id) });
+    cb({ peers: Array.from(peers.values()).map((peer) => peer.user) });
   }
 };

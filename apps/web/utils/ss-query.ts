@@ -1,4 +1,4 @@
-import { AxiosError } from "axios";
+import type { AxiosError } from "axios";
 import type { GetServerSidePropsContext, GetServerSideProps } from "next";
 import type { ApiError } from "types";
 import { parseapierror } from "./error";

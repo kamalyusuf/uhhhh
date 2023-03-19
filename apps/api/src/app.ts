@@ -3,9 +3,10 @@ import cors from "cors";
 import express, { type Express } from "express";
 import { env } from "./lib/env";
 import { start } from "./utils/start";
-import { router } from "./routes";
+import { router } from "./router";
 import helmet from "helmet";
 import { usesentry } from "./lib/sentry";
+import path from "path";
 
 class App {
   private readonly app: Express;
@@ -20,6 +21,8 @@ class App {
   }
 
   private configure() {
+    this.app.set("view engine", "ejs");
+    this.app.use(express.static(path.join(__dirname, "public")));
     this.app.set("trust proxy", true);
     this.app.use(express.json());
     this.app.use(helmet());

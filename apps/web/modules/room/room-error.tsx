@@ -2,12 +2,11 @@ import { Alert } from "../../components/alert";
 import { useRoomStore } from "../../store/room";
 
 export const RoomError = () => {
-  const roomstore = useRoomStore();
+  const errormessage = useRoomStore((state) => state.error_message);
 
-  const deviceerror = roomstore.error_message === "already loaded";
-  const micerror = roomstore.error_message === "Permission denied";
-  const devicemissingerror =
-    roomstore.error_message === "Requested device not found";
+  const deviceerror = errormessage === "already loaded";
+  const micerror = errormessage === "Permission denied";
+  const devicemissingerror = errormessage === "Requested device not found";
 
   return (
     <Alert

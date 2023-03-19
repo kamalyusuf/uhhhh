@@ -82,13 +82,7 @@ schema.methods = {
 
 schema.statics = {
   async delete(id) {
-    let room;
-
-    try {
-      room = await Room.findById(id);
-    } catch {
-      return false;
-    }
+    const room = await Room.findById(id);
 
     if (!room || (env.isDevelopment && room?.name === "test")) return false;
 
