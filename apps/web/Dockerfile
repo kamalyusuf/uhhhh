@@ -21,11 +21,7 @@ RUN yarn install
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
-# ENV NEXT_PUBLIC_API_URL http://host.docker.internal:2300
-ENV NEXT_PUBLIC_API_URL http://localhost:2300
-ENV NEXT_PUBLIC_ENV docker
-
-RUN yarn turbo run build --filter=web...
+RUN yarn turbo run build --filter=web
 
 FROM node:alpine AS runner
 WORKDIR /app

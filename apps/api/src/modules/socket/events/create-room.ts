@@ -1,6 +1,5 @@
 import type { CallbackEvent } from "../types";
 import { MediasoupRoom } from "../../mediasoup/room";
-import { type Room as IRoom } from "types";
 import { Room } from "../../room/room.model";
 
 export const handler: CallbackEvent<"create room"> = {
@@ -16,7 +15,7 @@ export const handler: CallbackEvent<"create room"> = {
       doc: room
     });
 
-    const r: IRoom = {
+    const r = {
       _id: room._id.toString(),
       created_at: room.created_at.toISOString(),
       updated_at: room.updated_at.toISOString(),

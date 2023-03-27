@@ -16,9 +16,3 @@ router.get("/:id", async (req, res) => {
 
   res.send(room);
 });
-
-// router.get("/", (_req, res) => {
-//   const rooms = MediasoupRoom.find();
-
-//   res.send(rooms);
-// });

@@ -20,7 +20,7 @@ const connect = async (url: string) => {
         serverSelectionTimeoutMS: 5000
       });
 
-      logger.info(`[mongodb] connected on ${mongoose.connection.host}`);
+      logger.info(`mongoose connected on ${mongoose.connection.host}`);
     },
     {
       maxAttempts: maxattempts,

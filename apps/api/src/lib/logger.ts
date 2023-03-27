@@ -56,6 +56,12 @@ const prod = () =>
     transports: [new winston.transports.Console()]
   });
 
+interface Options {
+  capture?: boolean;
+  extra?: AnyObject;
+  force?: boolean;
+}
+
 class Logger {
   private output: winston.Logger;
 
@@ -103,7 +109,7 @@ class Logger {
   }
 
   warn(message: string, extra?: AnyObject) {
-    if (env.isProduction)
+    if (env.SENTRY_DSN)
       Sentry.withScope((scope) => {
         scope.setLevel("warning");
 
@@ -120,46 +126,13 @@ class Logger {
     });
   }
 
-  error(
-    message: string,
-    error: Error,
-    o?: {
-      capture?: boolean;
-      extra?: AnyObject;
-      force?: boolean;
-    }
-  ): void;
-  error(
-    error: Error,
-    o?: {
-      capture?: boolean;
-      extra?: AnyObject;
-      force?: boolean;
-    }
-  ): void;
-  error(
-    a: string | Error,
-    b?:
-      | Error
-      | {
-          capture?: boolean;
-          extra?: AnyObject;
-          force?: boolean;
-        },
-    c?: {
-      capture?: boolean;
-      extra?: AnyObject;
-      force?: boolean;
-    }
-  ) {
+  error(message: string, error: Error, o?: Options): void;
+  error(error: Error, o?: Options): void;
+  error(a: string | Error, b?: Error | Options, c?: Options) {
     const e = typeof a === "string" ? (b as Error) : a;
-    const o = (typeof a === "string" ? c : b) as {
-      capture?: boolean;
-      extra?: AnyObject;
-      force?: boolean;
-    };
+    const o = (typeof a === "string" ? c : b) as Options;
 
-    if (o?.capture && env.isProduction)
+    if (o?.capture && env.SENTRY_DSN)
       Sentry.captureException(e, (scope) => {
         if (o?.extra) scope.setExtras(o.extra);
 

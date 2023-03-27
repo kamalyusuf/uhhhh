@@ -5,8 +5,7 @@ import type { ApiError } from "types";
 
 export const api = axios.create({
   baseURL: `${process.env.NEXT_PUBLIC_API_URL}/api`,
-  timeout: 10000,
-  withCredentials: true
+  timeout: 15000
 });
 
 api.interceptors.response.use(

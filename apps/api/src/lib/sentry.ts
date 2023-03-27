@@ -18,8 +18,6 @@ export const usesentry = (app: Express) => {
 
   app.use(
     Sentry.Handlers.requestHandler({
-      ip: true,
-      user: true,
       request: true
     })
   );

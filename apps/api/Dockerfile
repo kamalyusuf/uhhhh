@@ -36,9 +36,7 @@ RUN yarn install
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
-RUN yarn turbo run build --filter=api...
-
-ENV NODE_ENV production
+RUN yarn turbo run build --filter=api
 
 WORKDIR /app/apps/api
 

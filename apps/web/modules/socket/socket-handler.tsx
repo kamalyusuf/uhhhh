@@ -5,20 +5,13 @@ import { useConsumerStore } from "../../store/consumer";
 import { usePeerStore } from "../../store/peer";
 import { toast } from "react-toastify";
 import { useRoomStore } from "../../store/room";
-import { useQueryClient } from "@tanstack/react-query";
-import type { Room } from "types";
 import { useRoomChatStore } from "../../store/room-chat";
+import { useUpdateSocketQuery } from "../../hooks/use-update-socket-query";
 
 export const SocketHandler = () => {
   const { socket } = useSocket();
-  const client = useQueryClient();
   const chatstore = useRoomChatStore((state) => ({ add: state.add }));
-  const consumerstore = useConsumerStore((state) => ({
-    add: state.add,
-    remove: state.remove,
-    pause: state.pause,
-    resume: state.resume
-  }));
+  const updatequery = useUpdateSocketQuery();
   const peerstore = usePeerStore((state) => ({
     add: state.add,
     remove: state.remove
@@ -29,6 +22,12 @@ export const SocketHandler = () => {
   }));
   const transportstore = useTransportStore((state) => ({
     receive_transport: state.receive_transport
+  }));
+  const consumerstore = useConsumerStore((state) => ({
+    add: state.add,
+    remove: state.remove,
+    pause: state.pause,
+    resume: state.resume
   }));
 
   useEffect(() => {
@@ -97,22 +96,22 @@ export const SocketHandler = () => {
     });
 
     socket.on("delete room", ({ room_id }) => {
-      client.setQueryData<{ rooms: Room[] }>(["rooms"], (cached) => {
-        if (!cached) return undefined;
+      updatequery({
+        key: "rooms",
+        updater: (draft) => {
+          const index = draft.rooms.findIndex((room) => room._id === room_id);
 
-        return {
-          rooms: cached.rooms.filter((room) => room._id !== room_id)
-        };
+          if (index > -1) draft.rooms.splice(index, 1);
+        }
       });
     });
 
     socket.on("create room", ({ room }) => {
-      client.setQueryData<{ rooms: Room[] }>(["rooms"], (cached) => {
-        if (!cached) return undefined;
-
-        return {
-          rooms: [...cached.rooms, room]
-        };
+      updatequery({
+        key: "rooms",
+        updater: (draft) => {
+          draft.rooms.push(room);
+        }
       });
     });
 
@@ -121,23 +120,14 @@ export const SocketHandler = () => {
     });
 
     socket.on("update room members count", ({ room_id, members_count }) => {
-      client.setQueryData<{ rooms: Room[] } | undefined>(
-        ["rooms"],
-        (cached) => {
-          if (!cached) return undefined;
+      updatequery({
+        key: "rooms",
+        updater: (draft) => {
+          const room = draft.rooms.find((room) => room._id === room_id);
 
-          return {
-            rooms: cached.rooms.map((room) => {
-              if (room._id === room_id)
-                return {
-                  ...room,
-                  members_count
-                };
-              else return room;
-            })
-          };
+          if (room) room.members_count = members_count;
         }
-      );
+      });
     });
 
     socket.on("room session at", ({ in_session_at }) => {

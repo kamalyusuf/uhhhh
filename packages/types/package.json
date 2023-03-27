@@ -1,9 +1,9 @@
 {
   "name": "types",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "license": "MIT",
   "main": "./dist/index.js",
-  "types": "./dist/index.d.ts",
+  "types": "./src/index.ts",
   "source": "./src/index.ts",
   "files": [
     "dist/**"
@@ -13,6 +13,7 @@
     "build": "tsc"
   },
   "devDependencies": {
-    "tsconfig": "*"
+    "tsconfig": "*",
+    "typescript": "^5.0.2"
   }
 }

@@ -2,36 +2,53 @@ import "react-toastify/dist/ReactToastify.css";
 import "../styles/globals.scss";
 import "nprogress/nprogress.css";
 import { MantineProvider } from "@mantine/core";
-import { type AppProps } from "next/app";
+import type { AppProps } from "next/app";
 import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
 import { Slide, ToastContainer } from "react-toastify";
 import { theme } from "../mantine/theme";
 import { SocketProvider } from "../modules/socket/socket-provider";
-import { PageComponent } from "../types";
+import type { PageComponent } from "../types";
 import { useState } from "react";
-import { createqueryclient } from "../lib/query-client";
-import { QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Authenticate } from "../modules/auth/authenticate";
 import { SocketHandler } from "../modules/socket/socket-handler";
 import { useMounted } from "../hooks/use-mounted";
 import { isFirefox, isOpera } from "react-device-detect";
 import { Alert } from "../components/alert";
+import { api } from "../lib/api";
 
 if (!process.env.NEXT_PUBLIC_API_URL) throw new Error("where API_URL at?");
 
-Router.events.on("routeChangeStart", () => {
-  NProgress.start();
-});
-Router.events.on("routeChangeComplete", () => NProgress.done());
-Router.events.on("routeChangeError", () => NProgress.done());
+Router.events.on("routeChangeStart", NProgress.start);
+Router.events.on("routeChangeComplete", NProgress.done);
+Router.events.on("routeChangeError", NProgress.done);
 
 const MyApp = ({ Component: C, pageProps }: AppProps) => {
   const Component = C as PageComponent;
-  const [client] = useState(() => createqueryclient());
   const mounted = useMounted();
+  const [client] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            retry: false,
+            staleTime: Infinity,
+            queryFn: async ({ queryKey }) =>
+              (await api.get(`${queryKey[0]}`)).data,
+            refetchOnWindowFocus: false,
+            refetchOnReconnect: false,
+            retryOnMount: false,
+            refetchOnMount: false
+          },
+          mutations: {
+            retry: false
+          }
+        }
+      })
+  );
 
   if (!mounted) return null;
 

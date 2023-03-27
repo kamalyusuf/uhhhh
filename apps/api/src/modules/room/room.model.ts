@@ -1,73 +1,97 @@
-import { type Room as IRoom, RoomStatus, RoomVisibility } from "types";
-import type { MongooseProps } from "../../types/types";
-import { Types, type HydratedDocument } from "mongoose";
-import { ModelBuilder } from "../shared/model-builder";
 import argon2 from "argon2";
+import mongoose from "mongoose";
+import { RoomStatus, RoomVisibility } from "types";
 import { env } from "../../lib/env";
 
-export type RoomProps = Omit<
-  MongooseProps<IRoom>,
-  "members_count" | "status"
-> & {
+export interface RoomProps {
+  _id: mongoose.Types.ObjectId;
+  name: string;
+  description: string;
+  visibility: RoomVisibility;
   password?: string;
-};
+  created_at: Date;
+  updated_at: Date;
+  creator: {
+    _id: string;
+    display_name: string;
+  };
+}
 
-export type RoomDocument = HydratedDocument<RoomProps, RoomMethods>;
+export type RoomDocument = mongoose.HydratedDocument<
+  RoomProps,
+  Methods & Virtuals
+>;
 
-interface RoomMethods {
+interface Methods {
   isprivate: () => boolean;
   verifypassword: (plain: string) => Promise<boolean>;
 }
 
-interface RoomStatics {
-  delete: (id: string | Types.ObjectId) => Promise<boolean>;
+interface Statics {
+  delete: (id: string | mongoose.Types.ObjectId) => Promise<boolean>;
 }
 
-interface RoomVirtuals {
+interface Virtuals {
   status: RoomStatus;
 }
 
-const builder = new ModelBuilder<
+const schema = new mongoose.Schema<
   RoomProps,
-  RoomMethods,
-  RoomVirtuals,
-  RoomStatics
->("Room", "rooms");
-
-const schema = builder.schema(
-  (t) => ({
+  {},
+  Methods,
+  {},
+  Virtuals,
+  Statics
+>(
+  {
     name: {
-      type: t.String,
+      type: mongoose.Schema.Types.String,
       required: [true, "name is required"],
       trim: true
     },
     creator: {
       _id: {
-        type: t.String,
+        type: mongoose.Schema.Types.String,
         required: [true, "creator's id is required"]
       },
       display_name: {
-        type: t.String,
+        type: mongoose.Schema.Types.String,
         required: [true, "creator's display name is required"]
       }
     },
     visibility: {
-      type: t.String,
+      type: mongoose.Schema.Types.String,
       required: [true, "visibility is required"],
       enum: Object.values(RoomVisibility),
       index: true
     },
     description: {
-      type: t.String,
+      type: mongoose.Schema.Types.String,
       required: [true, "description is required"],
       trim: true
     },
     password: {
-      type: t.String,
+      type: mongoose.Schema.Types.String,
       minlength: 5
     }
-  }),
-  { to_json_exclude: ["password"] }
+  },
+  {
+    id: false,
+    versionKey: false,
+    timestamps: {
+      createdAt: "created_at",
+      updatedAt: "updated_at"
+    },
+    toObject: {
+      virtuals: true
+    },
+    toJSON: {
+      virtuals: true,
+      transform(_doc, ret) {
+        delete ret.password;
+      }
+    }
+  }
 );
 
 schema.methods = {
@@ -95,10 +119,7 @@ schema.statics = {
 schema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
-  if (!this.password)
-    throw new Error(`password not set for ${JSON.stringify(this.toJSON())}`);
-
-  this.set({ password: await argon2.hash(this.password) });
+  if (this.password) this.set({ password: await argon2.hash(this.password) });
 
   next();
 });
@@ -107,4 +128,4 @@ schema.virtual("status").get(function () {
   return this.password ? RoomStatus.PROTECTED : RoomStatus.UNPROTECTED;
 });
 
-export const Room = builder.model();
+export const Room = mongoose.model("Room", schema);

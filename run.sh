@@ -5,9 +5,10 @@ export MEDIASOUP_MIN_PORT=${MEDIASOUP_MIN_PORT:="2000"}
 export MEDIASOUP_MAX_PORT=${MEDIASOUP_MAX_PORT:="2020"}
 export LISTEN_IP=${LISTEN_IP:="0.0.0.0"}
 export WEB_URL=${WEB_URL:="http://localhost:3000"}
-export ANNOUNCED_IP=127.0.0.1
-export MONGO_URL=mongodb://host/.docker.internal:27017/uhhhh
-export NODE_ENV=development
+export MONGO_URL=${MONGO_URL:="mongodb://host.docker.internal:27017/uhhhh"}
+export ANNOUNCED_IP=${ANNOUNCED_IP:="127.0.0.1"}
+
+docker build -t uhhhh-api -f apps/api/Dockerfile .
 
 docker run \
         --name uhhhh-api \
@@ -17,9 +18,10 @@ docker run \
         -e PORT \
         -e MEDIASOUP_MIN_PORT \
         -e MEDIASOUP_MAX_PORT \
+        -e MONGO_URL \
+        -e ANNOUNCED_IP \
         -e LISTEN_IP \
         -e WEB_URL \
-        --env-file ./.env \
         -it \
         --rm \
-        kamalyb/uhhhh-api
+        uhhhh-api

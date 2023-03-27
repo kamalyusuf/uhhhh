@@ -19,10 +19,10 @@ type Params<T extends ServerEvent> = SocketRequestParams<T>[0] extends
   ? never
   : SocketRequestParams<T>[0];
 
-type Options<T extends ServerEvent> = UseQueryOptions<
-  SocketRequestResponse<T>,
-  SocketEventError
->;
+type Options<T extends ServerEvent> = Omit<
+  UseQueryOptions<SocketRequestResponse<T>, SocketEventError>,
+  "enabled"
+> & { _enabled?: boolean };
 
 export const useSocketQuery = <T extends ServerEvent>(
   ...args: Params<T> extends never
@@ -42,10 +42,6 @@ export const useSocketQuery = <T extends ServerEvent>(
       : ({} as Parameters<typeof request<T>>[0]["data"]);
   const options = args[1] && !Array.isArray(args[1]) ? args[1] : args[2];
 
-  const enabled = options?.enabled ?? true;
-
-  delete options?.enabled;
-
   return useQuery<SocketRequestResponse<T>, SocketEventError>(
     Array.isArray(key) ? key : [key],
     () => {
@@ -61,8 +57,10 @@ export const useSocketQuery = <T extends ServerEvent>(
     },
     {
       enabled:
-        typeof window !== "undefined" && state === "connected" && enabled,
-      ...(options || {})
+        typeof window !== "undefined" &&
+        state === "connected" &&
+        options?._enabled,
+      ...(options ?? {})
     }
   );
 };

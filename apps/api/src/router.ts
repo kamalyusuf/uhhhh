@@ -1,8 +1,13 @@
-import { Router } from "express";
-import { NotFoundError } from "@kamalyb/errors";
+import {
+  Router,
+  type Request,
+  type Response,
+  type NextFunction
+} from "express";
+import { CustomError, NotFoundError } from "@kamalyb/errors";
 import { router as roomrouter } from "./modules/room/room.route";
 import { Sentry } from "./lib/sentry";
-import { useglobalerrorhandler } from "./middlewares/error";
+import { env } from "./lib/env";
 
 export const router = Router();
 
@@ -12,12 +17,25 @@ router.get(["/", "/api", "/health", "/api/health"], (_req, res) =>
 
 router.use("/api/rooms", roomrouter);
 
-router.use(Sentry.Handlers.errorHandler());
-
 router.use((_, __, ___) => {
   throw new NotFoundError("no route found");
 });
 
-router.use(useglobalerrorhandler);
+if (env.SENTRY_DSN) router.use(Sentry.Handlers.errorHandler());
+
+router.use(
+  (error: Error, _req: Request, res: Response, _next: NextFunction) => {
+    if (error instanceof CustomError)
+      return res.status(error.status).send({ errors: error.serialize() });
+
+    res.status(500).send({
+      errors: [
+        {
+          message: error.message
+        }
+      ]
+    });
+  }
+);
 
 require("express-list-routes")(router);
