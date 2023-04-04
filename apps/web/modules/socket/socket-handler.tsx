@@ -61,7 +61,11 @@ export const SocketHandler = () => {
           }
         });
 
-        consumerstore.add(peer_id, consumer, producer_paused);
+        consumerstore.add({
+          consumer,
+          paused: producer_paused,
+          peer_id
+        });
 
         socket.emit("consumer consumed", {
           consumer_id: consumer.id

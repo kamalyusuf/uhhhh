@@ -6,17 +6,31 @@ export const useConsumerStore = create(
   devtools(
     combine(
       {
-        consumers: {} as Record<string, { consumer: Consumer; paused: boolean }>
+        consumers: {} as Record<
+          string,
+          { consumer: Consumer; paused: boolean; volume: number }
+        >
       },
       (set) => ({
-        add: (peer_id: string, consumer: Consumer, paused: boolean) =>
+        add: ({
+          consumer,
+          paused,
+          peer_id,
+          volume = 100
+        }: {
+          peer_id: string;
+          consumer: Consumer;
+          paused: boolean;
+          volume?: number;
+        }) =>
           set((state) => {
             return {
               consumers: {
                 ...state.consumers,
                 [peer_id]: {
                   consumer,
-                  paused
+                  paused,
+                  volume
                 }
               }
             };
@@ -68,6 +82,23 @@ export const useConsumerStore = create(
                 [peer_id]: {
                   ...state.consumers[peer_id],
                   paused: false
+                }
+              }
+            };
+          }),
+
+        setvolume: (peer_id: string, volume: number) =>
+          set((state) => {
+            const c = state.consumers[peer_id];
+
+            if (!c) return state;
+
+            return {
+              consumers: {
+                ...state.consumers,
+                [peer_id]: {
+                  ...state.consumers[peer_id],
+                  volume
                 }
               }
             };

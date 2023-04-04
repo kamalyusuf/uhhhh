@@ -46,7 +46,11 @@ export class MediasoupRoom {
       ]
     });
 
-    const room = new MediasoupRoom({ router, io, doc });
+    const room = new MediasoupRoom({
+      router,
+      io,
+      doc
+    });
 
     this.rooms.set(room.id, room);
 
