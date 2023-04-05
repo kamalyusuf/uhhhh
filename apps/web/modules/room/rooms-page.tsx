@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { Layout } from "../../components/layout";
+import { Layout } from "../../components/_layout";
 import { Box, Group, Divider, Space, ActionIcon, Title } from "@mantine/core";
-import { Container } from "../../components/container";
+import { Container } from "../../components/_container";
 import { MdOutlineAdd } from "react-icons/md";
 import { CreateRoomModal } from "./create-room-modal";
 import type { PageComponent } from "../../types";

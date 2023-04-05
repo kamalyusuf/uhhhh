@@ -4,7 +4,7 @@ import { c } from "../../utils/constants";
 import { Audio } from "../audio/audio";
 import { useConsumerStore } from "../../store/consumer";
 import { AiOutlineAudioMuted } from "react-icons/ai";
-import { Icon } from "../../components/icon";
+import { Icon } from "../../components/_icon";
 import { useDisclosure } from "@mantine/hooks";
 
 export const PeerBadge = ({

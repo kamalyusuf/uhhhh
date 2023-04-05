@@ -1,4 +1,4 @@
-import { NavBar } from "./navbar";
+import { NavBar } from "./_navbar";
 import { Stack, type StackProps } from "@mantine/core";
 import Head from "next/head";
 import type { PropsWithChildren } from "react";
