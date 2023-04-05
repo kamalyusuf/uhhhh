@@ -8,7 +8,7 @@ export WEB_URL=${WEB_URL:="http://localhost:3000"}
 export MONGO_URL=${MONGO_URL:="mongodb://host.docker.internal:27017/uhhhh"}
 export ANNOUNCED_IP=${ANNOUNCED_IP:="127.0.0.1"}
 
-docker build -t uhhhh-api -f apps/api/Dockerfile .
+docker build -t uhhhh-api .
 
 docker run \
         --name uhhhh-api \
