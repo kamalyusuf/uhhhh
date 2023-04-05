@@ -1,4 +1,4 @@
-import { Alert } from "../../components/alert";
+import { Alert } from "../../components/_alert";
 import { useRoomStore } from "../../store/room";
 
 export const RoomError = () => {

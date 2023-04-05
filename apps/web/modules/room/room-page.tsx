@@ -14,7 +14,7 @@ import { RoomLogin } from "./room-login";
 import { RoomError } from "./room-error";
 import { useMounted } from "../../hooks/use-mounted";
 import { useActiveSpeaker } from "../../hooks/use-active-speaker";
-import { Alert } from "../../components/alert";
+import { Alert } from "../../components/_alert";
 import { AbsoluteCenter } from "../../components/absolute-center";
 
 interface Props {

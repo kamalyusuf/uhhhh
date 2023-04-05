@@ -17,7 +17,7 @@ import { Authenticate } from "../modules/auth/authenticate";
 import { SocketHandler } from "../modules/socket/socket-handler";
 import { useMounted } from "../hooks/use-mounted";
 import { isFirefox, isOpera } from "react-device-detect";
-import { Alert } from "../components/alert";
+import { Alert } from "../components/_alert";
 import { api } from "../lib/api";
 
 if (!process.env.NEXT_PUBLIC_API_URL) throw new Error("where API_URL at?");

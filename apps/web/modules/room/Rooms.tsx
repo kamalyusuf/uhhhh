@@ -1,7 +1,7 @@
 import { useSocketQuery } from "../../hooks/use-socket-query";
 import { Center, Loader, ScrollArea, Stack } from "@mantine/core";
 import { RoomCard } from "./room-card";
-import { Alert } from "../../components/alert";
+import { Alert } from "../../components/_alert";
 import { c } from "../../utils/constants";
 import { useSocket } from "../../hooks/use-socket";
 
