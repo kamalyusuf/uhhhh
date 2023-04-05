@@ -26,15 +26,15 @@ export const useRoom = (room_id: string) => {
   const producerstore = useProducerStore();
   const transportstore = useTransportStore();
   const chatstore = useRoomChatStore((state) => ({ reset: state.reset }));
+  const roomstore = useRoomStore((state) => ({
+    reset: state.reset,
+    set: state.set
+  }));
   const micstore = useMicStore((state) => ({
     reset: state.reset,
     id: state.id,
     setstream: state.setstream,
     settrack: state.settrack
-  }));
-  const roomstore = useRoomStore((state) => ({
-    reset: state.reset,
-    set: state.set
   }));
   const peerstore = usePeerStore((state) => ({
     reset: state.reset,
@@ -344,11 +344,21 @@ export const useRoom = (room_id: string) => {
     producerstore.remove();
   }, [producerstore.producer, socket]);
 
+  const togglemute = useCallback(async () => {
+    const producer = producerstore.producer;
+
+    if (!producer) return;
+
+    if (producer.paused) await unmute();
+    else await mute();
+  }, [producerstore.producer]);
+
   return {
     join,
     leave,
     mute,
     unmute,
-    disable
+    disable,
+    togglemute
   };
 };

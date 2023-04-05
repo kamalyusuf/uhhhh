@@ -1,13 +1,17 @@
 import { TextInput, ActionIcon, Stack } from "@mantine/core";
 import { AiOutlineSend } from "react-icons/ai";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { c } from "../../../utils/constants";
 import { useSocket } from "../../../hooks/use-socket";
 import { toast } from "react-toastify";
+import { useHotkeys } from "@mantine/hooks";
 
 export const RoomChatInput = () => {
   const [content, setcontent] = useState("");
   const { socket } = useSocket();
+  const ref = useRef<HTMLInputElement>(null);
+
+  useHotkeys([["c", () => ref.current?.focus()]]);
 
   const send = useCallback(() => {
     if (!socket) return toast.error("webserver is down");
@@ -21,6 +25,7 @@ export const RoomChatInput = () => {
   return (
     <Stack spacing={5}>
       <TextInput
+        ref={ref}
         placeholder="chat..."
         variant="filled"
         rightSection={
@@ -34,13 +39,9 @@ export const RoomChatInput = () => {
           }
         }}
         value={content}
-        onChange={(e) => {
-          const value = e.currentTarget.value;
-
-          if (!value.trim()) return;
-
-          setcontent(e.currentTarget.value.slice(0, c.chat.text_limit));
-        }}
+        onChange={(e) =>
+          setcontent(e.currentTarget.value.slice(0, c.chat.text_limit))
+        }
         onKeyDown={(e) => {
           switch (e.key) {
             case "Enter":

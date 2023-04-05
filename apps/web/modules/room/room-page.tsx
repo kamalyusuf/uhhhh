@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { Group, Loader } from "@mantine/core";
-import { useMediaQuery } from "@mantine/hooks";
+import { useMediaQuery, useHotkeys } from "@mantine/hooks";
 import { type Room, RoomStatus } from "types";
 import { useRoom } from "./use-room";
 import { Layout } from "../../components/layout";
@@ -24,8 +24,8 @@ interface Props {
 export const RoomPage: PageComponent<Props> = ({ room }) => {
   useActiveSpeaker();
   const mounted = useMounted();
-  const { join, leave, mute, unmute } = useRoom(room._id);
-  const roomstore = useRoomStore((state) => ({ state: state.state }));
+  const { join, leave, mute, unmute, togglemute } = useRoom(room._id);
+  const roomstate = useRoomStore((state) => state.state);
   const { state } = useSocket();
   const [ok, setok] = useState(false);
   const matches = useMediaQuery("(max-width: 768px)");
@@ -44,6 +44,8 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
       join();
     }
   }, [state, ok, locked]);
+
+  useHotkeys([["m", () => togglemute()]]);
 
   if (!mounted) return null;
 
@@ -66,9 +68,9 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
   if (locked && !ok)
     return <RoomLogin room={room} onok={(value) => setok(value)} />;
 
-  if (roomstore.state === "error") return <RoomError />;
+  if (roomstate === "error") return <RoomError />;
 
-  if (roomstore.state === "connected")
+  if (roomstate === "connected")
     return (
       <Layout title={room.name}>
         <Container style={{ width: "100%", height: "100%" }}>

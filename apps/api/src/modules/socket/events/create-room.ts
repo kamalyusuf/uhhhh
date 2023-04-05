@@ -1,10 +1,16 @@
 import type { CallbackEvent } from "../types";
 import { MediasoupRoom } from "../../mediasoup/room";
 import { Room } from "../../room/room.model";
+import { UnprocessableEntityError } from "@kamalyb/errors";
 
 export const handler: CallbackEvent<"create room"> = {
   on: "create room",
   invoke: async ({ data, cb, io, peer }) => {
+    if (data.password && data.password.length < 5)
+      throw new UnprocessableEntityError(
+        "passport must be at least 5 characters"
+      );
+
     const room = await Room.create({
       ...data,
       creator: peer.user
