@@ -25,7 +25,7 @@ class App {
     this.app.use(helmet());
     this.app.use(
       cors({
-        origin: env.WEB_URL
+        origin: env.WEB_URL.split(",")
       })
     );
 
