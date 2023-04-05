@@ -1,7 +1,7 @@
 import { Badge, Stack, Modal, Slider, Text } from "@mantine/core";
 import type { User } from "types";
 import { c } from "../../utils/constants";
-import { Audio } from "../audio/audio";
+import { Audio } from "../audio/_audio";
 import { useConsumerStore } from "../../store/consumer";
 import { AiOutlineAudioMuted } from "react-icons/ai";
 import { Icon } from "../../components/_icon";

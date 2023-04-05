@@ -13,7 +13,7 @@ import type { PageComponent } from "../types";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Authenticate } from "../modules/auth/authenticate";
+import { Authenticate } from "../modules/auth/_authenticate";
 import { SocketHandler } from "../modules/socket/socket-handler";
 import { useMounted } from "../hooks/use-mounted";
 import { isFirefox, isOpera } from "react-device-detect";

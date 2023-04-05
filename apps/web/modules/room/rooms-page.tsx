@@ -6,7 +6,7 @@ import { MdOutlineAdd } from "react-icons/md";
 import { CreateRoomModal } from "./create-room-modal";
 import type { PageComponent } from "../../types";
 import { useMounted } from "../../hooks/use-mounted";
-import { Rooms } from "./rooms";
+import { Rooms } from "./_rooms";
 
 export const RoomsPage: PageComponent = () => {
   const [opened, setopened] = useState(false);
