@@ -1,6 +1,6 @@
 import { MediasoupRoom } from "../../mediasoup/room";
 import type { CallbackEvent } from "../types";
-import { NotJoinedError, NoTransportFoundError } from "../utils";
+import { NotInRoomError, NoTransportFoundError } from "../utils";
 
 export const handler: CallbackEvent<"produce"> = {
   on: "produce",
@@ -9,16 +9,16 @@ export const handler: CallbackEvent<"produce"> = {
     data: { room_id, transport_id, kind, rtp_parameters, app_data },
     cb
   }) => {
-    if (!peer.active_room_id) throw new NotJoinedError();
+    if (!peer.active_room_id) throw new NotInRoomError();
 
     const room = MediasoupRoom.findbyid(room_id);
 
     if (!room.has(peer.user._id) || peer.active_room_id !== room.id)
-      throw new NotJoinedError();
+      throw new NotInRoomError();
 
     const transport = peer.transports.get(transport_id);
 
-    if (!transport) throw new NoTransportFoundError(transport_id);
+    if (!transport) throw new NoTransportFoundError();
 
     const producer = await transport.produce({
       kind,

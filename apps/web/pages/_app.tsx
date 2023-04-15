@@ -85,7 +85,7 @@ const MyApp = ({ Component: C, pageProps }: AppProps) => {
               )}
             </>
             <ToastContainer
-              position="top-center"
+              position="bottom-center"
               autoClose={3000}
               newestOnTop={true}
               closeOnClick

@@ -1,4 +1,4 @@
-import axios, { AxiosError } from "axios";
+import axios, { type AxiosError } from "axios";
 import { parseapierror } from "../utils/error";
 import { toast } from "react-toastify";
 import type { ApiError } from "types";
@@ -13,6 +13,8 @@ api.interceptors.response.use(
     return response;
   },
   (error: AxiosError<ApiError>) => {
+    if (typeof window === "undefined") return Promise.reject(error);
+
     const { messages } = parseapierror(error);
 
     if (messages.length === 0) messages.push("something went wrong");

@@ -72,7 +72,7 @@ export class MediasoupRoom {
   static findbyid(room_id: string) {
     const room = this.rooms.get(room_id);
 
-    if (!room) throw new NotFoundError("no mediasoup room found");
+    if (!room) throw new NotFoundError("mediasoup room not found");
 
     return room;
   }
@@ -113,7 +113,7 @@ export class MediasoupRoom {
 
     this.peers.set(peer.user._id, peer);
 
-    if (!this.doc.isprivate())
+    if (this.doc.ispublic())
       this.io.emit("update room members count", {
         room_id: this.id,
         members_count: this.members_count
@@ -254,7 +254,7 @@ export class MediasoupRoom {
     peer.reset();
     this.peers.delete(peer.user._id);
 
-    if (!this.doc.isprivate())
+    if (this.doc.ispublic())
       this.io.emit("update room members count", {
         room_id: this.id,
         members_count: this.members_count
@@ -265,7 +265,7 @@ export class MediasoupRoom {
 
       const deleted = await Room.delete(this.id);
 
-      if (deleted && !this.doc.isprivate())
+      if (deleted && this.doc.ispublic())
         this.io.emit("delete room", { room_id: this.id });
 
       MediasoupRoom.remove(this.id);

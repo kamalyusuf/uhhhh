@@ -43,7 +43,7 @@ class SocketIO {
 
       for (const event of this.events.values()) {
         socket.on(event.on, async (...args: unknown[]) => {
-          if (!this.io) throw new Error("io is not initialized");
+          if (!this.io) throw new Error("io not initialized");
 
           let t,
             __request__: boolean | undefined = false;

@@ -3,7 +3,7 @@ import type { User } from "./user";
 export interface Room {
   _id: string;
   name: string;
-  description: string;
+  description?: string;
   created_at: string;
   updated_at: string;
   members_count: number;

@@ -153,7 +153,7 @@ export interface ClientToServerEvents<
   "create room": (
     t: {
       name: string;
-      description: string;
+      description?: string;
       visibility: RoomVisibility;
       password?: string;
     },

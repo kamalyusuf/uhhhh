@@ -97,9 +97,11 @@ export const RoomPanel = ({ room, actions }: Props) => {
           <Group position="apart">
             <Stack spacing={0}>
               <Title order={3}>{room.name}</Title>
-              <Text color="indigo" size="xs">
-                {room.description}
-              </Text>
+              {room.description ? (
+                <Text color="indigo" size="xs">
+                  {room.description}
+                </Text>
+              ) : null}
             </Stack>
 
             <Text color="white" size="sm" italic>

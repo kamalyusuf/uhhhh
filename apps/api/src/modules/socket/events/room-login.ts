@@ -7,7 +7,7 @@ export const handler: CallbackEvent<"room login"> = {
   invoke: async ({ data, cb }) => {
     const room = await Room.findById(data.room_id);
 
-    if (!room) throw new NotFoundError("no room found");
+    if (!room) throw new NotFoundError("room not found");
 
     if (!(await room.verifypassword(data.password)))
       throw new BadRequestError("incorrect password");

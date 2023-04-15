@@ -6,7 +6,7 @@ import { env } from "../../lib/env";
 export interface RoomProps {
   _id: mongoose.Types.ObjectId;
   name: string;
-  description: string;
+  description?: string;
   visibility: RoomVisibility;
   password?: string;
   created_at: Date;
@@ -24,6 +24,7 @@ export type RoomDocument = mongoose.HydratedDocument<
 
 interface Methods {
   isprivate: () => boolean;
+  ispublic: () => boolean;
   verifypassword: (plain: string) => Promise<boolean>;
 }
 
@@ -46,29 +47,29 @@ const schema = new mongoose.Schema<
   {
     name: {
       type: mongoose.Schema.Types.String,
-      required: [true, "name is required"],
+      required: true,
       trim: true
     },
     creator: {
       _id: {
         type: mongoose.Schema.Types.String,
-        required: [true, "creator's id is required"]
+        required: true
       },
       display_name: {
         type: mongoose.Schema.Types.String,
-        required: [true, "creator's display name is required"]
+        required: true
       }
     },
     visibility: {
       type: mongoose.Schema.Types.String,
-      required: [true, "visibility is required"],
+      required: true,
       enum: Object.values(RoomVisibility),
       index: true
     },
     description: {
       type: mongoose.Schema.Types.String,
-      required: [true, "description is required"],
-      trim: true
+      trim: true,
+      maxlength: 140
     },
     password: {
       type: mongoose.Schema.Types.String,
@@ -101,6 +102,10 @@ schema.methods = {
 
   isprivate() {
     return (this as RoomDocument).visibility === RoomVisibility.PRIVATE;
+  },
+
+  ispublic() {
+    return (this as RoomDocument).visibility === RoomVisibility.PUBLIC;
   }
 };
 
@@ -117,15 +122,23 @@ schema.statics = {
 };
 
 schema.pre("save", async function (next) {
+  const doc = asdoc(this);
+
   if (!this.isModified("password")) return next();
 
-  if (this.password) this.set({ password: await argon2.hash(this.password) });
+  if (doc.password) this.set({ password: await argon2.hash(doc.password) });
 
   next();
 });
 
 schema.virtual("status").get(function () {
-  return this.password ? RoomStatus.PROTECTED : RoomStatus.UNPROTECTED;
+  const doc = asdoc(this);
+
+  return doc.password ? RoomStatus.PROTECTED : RoomStatus.UNPROTECTED;
 });
+
+function asdoc(t: unknown) {
+  return t as RoomDocument;
+}
 
 export const Room = mongoose.model("Room", schema);

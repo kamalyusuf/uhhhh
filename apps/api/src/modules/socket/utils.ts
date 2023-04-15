@@ -102,27 +102,27 @@ export const validateargs = (
   return { eventdata, cb: callbackfn, __request__ };
 };
 
-export class NotJoinedError extends Error {
+export class NotInRoomError extends Error {
   constructor() {
-    super("not joined in room");
+    super("not in room");
   }
 }
 
 export class NoProducerFoundError extends Error {
-  constructor(id: string) {
-    super(`no producer with id ${id} found`);
+  constructor() {
+    super("producer not found");
   }
 }
 
 export class NoTransportFoundError extends Error {
-  constructor(id: string) {
-    super(`no transport with id ${id} found`);
+  constructor() {
+    super("transport not found");
   }
 }
 
 export class NoConsumerFoundError extends Error {
-  constructor(id: string) {
-    super(`no constumer with id ${id} found`);
+  constructor() {
+    super("consumer not found");
   }
 }
 
@@ -179,7 +179,7 @@ export const onerror = ({
   logger.error(error.message, error, {
     capture: true,
     extra: {
-      peer: { user: peer.user, active_room_id: peer.active_room_id },
+      user: peer.user,
       event: event.on
     }
   });

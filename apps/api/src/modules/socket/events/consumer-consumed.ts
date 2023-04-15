@@ -6,7 +6,7 @@ export const handler: Event<"consumer consumed"> = {
   invoke: async ({ peer, data }) => {
     const consumer = peer.consumers.get(data.consumer_id);
 
-    if (!consumer) throw new NoConsumerFoundError(data.consumer_id);
+    if (!consumer) throw new NoConsumerFoundError();
 
     await consumer.resume();
   }

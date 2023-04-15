@@ -12,7 +12,7 @@ router.get("/:id", async (req, res) => {
 
   const room = await Room.findById(id);
 
-  if (!room) throw new NotFoundError("no room found");
+  if (!room) throw new NotFoundError("room not found");
 
   res.send(room);
 });

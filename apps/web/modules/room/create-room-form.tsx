@@ -34,12 +34,22 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
       onSubmit={async (values) => {
         if (!socket) return toast.error("webserver is down");
 
+        if (values.name.trim().length < 2)
+          return toast.error("name must be at least 2 characters");
+
+        if (
+          values.require_password &&
+          values.password &&
+          values.password.length < 5
+        )
+          return toast.error("password must be at least 5 characters");
+
         const { room } = await request({
           socket,
           event: "create room",
           data: {
             name: values.name,
-            description: values.description,
+            description: values.description.trim(),
             visibility: values.private
               ? RoomVisibility.PRIVATE
               : RoomVisibility.PUBLIC,
@@ -78,7 +88,6 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
                 <TextInput
                   label="description"
                   placeholder="description"
-                  required
                   {...field}
                   autoComplete="off"
                 />
@@ -93,18 +102,14 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
 
             <Field name="require_password" type="checkbox">
               {({ field }: FieldProps) => (
-                <Checkbox label="require password" size="sm" {...field} />
+                <Checkbox label="password" size="sm" {...field} />
               )}
             </Field>
 
             {values.require_password ? (
               <Field name="password">
                 {({ field }: FieldProps) => (
-                  <PasswordInput
-                    label="password"
-                    placeholder="password"
-                    {...field}
-                  />
+                  <PasswordInput placeholder="password" {...field} />
                 )}
               </Field>
             ) : null}
@@ -112,11 +117,7 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
               <Button
                 type="submit"
                 loading={isSubmitting}
-                disabled={
-                  isSubmitting ||
-                  !values.name.trim() ||
-                  !values.description.trim()
-                }
+                disabled={isSubmitting || !values.name.trim()}
               >
                 create
               </Button>

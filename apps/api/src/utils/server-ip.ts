@@ -1,9 +1,9 @@
 import os from "os";
-import { logger } from "./logger";
+import { logger } from "../lib/logger";
 
 const ifaces = os.networkInterfaces();
 
-export const ip = () => {
+export const serverip = () => {
   let local = "127.0.0.1";
 
   Object.keys(ifaces).forEach((ifname) => {
@@ -23,4 +23,4 @@ export const ip = () => {
   return local;
 };
 
-console.log({ ip: ip() });
+console.log({ serverip: serverip() });

@@ -4,11 +4,16 @@ import { MediasoupRoom } from "../../mediasoup/room";
 export const handler: CallbackEvent<"join"> = {
   on: "join",
   invoke: async ({ peer, data, socket, cb }) => {
-    if (peer.active_room_id) throw new Error("already in a room");
+    if (peer.active_room_id)
+      throw new Error(
+        peer.active_room_id === data.room_id
+          ? "already in room"
+          : "already in a room"
+      );
 
     const room = MediasoupRoom.findbyid(data.room_id);
 
-    if (room.has(peer.user._id)) throw new Error("already joined");
+    if (room.has(peer.user._id)) throw new Error("already in room");
 
     peer.rtp_capabilities = data.rtp_capabilities;
     room.join(peer);

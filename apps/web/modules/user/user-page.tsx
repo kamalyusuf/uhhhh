@@ -34,10 +34,11 @@ export const UserPage: PageComponent = () => {
   const onsubmit = () => {
     if (!socket) return toast.error("webserver is down");
 
-    if (!name.trim()) return toast.warn("where yo name at?");
+    const n = name.trim();
 
-    if (name.trim().length < 3)
-      return toast.warn("name should be at least 3 characters");
+    if (!n) return toast.warn("where yo name at?");
+
+    if (n.length < 2) return toast.warn("name should be at least 2 characters");
 
     update(name, remember);
 

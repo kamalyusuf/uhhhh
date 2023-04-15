@@ -12,13 +12,13 @@ import { env } from "./lib/env";
 export const router = Router();
 
 router.get(["/", "/api", "/health", "/api/health"], (_req, res) =>
-  res.send({ ok: true, uptime: process.uptime() })
+  res.send({ ok: true })
 );
 
 router.use("/api/rooms", roomrouter);
 
 router.use((_, __, ___) => {
-  throw new NotFoundError("no route found");
+  throw new NotFoundError("route not found");
 });
 
 if (env.SENTRY_DSN) router.use(Sentry.Handlers.errorHandler());

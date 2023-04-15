@@ -1,10 +1,10 @@
 import "colors";
-import "./lib/ip";
+import "./utils/server-ip";
 import type { Server } from "http";
 import { app } from "./app";
 import { workers } from "./modules/mediasoup/workers";
 import { logger } from "./lib/logger";
-import { exithandler } from "./utils/exit-handler";
+import { shutdown } from "./utils/shutdown";
 import { mongo } from "./lib/mongo";
 import { env } from "./lib/env";
 import { io } from "./modules/socket/io";
@@ -27,18 +27,16 @@ bootstrap().catch((e) => {
   process.exit(1);
 });
 
-process.on("uncaughtException", (error: Error) => {
-  logger.error(error.message, error);
+["uncaughtException", "unhandledRejection"].forEach((signal) => {
+  process.on(signal, (error: Error) => {
+    logger.error(error, { capture: true });
 
-  exithandler(server);
+    void shutdown(server, 1);
+  });
 });
 
-process.on("unhandledRejection", (error: Error) => {
-  logger.error(error.message, error);
-
-  exithandler(server);
-});
-
-process.on("SIGTERM", () => {
-  if (server) server.close();
+["SIGINT", "SIGTERM"].forEach((signal) => {
+  process.on(signal, () => {
+    void shutdown(server);
+  });
 });

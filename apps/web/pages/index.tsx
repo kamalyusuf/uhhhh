@@ -40,12 +40,19 @@ const HomePage: PageComponent = () => {
                 />
                 <Button
                   onClick={() => {
-                    if (!name.trim()) return toast.warn("where yo name at?");
+                    const n = name.trim();
 
-                    if (name.trim().length < 3)
-                      return toast.warn("name should be at least 3 characters");
+                    if (!n) return toast.warn("where yo name at?");
 
-                    load(name, remember);
+                    if (n.length < 2)
+                      return toast.error(
+                        "name should be at least 2 characters"
+                      );
+
+                    if (!/^[a-z0-9]+$/i.test(n))
+                      return toast.error("no special characters allowed");
+
+                    load(n, remember);
                   }}
                 >
                   submit

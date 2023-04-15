@@ -36,7 +36,7 @@ const connect = (me: User | null): Promise<TypedSocket> => {
       rememberUpgrade: true,
       path: "/ws",
       autoConnect: true,
-      reconnectionAttempts: 2,
+      reconnectionAttempts: 5,
       transports: ["websocket", "polling"],
       withCredentials: true,
       query: {
@@ -49,8 +49,6 @@ const connect = (me: User | null): Promise<TypedSocket> => {
     socket.on("connect_error", reject);
 
     socket.io.on("error", reject);
-
-    socket.on("disconnect", () => reject(new Error("socket disconnected")));
   });
 };
 
@@ -76,10 +74,9 @@ export const SocketProvider = ({ children }: Props) => {
         const error = e as Error;
         console.log(error);
 
-        if (error.message === "socket disconnected") setstate("disconnected");
-        else setstate("error");
+        setstate("error");
 
-        toast.error("socket connection failed. try reloading the page", {
+        toast.error("failed to establish connection. try reloading the page", {
           autoClose: false
         });
       });
@@ -95,6 +92,8 @@ export const SocketProvider = ({ children }: Props) => {
 
   useEffect(() => {
     if (!socket) return;
+
+    socket.on("disconnect", () => setsocket(null));
 
     return () => {
       socket.disconnect();
