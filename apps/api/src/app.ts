@@ -22,7 +22,7 @@ app.use("/api/rooms", roomrouter);
 
 if (env.isProduction) app.use(Sentry.Handlers.errorHandler());
 
-app.use(() => {
+app.use((_req, _res, _next) => {
   throw new NotFoundError("route not found");
 });
 
