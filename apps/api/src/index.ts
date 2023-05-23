@@ -8,6 +8,7 @@ import { shutdown } from "./utils/shutdown";
 import { mongo } from "./lib/mongo";
 import { env } from "./lib/env";
 import { io } from "./modules/socket/io";
+import { start } from "./utils/start";
 
 let server: Server;
 
@@ -16,7 +17,7 @@ const bootstrap = async () => {
 
   await mongo.connect(env.MONGO_URL);
 
-  server = await app.serve();
+  server = await start({ app, port: env.PORT });
 
   io.initialize(server);
 };

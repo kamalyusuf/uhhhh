@@ -62,9 +62,7 @@ class SocketIO {
               peer
             });
           } catch (e) {
-            const error = e as Error;
-
-            onerror({ error, peer, socket, event, __request__ });
+            onerror({ error: e as Error, peer, socket, event, __request__ });
           }
         });
       }

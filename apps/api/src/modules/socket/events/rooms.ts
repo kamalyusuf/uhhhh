@@ -14,10 +14,10 @@ export const handler: CallbackEvent<"rooms"> = {
       },
       {},
       {
+        lean: true,
         sort: {
           created_at: -1
-        },
-        lean: true
+        }
       }
     );
 

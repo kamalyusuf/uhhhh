@@ -36,19 +36,11 @@ const anyobject = () => Joi.object();
 
 const array = () => Joi.array().required();
 
-const validate = (
-  schema: Joi.Schema,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any,
-  o?: ValidationOptions
-) => schema.validate(value, { ...options, ...(o ?? {}) });
+const validate = (schema: Joi.Schema, value: any, o?: ValidationOptions) =>
+  schema.validate(value, { ...options, ...(o ?? {}) });
 
-const validateasync = (
-  schema: Joi.Schema,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  value: any,
-  o?: ValidationOptions
-) => schema.validateAsync(value, { ...options, ...(o ?? {}) });
+const validateasync = (schema: Joi.Schema, value: any, o?: ValidationOptions) =>
+  schema.validateAsync(value, { ...options, ...(o ?? {}) });
 
 const isodate: Joi.CustomValidator = (value: string, helpers) => {
   if (!isisodate(value)) return helpers.error("any.invalid");

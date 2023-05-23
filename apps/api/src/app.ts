@@ -1,42 +1,49 @@
 import "express-async-errors";
 import cors from "cors";
-import express, { type Express } from "express";
+import express from "express";
 import { env } from "./lib/env";
-import { start } from "./utils/start";
-import { router } from "./router";
 import helmet from "helmet";
-import { usesentry } from "./lib/sentry";
+import { Sentry, usesentry } from "./lib/sentry";
+import { CustomError, NotFoundError } from "@kamalyb/errors";
+import { router as roomrouter } from "./modules/room/room.route";
 
-class App {
-  private readonly app: Express;
+export const app = express();
 
-  public port: number;
+if (env.isProduction) usesentry(app);
 
-  constructor() {
-    this.app = express();
-    this.port = env.PORT;
+app.set("trust proxy", true);
+app.use(express.json({ limit: "500kb" }));
+app.use(helmet());
+app.use(cors({ origin: env.WEB_URL.split(",") }));
 
-    this.configure();
+app.get("/", (_req, res) => res.send({ ok: true }));
+
+app.use("/api/rooms", roomrouter);
+
+if (env.isProduction) app.use(Sentry.Handlers.errorHandler());
+
+app.use(() => {
+  throw new NotFoundError("route not found");
+});
+
+app.use(
+  (
+    error: Error,
+    _req: express.Request,
+    res: express.Response,
+    _next: express.NextFunction
+  ) => {
+    if (error instanceof CustomError)
+      return res.status(error.status).send({ errors: error.serialize() });
+
+    res.status(500).send({
+      errors: [
+        {
+          message: error.message
+        }
+      ]
+    });
   }
+);
 
-  private configure() {
-    this.app.set("trust proxy", true);
-    this.app.use(express.json());
-    this.app.use(helmet());
-    this.app.use(
-      cors({
-        origin: env.WEB_URL.split(",")
-      })
-    );
-
-    if (env.SENTRY_DSN) usesentry(this.app);
-
-    this.app.use(router);
-  }
-
-  serve() {
-    return start({ app: this.app, port: this.port });
-  }
-}
-
-export const app = new App();
+require("express-list-routes")(app);

@@ -132,7 +132,7 @@ class Logger {
     const e = typeof a === "string" ? (b as Error) : a;
     const o = (typeof a === "string" ? c : b) as Options;
 
-    if (o?.capture && env.SENTRY_DSN)
+    if (o?.capture && env.isProduction)
       Sentry.captureException(e, (scope) => {
         if (o?.extra) scope.setExtras(o.extra);
 
