@@ -47,6 +47,22 @@ useexplorer({
     if (!req.session?.pass) return res.redirect("/pass");
 
     next();
+  },
+  models: {
+    Room: {
+      properties: {
+        password: {
+          isfilterable: false,
+          iseditable: false
+        },
+        "creator._id": {
+          iseditable: false
+        },
+        "creator.display_name": {
+          iseditable: false
+        }
+      }
+    }
   }
 });
 

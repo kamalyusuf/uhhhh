@@ -2363,10 +2363,10 @@ mongodb@5.7.0:
   optionalDependencies:
     saslprep "^1.0.3"
 
-mongoose-explorer@^1.0.2:
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/mongoose-explorer/-/mongoose-explorer-1.0.2.tgz#69701a9a962c9057513e5df5359e7f51745f4451"
-  integrity sha512-U7S4djQdu6pxCSFgMJQS9qKgmN8xN+3hvc1mYVY+aDM07hKtF5QzzcpyxSIlJ9QeN1OWUswLMuQnVjiCt2It4w==
+mongoose-explorer@^1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/mongoose-explorer/-/mongoose-explorer-1.1.0.tgz#64aca697048e36752157c5dbd1f57091a4b70c64"
+  integrity sha512-b9WYGXqJNfvrSPnU3bPrs06SseKfUpIhlR+FHdG8rWfu1ai6n7Guq+39kRP88gWhFFzIk7WQQ2Fm282l0I+Lzg==
   dependencies:
     "@kamalyb/errors" "^2.0.0"
     celebrate "^15.0.1"
