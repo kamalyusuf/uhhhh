@@ -1,0 +1,39 @@
+html(lang="en")
+	head
+		meta(charset="UTF-8")
+		meta(name="viewport", content="width=device-width, initial-scale=1.0")
+		title pass
+
+	style.
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+
+		form {
+			display: grid;
+			border: 1px solid #ccc;
+			width: 200px;
+			margin: 50px auto 0;
+			gap: 10px;
+			padding: 5px;
+		}
+
+		form input, form button {
+			padding: 5px;
+		}
+
+		.error {
+			font-weight: bold;
+			color: #dc2626;
+			font-size: 18px;
+			text-align: center;
+		}
+	body
+		form(method="post" action="/pass")
+			if error
+				p.error i am error nerd
+			div(style="display: grid; gap: 10px")
+				input(type="password" placeholder="pass key" name="passkey" required)
+				button(type="submit") submit

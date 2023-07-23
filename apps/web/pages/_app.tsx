@@ -16,7 +16,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Authenticate } from "../modules/auth/_authenticate";
 import { SocketHandler } from "../modules/socket/socket-handler";
 import { useMounted } from "../hooks/use-mounted";
-import { isFirefox, isOpera } from "react-device-detect";
+import { isFirefox } from "react-device-detect";
 import { Alert } from "../components/_alert";
 import { api } from "../lib/api";
 
@@ -62,10 +62,10 @@ const MyApp = ({ Component: C, pageProps }: AppProps) => {
       </Head>
 
       <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
-        {isFirefox || isOpera ? (
+        {isFirefox ? (
           <Alert
             type="warning"
-            message="firefox and opera are not supported. use chrome/edge/brave"
+            message="firefox is not supported. use chrome/edge/brave/opera"
             wrap={false}
             style={{ marginTop: 100 }}
           />

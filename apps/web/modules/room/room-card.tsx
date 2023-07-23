@@ -1,7 +1,7 @@
 import { Group, Text, ThemeIcon, Button, Stack, Title } from "@mantine/core";
 import { type Room, RoomStatus } from "types";
 import { MdRoom } from "react-icons/md";
-import { GoPrimitiveDot } from "react-icons/go";
+import { GoDotFill } from "react-icons/go";
 import { useRouter } from "next/router";
 import { IoMdLock } from "react-icons/io";
 import { micenabled } from "../../utils/mic";
@@ -49,7 +49,7 @@ export const RoomCard = ({ room }: Props) => {
               size="sm"
               color="red"
             >
-              <GoPrimitiveDot />
+              <GoDotFill />
             </ThemeIcon>
             <Text color="white" size="sm">
               {room.members_count}
