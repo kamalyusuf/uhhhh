@@ -1,11 +1,11 @@
 import "colors";
 import "./utils/server-ip";
+import { mongo } from "./lib/mongo";
 import type { Server } from "http";
 import { app } from "./app";
 import { workers } from "./modules/mediasoup/workers";
 import { logger } from "./lib/logger";
 import { shutdown } from "./utils/shutdown";
-import { mongo } from "./lib/mongo";
 import { env } from "./lib/env";
 import { io } from "./modules/socket/io";
 import { start } from "./utils/start";

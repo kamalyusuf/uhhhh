@@ -6,6 +6,8 @@ import helmet from "helmet";
 import { Sentry, usesentry } from "./lib/sentry";
 import { CustomError, NotFoundError } from "@kamalyb/errors";
 import { router as roomrouter } from "./modules/room/room.route";
+import { useexplorer } from "mongoose-explorer";
+import mongoose from "mongoose";
 
 export const app = express();
 
@@ -13,10 +15,22 @@ if (env.isProduction) usesentry(app);
 
 app.set("trust proxy", true);
 app.use(express.json({ limit: "500kb" }));
-app.use(helmet());
+app.use(express.urlencoded({ extended: false }));
+app.use(
+  helmet({
+    contentSecurityPolicy: {
+      useDefaults: true,
+      directives: {
+        "script-src": ["'unsafe-inline'"]
+      }
+    }
+  })
+);
 app.use(cors({ origin: env.WEB_URL.split(",") }));
 
 app.get("/", (_req, res) => res.send({ ok: true }));
+
+useexplorer({ app, mongoose });
 
 app.use("/api/rooms", roomrouter);
 

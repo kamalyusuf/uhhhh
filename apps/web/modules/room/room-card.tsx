@@ -4,6 +4,7 @@ import { MdRoom } from "react-icons/md";
 import { GoPrimitiveDot } from "react-icons/go";
 import { useRouter } from "next/router";
 import { IoMdLock } from "react-icons/io";
+import { micenabled } from "../../utils/mic";
 
 interface Props {
   room: Room;
@@ -63,7 +64,11 @@ export const RoomCard = ({ room }: Props) => {
       <Button
         size="sm"
         radius="xl"
-        onClick={() => router.push(`/rooms/${room._id}`)}
+        onClick={async () => {
+          if (!(await micenabled())) return;
+
+          router.push(`/rooms/${room._id}`);
+        }}
       >
         join
       </Button>

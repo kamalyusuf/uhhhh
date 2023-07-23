@@ -24,7 +24,7 @@ interface Props {
 export const RoomPage: PageComponent<Props> = ({ room }) => {
   useActiveSpeaker();
   const mounted = useMounted();
-  const { join, leave, mute, unmute, togglemute } = useRoom(room._id);
+  const { join, leave, togglemute } = useRoom(room._id);
   const roomstate = useRoomStore((state) => state.state);
   const { state } = useSocket();
   const [ok, setok] = useState(false);
@@ -60,13 +60,12 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
     return (
       <Alert
         type="error"
-        message="websocket connection failed. try refreshing the page"
+        message="connection failed. try refreshing the page"
         wrap
       />
     );
 
-  if (locked && !ok)
-    return <RoomLogin room={room} onok={(value) => setok(value)} />;
+  if (locked && !ok) return <RoomLogin room={room} onok={setok} />;
 
   if (roomstate === "error") return <RoomError />;
 
@@ -79,8 +78,7 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
               room={room}
               actions={{
                 leave,
-                mute,
-                unmute
+                togglemute
               }}
             />
             {!matches ? <RoomChat /> : null}

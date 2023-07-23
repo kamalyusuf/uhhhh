@@ -1,22 +1,13 @@
-import { useCallback } from "react";
 import { ActionIcon } from "@mantine/core";
 import { IoMdMic, IoMdMicOff } from "react-icons/io";
 import { useProducerStore } from "../../store/producer";
 
 interface Props {
-  mute: () => Promise<void>;
-  unmute: () => Promise<void>;
+  toggle: () => Promise<void>;
 }
 
-export const ToggleMuteButton = ({ mute, unmute }: Props) => {
+export const ToggleMuteButton = ({ toggle }: Props) => {
   const producer = useProducerStore((state) => state.producer);
-
-  const toggle = useCallback(async () => {
-    if (!producer) return;
-
-    if (producer.paused) await unmute();
-    else await mute();
-  }, [producer?.paused]);
 
   return (
     <>

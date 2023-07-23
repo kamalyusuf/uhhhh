@@ -13,6 +13,7 @@ import { useSocket } from "../../hooks/use-socket";
 import { request } from "../../utils/request";
 import { RoomVisibility } from "types";
 import { toast } from "react-toastify";
+import { micenabled } from "../../utils/mic";
 
 interface Props {
   oncancel: () => void;
@@ -33,6 +34,8 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
       }}
       onSubmit={async (values) => {
         if (!socket) return toast.error("webserver is down");
+
+        if (!(await micenabled())) return;
 
         if (values.name.trim().length < 2)
           return toast.error("name must be at least 2 characters");
