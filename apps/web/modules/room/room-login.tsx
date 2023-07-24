@@ -5,6 +5,7 @@ import { Layout } from "../../components/_layout";
 import { useSocket } from "../../hooks/use-socket";
 import { request } from "../../utils/request";
 import { toast } from "react-toastify";
+import { micenabled } from "../../utils/mic";
 
 interface Props {
   room: Room;
@@ -25,6 +26,8 @@ export const RoomLogin = ({ room, onok }: Props) => {
               e.preventDefault();
 
               if (!socket) return toast.error("web server is down");
+
+              if (!(await micenabled())) return;
 
               setoking(true);
 

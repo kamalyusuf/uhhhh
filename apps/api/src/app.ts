@@ -6,7 +6,7 @@ import helmet from "helmet";
 import { Sentry, usesentry } from "./lib/sentry";
 import { CustomError, NotFoundError } from "@kamalyb/errors";
 import { router as roomrouter } from "./modules/room/room.route";
-import { useexplorer } from "mongoose-explorer";
+import { useexplorer, usepass, usesimplepass } from "mongoose-explorer";
 import mongoose from "mongoose";
 import cookiesession from "cookie-session";
 
@@ -14,7 +14,6 @@ export const app = express();
 
 if (env.isProduction) usesentry(app);
 
-app.set("view engine", "pug");
 app.set("trust proxy", true);
 app.use(express.json({ limit: "500kb" }));
 app.use(express.urlencoded({ extended: false }));
@@ -39,15 +38,17 @@ app.use(
 
 app.get("/", (_req, res) => res.send({ ok: true }));
 
+usesimplepass({
+  app,
+  passkey: env.PASS_KEY,
+  redirect_path: "/explorer"
+});
+
 useexplorer({
   app,
   mongoose,
   rootpath: "/explorer",
-  authorize: (req, res, next) => {
-    if (!req.session?.pass) return res.redirect("/pass");
-
-    next();
-  },
+  authorize: usepass,
   models: {
     Room: {
       properties: {
@@ -64,21 +65,6 @@ useexplorer({
       }
     }
   }
-});
-
-app.get("/pass", (_req, res, _next) => {
-  res.render("pass");
-});
-
-app.post("/pass", (req, res) => {
-  const passkey = req.body.passkey as string;
-
-  if (passkey !== env.PASS_KEY)
-    return res.render("pass", { error: "incorrect pass key" });
-
-  if (req.session) req.session.pass = true;
-
-  res.redirect("/explorer");
 });
 
 app.use("/api/rooms", roomrouter);

@@ -21,6 +21,7 @@ export const PeerBadge = ({
     consumers: state.consumers,
     setvolume: state.setvolume
   }));
+
   const consumer = consumers[peer._id]?.consumer;
   const paused = consumers[peer._id]?.paused;
   const volume = consumers[peer._id]?.volume;
