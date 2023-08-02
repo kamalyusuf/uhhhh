@@ -3,12 +3,12 @@ import { NoTransportFoundError } from "../utils";
 
 export const handler: CallbackEvent<"connect transport"> = {
   on: "connect transport",
-  invoke: async ({ peer, data, cb }) => {
-    const transport = peer.transports.get(data.transport_id);
+  invoke: async ({ peer, payload, cb }) => {
+    const transport = peer.transports.get(payload.transport_id);
 
     if (!transport) throw new NoTransportFoundError();
 
-    await transport.connect({ dtlsParameters: data.dtls_parameters });
+    await transport.connect({ dtlsParameters: payload.dtls_parameters });
 
     cb();
   }

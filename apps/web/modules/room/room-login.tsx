@@ -35,7 +35,7 @@ export const RoomLogin = ({ room, onok }: Props) => {
                 const { ok } = await request({
                   socket,
                   event: "room login",
-                  data: {
+                  payload: {
                     room_id: room._id,
                     password
                   }

@@ -4,7 +4,7 @@ import { env } from "../../../lib/env";
 
 export const handler: CallbackEvent<"create transport"> = {
   on: "create transport",
-  invoke: async ({ peer, data: { room_id, direction }, cb }) => {
+  invoke: async ({ peer, payload: { room_id, direction }, cb }) => {
     const room = MediasoupRoom.findbyid(room_id);
 
     const transport = await room.router.createWebRtcTransport({

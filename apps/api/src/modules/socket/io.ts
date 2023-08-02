@@ -1,7 +1,7 @@
 import { logger } from "../../lib/logger";
 import { Server } from "node:http";
 import { Server as SocketServer } from "socket.io";
-import type { ServerEvent, TypedIO, EventData, EventCb, E } from "./types";
+import type { ServerEvent, TypedIO, EventPayload, EventCb, E } from "./types";
 import fs from "node:fs";
 import path from "node:path";
 import { Peer } from "../mediasoup/peer";
@@ -56,7 +56,7 @@ class SocketIO {
             await event.invoke({
               io: this.io,
               socket,
-              data: t.eventdata as EventData<ServerEvent>,
+              payload: t.eventpayload as EventPayload<ServerEvent>,
               cb: t.cb as EventCb<ServerEvent>,
               event: event.on,
               peer

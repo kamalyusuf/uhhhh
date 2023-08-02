@@ -36,10 +36,10 @@ export const useSocketQuery = <T extends ServerEvent>(
   const { socket, state } = useSocket();
 
   const key = args[0];
-  const data =
+  const payload =
     args[1] && Array.isArray(args[1])
       ? args[1][0]
-      : ({} as Parameters<typeof request<T>>[0]["data"]);
+      : ({} as Parameters<typeof request<T>>[0]["payload"]);
   const options = args[1] && !Array.isArray(args[1]) ? args[1] : args[2];
 
   return useQuery<SocketRequestResponse<T>, SocketEventError>(
@@ -52,7 +52,7 @@ export const useSocketQuery = <T extends ServerEvent>(
       return request({
         socket,
         event: typeof key === "string" ? key : key[0],
-        data
+        payload
       });
     },
     {

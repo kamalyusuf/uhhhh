@@ -3,19 +3,19 @@ import { MediasoupRoom } from "../../mediasoup/room";
 
 export const handler: CallbackEvent<"join"> = {
   on: "join",
-  invoke: async ({ peer, data, socket, cb }) => {
+  invoke: async ({ peer, payload, socket, cb }) => {
     if (peer.active_room_id)
       throw new Error(
-        peer.active_room_id === data.room_id
+        peer.active_room_id === payload.room_id
           ? "already in room"
           : "already in a room"
       );
 
-    const room = MediasoupRoom.findbyid(data.room_id);
+    const room = MediasoupRoom.findbyid(payload.room_id);
 
     if (room.has(peer.user._id)) throw new Error("already in room");
 
-    peer.rtp_capabilities = data.rtp_capabilities;
+    peer.rtp_capabilities = payload.rtp_capabilities;
     room.join(peer);
 
     socket.join(room.id);
@@ -31,7 +31,7 @@ export const handler: CallbackEvent<"join"> = {
           producer
         });
 
-    socket.to(data.room_id).emit("new peer", { peer: peer.user });
+    socket.to(payload.room_id).emit("new peer", { peer: peer.user });
 
     cb({ peers: Array.from(peers.values()).map((peer) => peer.user) });
   }

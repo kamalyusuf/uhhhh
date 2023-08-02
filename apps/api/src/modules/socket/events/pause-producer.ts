@@ -3,10 +3,10 @@ import { NoProducerFoundError, NotInRoomError } from "../utils";
 
 export const handler: CallbackEvent<"pause producer"> = {
   on: "pause producer",
-  invoke: async ({ peer, data, cb }) => {
+  invoke: async ({ peer, payload, cb }) => {
     if (!peer.active_room_id) throw new NotInRoomError();
 
-    const producer = peer.producers.get(data.producer_id);
+    const producer = peer.producers.get(payload.producer_id);
 
     if (!producer) throw new NoProducerFoundError();
 

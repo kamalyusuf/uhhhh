@@ -56,7 +56,7 @@ export type TypedSocket = Socket<
   SocketData
 >;
 
-export type EventData<T extends ServerEvent> = Parameters<
+export type EventPayload<T extends ServerEvent> = Parameters<
   ClientToServerEvents[T]
 >[0] extends Function
   ? never
@@ -75,7 +75,7 @@ export interface BaseParams<T extends ServerEvent> {
   socket: TypedSocket;
   event: T;
   peer: Peer;
-  data: EventData<T>;
+  payload: EventPayload<T>;
 }
 
 export interface CallbackEventParams<T extends ServerEvent>

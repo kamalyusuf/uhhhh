@@ -6,7 +6,13 @@ import {
   JoiValidationError,
   NotAuthorizedError
 } from "@kamalyb/errors";
-import type { E, EventData, ServerEvent, TypedIO, TypedSocket } from "./types";
+import type {
+  E,
+  EventPayload,
+  ServerEvent,
+  TypedIO,
+  TypedSocket
+} from "./types";
 import type { EventError, User, Anything } from "types";
 import { isfunction, isobject } from "../../utils/is";
 import { s } from "../../utils/schema";
@@ -26,18 +32,18 @@ const overloaderror = new Error(
 export const validateargs = (
   ...args: Anything[]
 ): {
-  eventdata: EventData<ServerEvent> | undefined;
+  eventpayload: EventPayload<ServerEvent> | undefined;
   cb: Function | undefined;
   __request__?: boolean | undefined;
 } => {
-  if (!args.length) return { eventdata: undefined, cb: undefined };
+  if (!args.length) return { eventpayload: undefined, cb: undefined };
 
   if (args.length > 2) throw overloaderror;
 
   const [data, cb] = args;
 
   let callbackfn: (() => void) | undefined;
-  let eventdata: EventData<ServerEvent> | undefined;
+  let eventpayload: EventPayload<ServerEvent> | undefined;
 
   let __request__ = false;
 
@@ -45,17 +51,17 @@ export const validateargs = (
     if (!isobject(p)) throw new Error("expected data to be an object");
 
     if (typeof p.__request__ === "undefined")
-      return p as EventData<ServerEvent>;
+      return p as EventPayload<ServerEvent>;
 
-    if (!p.data)
+    if (!p.payload)
       throw new Error(
-        `expected data to be contained in 'data' property if __request__ (i.e the request is coming from 'socketrequest' function) is present [and must be true]`
+        `expected payload to be contained in 'payload' property if __request__ (i.e the request is coming from 'socketrequest' function) is present [and must be true]`
       );
 
     const { error } = s.validate(
       s.object<{}>({
         __request__: s.boolean().valid(true),
-        data: s.anyobject()
+        payload: s.anyobject()
       }),
       p
     );
@@ -64,7 +70,7 @@ export const validateargs = (
 
     __request__ = true;
 
-    return p.data as EventData<ServerEvent>;
+    return p.payload as EventPayload<ServerEvent>;
   };
 
   if (data && cb) {
@@ -72,27 +78,27 @@ export const validateargs = (
 
     if (!isfunction(cb)) throw new Error("expected callback to be a function");
 
-    eventdata = set(data);
+    eventpayload = set(data);
     callbackfn = cb;
   } else if (data && !cb && typeof data !== "function") {
     if (!isobject(data)) throw new Error("expected data to be an object");
 
-    eventdata = set(data);
+    eventpayload = set(data);
     callbackfn = undefined;
   } else if (data && !cb && typeof data === "function") {
-    eventdata = undefined;
+    eventpayload = undefined;
     callbackfn = data;
   } else if (!data && !cb) {
-    eventdata = undefined;
+    eventpayload = undefined;
     callbackfn = undefined;
   } else if (!data && cb) {
     if (!isfunction(cb)) throw new Error("expected callback to be a function");
 
-    eventdata = undefined;
+    eventpayload = undefined;
     callbackfn = cb;
   } else throw overloaderror;
 
-  return { eventdata, cb: callbackfn, __request__ };
+  return { eventpayload, cb: callbackfn, __request__ };
 };
 
 export class NotInRoomError extends Error {

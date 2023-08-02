@@ -6,7 +6,7 @@ export const handler: CallbackEvent<"produce"> = {
   on: "produce",
   invoke: async ({
     peer,
-    data: { room_id, transport_id, kind, rtp_parameters, app_data },
+    payload: { room_id, transport_id, kind, rtp_parameters, app_data },
     cb
   }) => {
     if (!peer.active_room_id) throw new NotInRoomError();

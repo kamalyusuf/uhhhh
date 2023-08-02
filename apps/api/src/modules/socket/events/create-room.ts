@@ -4,9 +4,9 @@ import { Room } from "../../room/room.model";
 
 export const handler: CallbackEvent<"create room"> = {
   on: "create room",
-  invoke: async ({ data, cb, io, peer }) => {
+  invoke: async ({ payload, cb, io, peer }) => {
     const room = await Room.create({
-      ...data,
+      ...payload,
       creator: peer.user
     });
 

@@ -4,12 +4,12 @@ import { BadRequestError, NotFoundError } from "@kamalyb/errors";
 
 export const handler: CallbackEvent<"room login"> = {
   on: "room login",
-  invoke: async ({ data, cb }) => {
-    const room = await Room.findById(data.room_id);
+  invoke: async ({ payload, cb }) => {
+    const room = await Room.findById(payload.room_id);
 
     if (!room) throw new NotFoundError("room not found");
 
-    if (!(await room.verifypassword(data.password)))
+    if (!(await room.verifypassword(payload.password)))
       throw new BadRequestError("incorrect password");
 
     cb({ ok: true });

@@ -20,7 +20,7 @@ export type SocketRequestResponse<T extends ServerEvent> =
 interface Config<T extends ServerEvent> {
   socket: TypedSocket;
   event: T;
-  data: SocketRequestParams<T>[0] extends undefined | Fn
+  payload: SocketRequestParams<T>[0] extends undefined | Fn
     ? EmptyObject
     : SocketRequestParams<T>[0];
 }
@@ -28,7 +28,7 @@ interface Config<T extends ServerEvent> {
 export const request = <T extends ServerEvent>({
   socket,
   event,
-  data
+  payload
 }: Config<T>): Promise<SocketRequestResponse<T>> =>
   new Promise<SocketRequestResponse<T>>((resolve, reject) => {
     const timer = setTimeout(
@@ -47,7 +47,7 @@ export const request = <T extends ServerEvent>({
     socket.emit(
       event,
       // @ts-ignore
-      { data, __request__: true },
+      { payload, __request__: true },
       (response: SocketRequestResponse<T>) => {
         clearTimeout(timer);
 

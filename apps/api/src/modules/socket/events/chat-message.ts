@@ -5,12 +5,12 @@ import { NotInRoomError } from "../utils";
 
 export const handler: Event<"chat message"> = {
   on: "chat message",
-  invoke: ({ peer, data, io }) => {
+  invoke: ({ peer, payload, io }) => {
     if (!peer.active_room_id) throw new NotInRoomError();
 
     const message: ChatMessage = {
       _id: crypto.randomUUID(),
-      content: data.content,
+      content: payload.content,
       creator: peer.user,
       created_at: new Date().toISOString()
     };

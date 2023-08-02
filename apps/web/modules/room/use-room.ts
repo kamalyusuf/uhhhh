@@ -50,7 +50,7 @@ export const useRoom = (room_id: string) => {
     await request({
       socket,
       event: "leave",
-      data: {}
+      payload: {}
     });
 
     micstore.reset();
@@ -89,7 +89,7 @@ export const useRoom = (room_id: string) => {
       const { rtp_capabilities } = await request({
         socket,
         event: "rtp capabilities",
-        data: {
+        payload: {
           room_id
         }
       });
@@ -99,7 +99,7 @@ export const useRoom = (room_id: string) => {
       const { transport_options: sendtransportoptions } = await request({
         socket,
         event: "create transport",
-        data: {
+        payload: {
           room_id,
           producing: true,
           consuming: false,
@@ -124,7 +124,7 @@ export const useRoom = (room_id: string) => {
           request({
             socket,
             event: "connect transport",
-            data: {
+            payload: {
               room_id,
               transport_id: sendtransport.id,
               dtls_parameters
@@ -146,7 +146,7 @@ export const useRoom = (room_id: string) => {
             const { id } = await request({
               socket,
               event: "produce",
-              data: {
+              payload: {
                 room_id,
                 transport_id: sendtransport.id,
                 kind,
@@ -167,7 +167,7 @@ export const useRoom = (room_id: string) => {
       const { transport_options: receivetransportoptions } = await request({
         socket,
         event: "create transport",
-        data: {
+        payload: {
           room_id,
           producing: false,
           consuming: true,
@@ -194,7 +194,7 @@ export const useRoom = (room_id: string) => {
           request({
             socket,
             event: "connect transport",
-            data: {
+            payload: {
               room_id,
               transport_id: receivetransport.id,
               dtls_parameters
@@ -208,7 +208,7 @@ export const useRoom = (room_id: string) => {
       const { peers } = await request({
         socket,
         event: "join",
-        data: {
+        payload: {
           room_id,
           rtp_capabilities: device.rtpCapabilities
         }
@@ -296,7 +296,7 @@ export const useRoom = (room_id: string) => {
     await request({
       socket,
       event: "pause producer",
-      data: {
+      payload: {
         producer_id: producer.id
       }
     });
@@ -316,7 +316,7 @@ export const useRoom = (room_id: string) => {
     await request({
       socket,
       event: "resume producer",
-      data: {
+      payload: {
         producer_id: producer.id
       }
     });
@@ -336,7 +336,7 @@ export const useRoom = (room_id: string) => {
     await request({
       socket,
       event: "close producer",
-      data: {
+      payload: {
         producer_id: producer.id
       }
     });

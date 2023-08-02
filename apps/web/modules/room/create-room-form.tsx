@@ -50,7 +50,7 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
         const { room } = await request({
           socket,
           event: "create room",
-          data: {
+          payload: {
             name: values.name,
             description: values.description.trim(),
             visibility: values.private

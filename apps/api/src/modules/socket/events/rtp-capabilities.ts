@@ -5,8 +5,8 @@ import { NotFoundError } from "@kamalyb/errors";
 
 export const handler: CallbackEvent<"rtp capabilities"> = {
   on: "rtp capabilities",
-  invoke: async ({ data, cb, io }) => {
-    const doc = await Room.findById(data.room_id);
+  invoke: async ({ payload, cb, io }) => {
+    const doc = await Room.findById(payload.room_id);
 
     if (!doc) throw new NotFoundError("room not found");
 
