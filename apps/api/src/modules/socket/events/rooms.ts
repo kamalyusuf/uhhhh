@@ -8,13 +8,10 @@ export const handler: CallbackEvent<"rooms"> = {
   invoke: async ({ cb }) => {
     const data = await Room.find(
       {
-        visibility: {
-          $eq: RoomVisibility.PUBLIC
-        }
+        visibility: RoomVisibility.PUBLIC
       },
       {},
       {
-        lean: true,
         sort: {
           created_at: -1
         }

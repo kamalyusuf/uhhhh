@@ -4,11 +4,16 @@ import express from "express";
 import { env } from "./lib/env";
 import helmet from "helmet";
 import { Sentry, usesentry } from "./lib/sentry";
-import { CustomError, NotFoundError } from "@kamalyb/errors";
+import {
+  CustomError,
+  JoiValidationError,
+  NotFoundError
+} from "@kamalyb/errors";
 import { router as roomrouter } from "./modules/room/room.route";
 import { useexplorer, usepass, usesimplepass } from "mongoose-explorer";
 import mongoose from "mongoose";
 import cookiesession from "cookie-session";
+import type Joi from "joi";
 
 export const app = express();
 
@@ -69,7 +74,12 @@ useexplorer({
 
 app.use("/api/rooms", roomrouter);
 
-if (env.isProduction) app.use(Sentry.Handlers.errorHandler());
+if (env.isProduction)
+  app.use(
+    Sentry.Handlers.errorHandler({
+      shouldHandleError: (error) => error.message !== "Validation failed"
+    })
+  );
 
 app.use((_req, _res, _next) => {
   throw new NotFoundError("route not found");
@@ -84,6 +94,18 @@ app.use(
   ) => {
     if (error instanceof CustomError)
       return res.status(error.status).send({ errors: error.serialize() });
+
+    if ("details" in error) {
+      const errors = [];
+
+      for (const [, err] of (
+        error.details as Map<string, Joi.ValidationError>
+      ).entries())
+        for (const e of new JoiValidationError(err.details).serialize())
+          errors.push(e);
+
+      return res.status(422).send({ errors });
+    }
 
     res.status(500).send({
       errors: [

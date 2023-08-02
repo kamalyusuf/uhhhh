@@ -131,6 +131,7 @@ class Logger {
   error(a: string | Error, b?: Error | Options, c?: Options) {
     const e = typeof a === "string" ? (b as Error) : a;
     const o = (typeof a === "string" ? c : b) as Options;
+    const message = typeof a === "string" ? a : a.message;
 
     if (o?.capture && env.isProduction)
       Sentry.captureException(e, (scope) => {
@@ -141,7 +142,7 @@ class Logger {
 
     this.output.log({
       level: "error",
-      message: typeof a === "string" ? a : a.message,
+      message,
       stack: typeof a === "string" ? (b as Error).stack : a.stack,
       dev: true,
       custom: e instanceof CustomError,

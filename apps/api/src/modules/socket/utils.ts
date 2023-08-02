@@ -6,14 +6,7 @@ import {
   JoiValidationError,
   NotAuthorizedError
 } from "@kamalyb/errors";
-import type {
-  E,
-  EventData,
-  ServerEvent,
-  ServerToClientEvents,
-  TypedIO,
-  TypedSocket
-} from "./types";
+import type { E, EventData, ServerEvent, TypedIO, TypedSocket } from "./types";
 import type { EventError, User, Anything } from "types";
 import { isfunction, isobject } from "../../utils/is";
 import { s } from "../../utils/schema";
@@ -153,7 +146,6 @@ export const authenticate: Parameters<TypedIO["use"]>[0] = (socket, next) => {
 
 export const onerror = ({
   error,
-  peer,
   socket,
   event,
   __request__
@@ -166,20 +158,17 @@ export const onerror = ({
 }) => {
   const ev = __request__ ? "request error" : "error";
 
-  const on = event.on as Exclude<keyof ServerToClientEvents, "request error">;
-
   if (error instanceof CustomError) {
     const errors: EventError["errors"] = error.serialize();
 
-    socket.emit(ev, new SocketEventError(errors, on));
+    socket.emit(ev, new SocketEventError(errors, event.on));
 
     return;
   }
 
-  logger.error(error.message, error, {
+  logger.error(error, {
     capture: true,
     extra: {
-      user: peer.user,
       event: event.on
     }
   });
@@ -190,7 +179,7 @@ export const onerror = ({
       {
         message: error.message
       },
-      on
+      event.on
     )
   );
 };

@@ -19,10 +19,7 @@ export const ondisconnect = (peer: Peer) => async (reason: string) => {
     const error = e as Error;
 
     logger.error(`failed to leave room. reason: ${error.message}`, error, {
-      capture: true,
-      extra: {
-        user: peer.user
-      }
+      capture: true
     });
   }
 
