@@ -11,7 +11,7 @@ router.get("/:id", async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(id))
     throw new UnprocessableEntityError("invalid id");
 
-  const room = await Room.findById(id);
+  const room = await Room.findbyid(id);
 
   if (!room) throw new NotFoundError("room not found");
 

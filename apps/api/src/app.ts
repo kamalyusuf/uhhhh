@@ -10,10 +10,13 @@ import {
   NotFoundError
 } from "@kamalyb/errors";
 import { router as roomrouter } from "./modules/room/room.route";
-import { useexplorer, usepass, usesimplepass } from "mongoose-explorer";
 import mongoose from "mongoose";
 import cookiesession from "cookie-session";
 import type Joi from "joi";
+import { simplepass, usepass } from "express-simple-pass";
+import { explore } from "mongoose-explore";
+import { RoomProps } from "./modules/room/room.model";
+import { MediasoupRoom } from "./modules/mediasoup/room";
 
 export const app = express();
 
@@ -43,13 +46,13 @@ app.use(
 
 app.get("/", (_req, res) => res.send({ ok: true }));
 
-usesimplepass({
+simplepass({
   app,
   passkey: env.PASS_KEY,
-  redirect_path: "/explorer"
+  redirect: "/explorer"
 });
 
-useexplorer({
+explore({
   app,
   mongoose,
   rootpath: "/explorer",
@@ -58,15 +61,31 @@ useexplorer({
     Room: {
       properties: {
         password: {
-          isfilterable: false,
-          iseditable: false
+          filterable: false,
+          editable: false,
+          htmls: {
+            list: () => "✔️",
+            view: () => "✔️"
+          }
         },
         "creator._id": {
-          iseditable: false
+          editable: false
         },
         "creator.display_name": {
-          iseditable: false
+          editable: false
+        },
+        description: {
+          filterable: false
+        },
+        updated_at: {
+          filterable: false
         }
+      },
+      virtuals: {
+        members: (room: RoomProps) =>
+          MediasoupRoom.findbyidsafe(
+            room._id.toString()
+          )?.members_count.toString() ?? "0"
       }
     }
   }

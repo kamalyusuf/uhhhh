@@ -1,6 +1,8 @@
-import argon2 from "argon2";
+import { ModelBuilder, ModelDocument } from "mongoose-ts-builder";
+import { Dbm } from "../../types";
 import mongoose from "mongoose";
-import { RoomStatus, RoomVisibility } from "types";
+import { RoomVisibility, RoomStatus } from "types";
+import argon2 from "argon2";
 import { env } from "../../lib/env";
 
 export interface RoomProps {
@@ -17,10 +19,7 @@ export interface RoomProps {
   };
 }
 
-export type RoomDocument = mongoose.HydratedDocument<
-  RoomProps,
-  Methods & Virtuals
->;
+export type RoomDocument = ModelDocument<RoomProps, Methods, RoomVirtuals>;
 
 interface Methods {
   isprivate: () => boolean;
@@ -32,113 +31,86 @@ interface Statics {
   delete: (id: string | mongoose.Types.ObjectId) => Promise<boolean>;
 }
 
-interface Virtuals {
+export interface RoomVirtuals {
   status: RoomStatus;
 }
 
-const schema = new mongoose.Schema<
+const builder = new ModelBuilder<
+  Dbm,
   RoomProps,
-  {},
   Methods,
-  {},
-  Virtuals,
+  RoomVirtuals,
   Statics
->(
-  {
+>("Room", "rooms");
+
+builder.defineschema(
+  (t) => ({
     name: {
-      type: mongoose.Schema.Types.String,
+      type: t.String,
       required: true,
       trim: true
     },
-    creator: {
-      _id: {
-        type: mongoose.Schema.Types.String,
-        required: true
-      },
-      display_name: {
-        type: mongoose.Schema.Types.String,
-        required: true
-      }
-    },
     visibility: {
-      type: mongoose.Schema.Types.String,
+      type: t.String,
       required: true,
       enum: Object.values(RoomVisibility),
       index: true
     },
     description: {
-      type: mongoose.Schema.Types.String,
+      type: t.String,
       trim: true,
       maxlength: 140
     },
     password: {
-      type: mongoose.Schema.Types.String,
+      type: t.String,
       minlength: 5
-    }
-  },
-  {
-    id: false,
-    versionKey: false,
-    timestamps: {
-      createdAt: "created_at",
-      updatedAt: "updated_at"
     },
-    toObject: {
-      virtuals: true
-    },
-    toJSON: {
-      virtuals: true,
-      transform(_doc, ret) {
-        delete ret.password;
+    creator: {
+      _id: {
+        type: t.String,
+        required: true
+      },
+      display_name: {
+        type: t.String,
+        required: true
       }
     }
-  }
+  }),
+  { excludes: ["password"] }
 );
 
-schema.methods = {
-  verifypassword(plain) {
-    return argon2.verify((this as RoomDocument).get("password"), plain);
-  },
+builder.method("verifypassword", function (plain) {
+  return argon2.verify(this.password ?? "", plain);
+});
 
-  isprivate() {
-    return (this as RoomDocument).visibility === RoomVisibility.PRIVATE;
-  },
+builder.method("isprivate", function () {
+  return this.visibility === RoomVisibility.PRIVATE;
+});
 
-  ispublic() {
-    return (this as RoomDocument).visibility === RoomVisibility.PUBLIC;
-  }
-};
+builder.method("ispublic", function () {
+  return this.visibility === RoomVisibility.PUBLIC;
+});
 
-schema.statics = {
-  async delete(id) {
-    const room = await Room.findById(id);
+builder.static("delete", async function (id) {
+  const room = await this.findbyid(id);
 
-    if (!room || (env.isDevelopment && room?.name === "test")) return false;
+  if (!room || (env.isDevelopment && room?.name === "test")) return false;
 
-    await room.deleteOne();
+  await room.deleteOne();
 
-    return true;
-  }
-};
+  return true;
+});
 
-schema.pre("save", async function (next) {
-  const doc = asdoc(this);
-
+builder.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
-  if (doc.password) this.set({ password: await argon2.hash(doc.password) });
+  if (this.password) this.set({ password: await argon2.hash(this.password) });
 
   next();
 });
 
-schema.virtual("status").get(function () {
-  const doc = asdoc(this);
-
-  return doc.password ? RoomStatus.PROTECTED : RoomStatus.UNPROTECTED;
+builder.virtual("status", function () {
+  return this.password ? RoomStatus.PROTECTED : RoomStatus.UNPROTECTED;
 });
 
-function asdoc(t: unknown) {
-  return t as RoomDocument;
-}
-
-export const Room = mongoose.model("Room", schema);
+export const Room = builder.model();

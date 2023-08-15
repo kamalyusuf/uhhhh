@@ -1,13 +1,11 @@
 import { Room } from "../../room/room.model";
 import type { CallbackEvent } from "../types";
-import { BadRequestError, NotFoundError } from "@kamalyb/errors";
+import { BadRequestError } from "@kamalyb/errors";
 
 export const handler: CallbackEvent<"room login"> = {
   on: "room login",
   invoke: async ({ payload, cb }) => {
-    const room = await Room.findById(payload.room_id);
-
-    if (!room) throw new NotFoundError("room not found");
+    const room = await Room.findbyidorfail(payload.room_id);
 
     if (!(await room.verifypassword(payload.password)))
       throw new BadRequestError("incorrect password");

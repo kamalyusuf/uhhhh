@@ -26,7 +26,7 @@ Router.events.on("routeChangeStart", NProgress.start);
 Router.events.on("routeChangeComplete", NProgress.done);
 Router.events.on("routeChangeError", NProgress.done);
 
-const MyApp = ({ Component: C, pageProps }: AppProps) => {
+const App = ({ Component: C, pageProps }: AppProps) => {
   const Component = C as PageComponent;
   const mounted = useMounted();
   const [client] = useState(
@@ -103,4 +103,4 @@ const MyApp = ({ Component: C, pageProps }: AppProps) => {
   );
 };
 
-export default MyApp;
+export default App;

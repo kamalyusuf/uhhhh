@@ -35,7 +35,7 @@ const useForceScrollToBottom = (messages: Message[]) => {
 
       check();
     }
-  }, [messages, messages.length]);
+  }, [messages.length]);
 
   return check;
 };

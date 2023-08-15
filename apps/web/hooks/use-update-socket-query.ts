@@ -10,21 +10,19 @@ type QueryResult<T extends QueryKey> = Parameters<ServerToClientEvents[T]>[0];
 export const useUpdateSocketQuery = () => {
   const client = useQueryClient();
 
-  const fn = <T extends QueryKey>({
-    key,
-    updater
-  }: {
-    key: T;
-    updater: (draft: Draft<QueryResult<T>>) => void;
-  }) => {
-    client.setQueryData<QueryResult<T>>([key], (cached) => {
-      if (!cached) return undefined;
+  return useCallback(
+    <T extends QueryKey>(
+      key: T,
+      updater: (draft: Draft<QueryResult<T>>) => void
+    ) => {
+      client.setQueryData<QueryResult<T>>([key], (cached) => {
+        if (!cached) return undefined;
 
-      return produce(cached, (draft) => {
-        updater(draft);
+        return produce(cached, (draft) => {
+          updater(draft);
+        });
       });
-    });
-  };
-
-  return useCallback(fn, [client]);
+    },
+    [client]
+  );
 };

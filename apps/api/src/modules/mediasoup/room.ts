@@ -77,6 +77,10 @@ export class MediasoupRoom {
     return room;
   }
 
+  static findbyidsafe(room_id: string) {
+    return this.rooms.get(room_id);
+  }
+
   static async findorcreate(
     io: TypedIO,
     doc: RoomDocument

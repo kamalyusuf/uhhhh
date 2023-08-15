@@ -100,22 +100,16 @@ export const SocketHandler = () => {
     });
 
     socket.on("delete room", ({ room_id }) => {
-      updatequery({
-        key: "rooms",
-        updater: (draft) => {
-          const index = draft.rooms.findIndex((room) => room._id === room_id);
+      updatequery("rooms", (draft) => {
+        const index = draft.rooms.findIndex((room) => room._id === room_id);
 
-          if (index > -1) draft.rooms.splice(index, 1);
-        }
+        if (index > -1) draft.rooms.splice(index, 1);
       });
     });
 
     socket.on("create room", ({ room }) => {
-      updatequery({
-        key: "rooms",
-        updater: (draft) => {
-          draft.rooms.push(room);
-        }
+      updatequery("rooms", (draft) => {
+        draft.rooms.push(room);
       });
     });
 
@@ -124,13 +118,10 @@ export const SocketHandler = () => {
     });
 
     socket.on("update room members count", ({ room_id, members_count }) => {
-      updatequery({
-        key: "rooms",
-        updater: (draft) => {
-          const room = draft.rooms.find((room) => room._id === room_id);
+      updatequery("rooms", (draft) => {
+        const room = draft.rooms.find((room) => room._id === room_id);
 
-          if (room) room.members_count = members_count;
-        }
+        if (room) room.members_count = members_count;
       });
     });
 
