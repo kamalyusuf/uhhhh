@@ -1,14 +1,6 @@
 import { RoomProps, RoomVirtuals } from "./modules/room/room.model";
-
-export interface Timestamp {
-  created_at: Date;
-  updated_at: Date;
-}
+import { DbmEntity } from "mongoose-ts-builder";
 
 export interface Dbm {
-  Room: {
-    collection: "rooms";
-    props: RoomProps;
-    virtuals: RoomVirtuals;
-  };
+  Room: DbmEntity<"rooms", RoomProps, RoomVirtuals>;
 }

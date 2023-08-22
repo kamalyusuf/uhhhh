@@ -1659,10 +1659,10 @@ express-list-routes@^1.1.5:
   resolved "https://registry.yarnpkg.com/express-list-routes/-/express-list-routes-1.1.5.tgz#bcc9878a7e0d34dd61bad7cee2c431568f5a3399"
   integrity sha512-DUqJE9lxUmRSuw2Od/5C0vhlzvzcHFVo4fXat12fk6agAuxXGgO6cOQeq1/1sFBKzbjgSfMilT2CRJdYpcBh4g==
 
-express-simple-pass@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/express-simple-pass/-/express-simple-pass-1.0.1.tgz#0a6fdf3f0037636e0d5dfc6b5170236a01f40e1d"
-  integrity sha512-HXQigTtuZ2IsvHugZbLaIKt50kKl4ly8vvw8rOHvyMpaiXZDwH8jo9y5WWlHh7Tg7zfcEi0uNnESwy3WJwa35w==
+express-simple-pass@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/express-simple-pass/-/express-simple-pass-1.0.3.tgz#04eb831d30190d64ba169be67b60669483e00482"
+  integrity sha512-rhEHzD8kwLiZdMVNKdtEonX8cJ1BqQX1iZYRGOKafb90hbRSGB1qUfc6rQXNi2bwTMUkVp9mT4m4HWns9+djew==
 
 express@^4.18.2:
   version "4.18.2"
@@ -2257,6 +2257,21 @@ lodash.isempty@^4.4.0:
   resolved "https://registry.yarnpkg.com/lodash.isempty/-/lodash.isempty-4.4.0.tgz#6f86cbedd8be4ec987be9aaf33c9684db1b31e7e"
   integrity sha512-oKMuF3xEeqDltrGMfDxAPGIVMSSRv8tbRSODbrs4KGsRRLEhrW8N8Rd4DRgB2+621hY8A8XwwrTVhXWpxFvMzg==
 
+lodash.mapvalues@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.mapvalues/-/lodash.mapvalues-4.6.0.tgz#1bafa5005de9dd6f4f26668c30ca37230cc9689c"
+  integrity sha512-JPFqXFeZQ7BfS00H58kClY7SPVeHertPE0lNuCyZ26/XlN8TvakYD7b9bGyNmXbT/D3BbtPAAmq90gPWqLkxlQ==
+
+lodash.pickby@^4.6.0:
+  version "4.6.0"
+  resolved "https://registry.yarnpkg.com/lodash.pickby/-/lodash.pickby-4.6.0.tgz#7dea21d8c18d7703a27c704c15d3b84a67e33aff"
+  integrity sha512-AZV+GsS/6ckvPOVQPXSiFFacKvKB4kOQu6ynt9wz0F3LO4R9Ij4K1ddYsIytDpSgLz88JHd9P+oaLeej5/Sl7Q==
+
+lodash.set@^4.3.2:
+  version "4.3.2"
+  resolved "https://registry.yarnpkg.com/lodash.set/-/lodash.set-4.3.2.tgz#d8757b1da807dde24816b0d6a84bea1a76230b23"
+  integrity sha512-4hNPN5jlm/N/HLMCO43v8BXKq9Z7QdAGc/VGrRD61w8gN9g/6jF9A4L1pbUgBLCffi0w9VsXfTOij5x8iTyFvg==
+
 lodash@4.17.x, lodash@^4.17.21:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
@@ -2448,33 +2463,36 @@ mongodb@5.7.0:
   optionalDependencies:
     saslprep "^1.0.3"
 
-mongoose-explore@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/mongoose-explore/-/mongoose-explore-2.0.0.tgz#e90cd49b8fa2ec69bf950340108affd155434f9a"
-  integrity sha512-8Cse4EyPq4/vWsxjSBq375+w4zDURaejkDW59B3cFZf7xJH16tnFYp7uUXgVtV5QcGL7iZgkZyBWbI6gapI51g==
+mongoose-explore@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/mongoose-explore/-/mongoose-explore-2.0.1.tgz#9e93b0c96ffdc94985c4cc5309a140e865e35d5a"
+  integrity sha512-k0kH1LCeSczVkWagtIAdQ3+Z8TOrr14SYPaAAWayRRVmtLnLxPxRLL234doetAwISYVu+fRgF6Q9IqRq3rkb5g==
   dependencies:
     "@kamalyb/errors" "^2.0.0"
     celebrate "^15.0.1"
     cheerio "^1.0.0-rc.12"
     joi "^17.9.2"
     lodash.isempty "^4.4.0"
+    lodash.mapvalues "^4.6.0"
+    lodash.pickby "^4.6.0"
+    lodash.set "^4.3.2"
 
-mongoose-paginate-v2@^1.7.23:
-  version "1.7.23"
-  resolved "https://registry.yarnpkg.com/mongoose-paginate-v2/-/mongoose-paginate-v2-1.7.23.tgz#41afae2dcb25c599879a44904947b1bab7388c5c"
-  integrity sha512-/a6ER0tYlYLwTlP1zmE//eUC7iBs5xV9nz2+9sq8mVGIuZ+si4QSewUE+bDjdO4sNwFmiNR4rXXGtbY81sUqcw==
+mongoose-paginate-v2@^1.7.31:
+  version "1.7.31"
+  resolved "https://registry.yarnpkg.com/mongoose-paginate-v2/-/mongoose-paginate-v2-1.7.31.tgz#c6569688702483e80a28c599314474107f17481f"
+  integrity sha512-Zz7i/1k7/MJqipzttn9SUenbcW1hC63qBOB7HHBNMfIfg0AOPFT2CdAWpeAJ7BBGEQ4qC1Gu02fIaSeMmXOT0A==
 
-mongoose-ts-builder@^1.0.1:
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/mongoose-ts-builder/-/mongoose-ts-builder-1.0.1.tgz#deeb634fd5bb837b0c90f403ae5843fd478e188f"
-  integrity sha512-MMXDxeQ1oSTd+nbKiAbJ26M77xRFf6B6EIfrRMZvLVrt48x4FUDonLSSsc4GXFIws4UVMV4rBdrXEgA6WkSscg==
+mongoose-ts-builder@^1.6.1:
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/mongoose-ts-builder/-/mongoose-ts-builder-1.6.1.tgz#e4dede0e1e5fdb8a5aa587c49010405ce3f290e8"
+  integrity sha512-6+hqnUvS93hGKnUHNOJB+a0LEGDZtuVb2i3HvbhSq6wY35ZtDW68Wm7qb33sx4yae4BKrSiz9aoCzP7UE34ksA==
   dependencies:
     "@kamalyb/errors" "^2.0.0"
 
-mongoose@^7.4.0:
-  version "7.4.0"
-  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-7.4.0.tgz#3726a8dea0c9e2d54651845cc84c813a6507906a"
-  integrity sha512-oHE1eqodfKzugXRlQxpo+msIea7jPcRoayDuEMr50+bYwM/juA5f+1stjkWlXcg6vo1PdJFVA6DGaKOPLuG5mA==
+mongoose@^7.4.3:
+  version "7.4.3"
+  resolved "https://registry.yarnpkg.com/mongoose/-/mongoose-7.4.3.tgz#4f7b26e5a1924e06238083fb64fb7b006d0b438c"
+  integrity sha512-eok0lW6mZJHK2vVSWyJb9tUfPMUuRF3h7YC4pU2K2/YSZBlNDUwvKsHgftMOANbokP2Ry+4ylvzAdW4KjkRFjw==
   dependencies:
     bson "^5.4.0"
     kareem "2.5.1"

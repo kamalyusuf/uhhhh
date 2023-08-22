@@ -10,7 +10,6 @@ export const handler: CallbackEvent<"rooms"> = {
       {
         visibility: RoomVisibility.PUBLIC
       },
-      {},
       {
         sort: {
           created_at: -1
@@ -18,28 +17,19 @@ export const handler: CallbackEvent<"rooms"> = {
       }
     );
 
-    const rooms = data.map((room) => {
-      let r;
+    const rooms = data.map((room) => ({
+      _id: room._id.toString(),
+      name: room.name,
+      description: room.description,
+      created_at: room.created_at.toISOString(),
+      updated_at: room.updated_at.toISOString(),
+      visibility: room.visibility,
+      creator: room.creator,
+      status: room.status,
+      members_count:
+        MediasoupRoom.findbyidsafe(room._id.toString())?.members_count ?? 0
+    }));
 
-      try {
-        r = MediasoupRoom.findbyid(room._id.toString());
-      } catch (e) {}
-
-      return {
-        _id: room._id.toString(),
-        name: room.name,
-        description: room.description,
-        created_at: room.created_at.toISOString(),
-        updated_at: room.updated_at.toISOString(),
-        members_count: r?.members_count ?? 0,
-        visibility: room.visibility,
-        creator: room.creator,
-        status: room.status
-      };
-    });
-
-    cb({
-      rooms
-    });
+    cb({ rooms });
   }
 };

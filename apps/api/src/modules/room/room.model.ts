@@ -1,23 +1,20 @@
-import { ModelBuilder, ModelDocument } from "mongoose-ts-builder";
+import { ModelBuilder, ModelDocument, ModelProps } from "mongoose-ts-builder";
 import { Dbm } from "../../types";
 import mongoose from "mongoose";
 import { RoomVisibility, RoomStatus } from "types";
 import argon2 from "argon2";
 import { env } from "../../lib/env";
 
-export interface RoomProps {
-  _id: mongoose.Types.ObjectId;
+export type RoomProps = ModelProps<{
   name: string;
   description?: string;
   visibility: RoomVisibility;
   password?: string;
-  created_at: Date;
-  updated_at: Date;
   creator: {
     _id: string;
     display_name: string;
   };
-}
+}>;
 
 export type RoomDocument = ModelDocument<RoomProps, Methods, RoomVirtuals>;
 
@@ -102,9 +99,8 @@ builder.static("delete", async function (id) {
 });
 
 builder.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-
-  if (this.password) this.set({ password: await argon2.hash(this.password) });
+  if (this.password && this.isModified("password"))
+    this.set({ password: await argon2.hash(this.password) });
 
   next();
 });

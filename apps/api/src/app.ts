@@ -93,16 +93,25 @@ explore({
 
 app.use("/api/rooms", roomrouter);
 
+app.use((req, _res, next) => {
+  next(new NotFoundError(`route: ${req.method} ${req.url} not found`));
+});
+
 if (env.isProduction)
   app.use(
     Sentry.Handlers.errorHandler({
-      shouldHandleError: (error) => error.message !== "Validation failed"
+      shouldHandleError: (error) =>
+        !(
+          [
+            "CastError",
+            "DocumentNotFoundError",
+            "ObjectExpectedError",
+            "ObjectParameterError",
+            "ValidationError"
+          ].includes(error.name) || error instanceof CustomError
+        )
     })
   );
-
-app.use((_req, _res, _next) => {
-  throw new NotFoundError("route not found");
-});
 
 app.use(
   (
