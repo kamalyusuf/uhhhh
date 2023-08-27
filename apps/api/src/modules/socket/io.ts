@@ -82,7 +82,7 @@ class SocketIO {
 
       const handler = require(`./events/${file}`).handler as E;
 
-      if (!handler) throw new Error(`no handler found for ${file}`.red);
+      if (!handler) throw new Error(`no handler found for ${file}`);
 
       this.events.set(handler.on, handler);
     }

@@ -13,7 +13,7 @@ export const start = ({
     const server = app.listen(port);
 
     server.on("listening", () => {
-      logger.info(`api on http://localhost:${port}`.green);
+      logger.info(`api on http://localhost:${port}`);
 
       resolve(server);
     });

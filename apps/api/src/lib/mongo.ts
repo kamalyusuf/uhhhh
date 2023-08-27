@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 import { retry } from "@lifeomic/attempt";
 import { logger } from "./logger";
 import paginate from "mongoose-paginate-v2";
+import { env } from "./env";
 
 mongoose.set("strict", "throw");
 mongoose.set("strictQuery", "throw");
@@ -13,10 +14,10 @@ mongoose.plugin(paginate);
 
 const maxattempts = 5;
 
-const connect = async (url: string) => {
+const connect = async () => {
   await retry(
     async () => {
-      await mongoose.connect(url, {
+      await mongoose.connect(env.MONGO_URL, {
         serverSelectionTimeoutMS: 5000
       });
 

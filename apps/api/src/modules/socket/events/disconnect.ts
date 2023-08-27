@@ -3,9 +3,7 @@ import { Peer } from "../../mediasoup/peer";
 import { MediasoupRoom } from "../../mediasoup/room";
 
 export const ondisconnect = (peer: Peer) => async (reason: string) => {
-  logger.cinfo(
-    `peer ${peer.user.display_name} disconnected because ${reason}`.magenta
-  );
+  logger.cinfo(`peer ${peer.user.display_name} disconnected because ${reason}`);
 
   if (!peer.active_room_id) return;
 
@@ -18,9 +16,7 @@ export const ondisconnect = (peer: Peer) => async (reason: string) => {
   } catch (e) {
     const error = e as Error;
 
-    logger.error(`failed to leave room. reason: ${error.message}`, error, {
-      capture: true
-    });
+    logger.error(`failed to leave room. reason: ${error.message}`, error);
   }
 
   peer.socket.to(rid).emit("peer left", { peer: peer.user });

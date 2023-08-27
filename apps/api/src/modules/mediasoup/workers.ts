@@ -36,9 +36,7 @@ class MediasoupWorkers {
       });
 
       worker.on("died", (error) => {
-        logger.error(`mediasoup worker died. reason: ${error.message}`, error, {
-          capture: true
-        });
+        logger.error(`mediasoup worker died. reason: ${error.message}`, error);
 
         setTimeout(() => {
           process.exit(1);

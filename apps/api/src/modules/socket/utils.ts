@@ -14,7 +14,7 @@ import type {
   TypedSocket
 } from "./types";
 import type { EventError, User, Anything } from "types";
-import { isfunction, isobject } from "../../utils/is";
+import { v } from "../../utils/validation";
 import { s } from "../../utils/schema";
 
 const overload = `
@@ -48,7 +48,7 @@ export const validateargs = (
   let __request__ = false;
 
   const set = (p: { [key: string]: unknown }) => {
-    if (!isobject(p)) throw new Error("expected data to be an object");
+    if (!v.isobject(p)) throw new Error("expected data to be an object");
 
     if (typeof p.__request__ === "undefined")
       return p as EventPayload<ServerEvent>;
@@ -74,14 +74,15 @@ export const validateargs = (
   };
 
   if (data && cb) {
-    if (!isobject(data)) throw new Error("expected data to be an object");
+    if (!v.isobject(data)) throw new Error("expected data to be an object");
 
-    if (!isfunction(cb)) throw new Error("expected callback to be a function");
+    if (!v.isfunction(cb))
+      throw new Error("expected callback to be a function");
 
     eventpayload = set(data);
     callbackfn = cb;
   } else if (data && !cb && typeof data !== "function") {
-    if (!isobject(data)) throw new Error("expected data to be an object");
+    if (!v.isobject(data)) throw new Error("expected data to be an object");
 
     eventpayload = set(data);
     callbackfn = undefined;
@@ -92,7 +93,8 @@ export const validateargs = (
     eventpayload = undefined;
     callbackfn = undefined;
   } else if (!data && cb) {
-    if (!isfunction(cb)) throw new Error("expected callback to be a function");
+    if (!v.isfunction(cb))
+      throw new Error("expected callback to be a function");
 
     eventpayload = undefined;
     callbackfn = cb;
@@ -173,7 +175,6 @@ export const onerror = ({
   }
 
   logger.error(error, {
-    capture: true,
     extra: {
       event: event.on
     }

@@ -1,21 +1,20 @@
-import { CustomError } from "@kamalyb/errors";
 import consola from "consola";
-import Joi from "joi";
 import type { Anything, AnyObject } from "types";
 import winston, { format as f } from "winston";
 import { env } from "./env";
 import { Sentry } from "./sentry";
+import { shouldcapture } from "../utils/error";
 
 const format = f.printf(({ level, message, timestamp, stack, extra }) => {
   const log = `${timestamp} ${level}: ${message}`;
 
   const m = `${log}${extra ? `. ${JSON.stringify(extra)}` : ""}`;
 
-  return stack ? `${m}\n${`${(stack as string).replace(/\n/, "")}`.red}` : m;
+  return stack ? `${m}\n${`${(stack as string).replace(/\n/, "")}`}` : m;
 });
 
 const exclude = f((info) => {
-  if (info.custom || info.joi) return false;
+  if (info.skip) return false;
 
   return info;
 });
@@ -57,7 +56,6 @@ const prod = () =>
   });
 
 interface Options {
-  capture?: boolean;
   extra?: AnyObject;
   force?: boolean;
 }
@@ -67,6 +65,14 @@ class Logger {
 
   constructor() {
     this.output = env.isProduction ? prod() : dev();
+  }
+
+  cinfo(message: Anything, ...args: unknown[]) {
+    if (env.isDevelopment)
+      consola.info(
+        typeof message === "string" ? `${message}` : message,
+        ...args
+      );
   }
 
   info(
@@ -84,32 +90,8 @@ class Logger {
     });
   }
 
-  cinfo(message: Anything, ...args: unknown[]) {
-    if (env.isDevelopment)
-      consola.info(
-        typeof message === "string" ? `${message.blue}` : message,
-        ...args
-      );
-  }
-
-  cwarn(message: Anything, ...args: unknown[]) {
-    if (env.isDevelopment)
-      consola.info(
-        typeof message === "string" ? `${message.yellow}` : message,
-        ...args
-      );
-  }
-
-  csuccess(message: Anything, ...args: unknown[]) {
-    if (env.isDevelopment)
-      consola.success(
-        typeof message === "string" ? `${message.green}` : message,
-        ...args
-      );
-  }
-
   warn(message: string, extra?: AnyObject) {
-    if (env.SENTRY_DSN)
+    if (env.isProduction)
       Sentry.withScope((scope) => {
         scope.setLevel("warning");
 
@@ -129,13 +111,15 @@ class Logger {
   error(message: string, error: Error, o?: Options): void;
   error(error: Error, o?: Options): void;
   error(a: string | Error, b?: Error | Options, c?: Options) {
-    const e = typeof a === "string" ? (b as Error) : a;
+    const error = typeof a === "string" ? (b as Error) : a;
     const o = (typeof a === "string" ? c : b) as Options;
     const message = typeof a === "string" ? a : a.message;
 
-    if (o?.capture && env.isProduction)
-      Sentry.captureException(e, (scope) => {
-        if (o?.extra) scope.setExtras(o.extra);
+    const tocapture = shouldcapture(error);
+
+    if (tocapture && env.isProduction)
+      Sentry.captureException(error, (scope) => {
+        scope.setExtras({ message, ...(o?.extra ?? {}) });
 
         return scope;
       });
@@ -145,9 +129,8 @@ class Logger {
       message,
       stack: typeof a === "string" ? (b as Error).stack : a.stack,
       dev: true,
-      custom: e instanceof CustomError,
-      extra: o?.extra,
-      joi: Joi.isError(e)
+      skip: !tocapture,
+      extra: o?.extra
     });
   }
 }

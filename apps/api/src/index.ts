@@ -1,5 +1,4 @@
-import "colors";
-import "./utils/server-ip";
+import "./utils/ip";
 import { mongo } from "./lib/mongo";
 import type { Server } from "http";
 import { app } from "./app";
@@ -15,7 +14,7 @@ let server: Server;
 const bootstrap = async () => {
   await workers.run();
 
-  await mongo.connect(env.MONGO_URL);
+  await mongo.connect();
 
   server = await start({ app, port: env.PORT });
 
@@ -30,7 +29,7 @@ bootstrap().catch((e) => {
 
 ["uncaughtException", "unhandledRejection"].forEach((signal) => {
   process.on(signal, (error: Error) => {
-    logger.error(error, { capture: true });
+    logger.error(error);
 
     void shutdown(server, 1);
   });

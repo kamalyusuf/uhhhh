@@ -21,9 +21,7 @@ export const shutdown = async (server?: Server, code: 0 | 1 = 0) => {
   } catch (e) {
     const error = e as Error;
 
-    logger.error(`shutdown failed. reason: ${error.message}`, error, {
-      capture: true
-    });
+    logger.error(`shutdown failed. reason: ${error.message}`, error);
 
     process.exit(1);
   }
