@@ -12,5 +12,6 @@ export const shouldcapture = (error: Error) =>
     ].includes(error.name) ||
     error instanceof CustomError ||
     ("code" in error && error.code === 11000) ||
-    joi.isError(error)
+    joi.isError(error) ||
+    "details" in error
   );

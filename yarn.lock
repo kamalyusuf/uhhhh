@@ -2458,10 +2458,10 @@ mongodb@5.7.0:
   optionalDependencies:
     saslprep "^1.0.3"
 
-mongoose-explore@^2.1.1:
-  version "2.1.1"
-  resolved "https://registry.yarnpkg.com/mongoose-explore/-/mongoose-explore-2.1.1.tgz#891423c8e7b9fd8dd80f47bbac177f15886497ab"
-  integrity sha512-7STFphQ2EClzjN9NJ/3gdS3KJDfZ3ly6V4UyH33ZKGm2e6qN65K62FewQP1FEHmQ7EcEXF9D90NbmcFLuWa5tg==
+mongoose-explore@^2.1.2:
+  version "2.1.2"
+  resolved "https://registry.yarnpkg.com/mongoose-explore/-/mongoose-explore-2.1.2.tgz#5e9992597fc5744b394effed471ac59036c75d9c"
+  integrity sha512-11++0eI3A2R9S4O8G9n6K3rfXArHxNV/JG1uIaWZb6HDhB5oz0egsysRv2e3Ppiv8oKBDk73Yq/ibbcXBloENg==
   dependencies:
     "@kamalyb/errors" "^2.0.0"
     celebrate "^15.0.1"
