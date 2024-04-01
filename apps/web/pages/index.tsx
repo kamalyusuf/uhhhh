@@ -20,7 +20,7 @@ const HomePage: PageComponent = () => {
 
   return (
     <>
-      <Layout spacing={50} title="uhhhh">
+      <Layout gap={50} title="uhhhh">
         <Box>
           <Center>
             <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>

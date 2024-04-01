@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useSocket } from "../../hooks/use-socket";
+import { useSocket } from "./socket-provider";
 import { useTransportStore } from "../../store/transport";
 import { useConsumerStore } from "../../store/consumer";
 import { usePeerStore } from "../../store/peer";

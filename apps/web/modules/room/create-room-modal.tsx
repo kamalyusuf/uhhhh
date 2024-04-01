@@ -13,7 +13,7 @@ export const CreateRoomModal = ({ opened, setopened }: Props) => {
         opened={opened}
         onClose={() => setopened(false)}
         title={
-          <Title order={3} color="dark">
+          <Title order={3} c="dark">
             create a room
           </Title>
         }

@@ -2,7 +2,7 @@ import { useRef, useCallback } from "react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/router";
 import { useRoomStore } from "../../store/room";
-import { useSocket } from "../../hooks/use-socket";
+import { useSocket } from "../socket/socket-provider";
 import { request } from "../../utils/request";
 import { detectDevice, Device } from "mediasoup-client";
 import { useTransportStore } from "../../store/transport";

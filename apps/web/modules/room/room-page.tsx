@@ -9,7 +9,7 @@ import { RoomChat } from "./chat/room-chat";
 import { RoomPanel } from "./room-panel";
 import type { PageComponent } from "../../types";
 import { useRoomStore } from "../../store/room";
-import { useSocket } from "../../hooks/use-socket";
+import { useSocket } from "../../modules/socket/socket-provider";
 import { RoomLogin } from "./room-login";
 import { RoomError } from "./room-error";
 import { useMounted } from "../../hooks/use-mounted";

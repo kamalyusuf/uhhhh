@@ -1,14 +1,14 @@
 import {
   Button,
   Container,
-  createStyles,
   Group,
   Title,
   useMantineTheme,
   Text
 } from "@mantine/core";
 import { useRouter } from "next/router";
-import { type ComponentProps } from "react";
+import type { ComponentProps } from "react";
+import classes from "../styles/404.module.css";
 
 const Illustration = (props: ComponentProps<"svg">) => {
   const theme = useMantineTheme();
@@ -23,50 +23,7 @@ const Illustration = (props: ComponentProps<"svg">) => {
   );
 };
 
-const useStyles = createStyles((theme) => ({
-  root: {
-    paddingTop: 80,
-    paddingBottom: 80
-  },
-  inner: {
-    position: "relative"
-  },
-  image: {
-    position: "absolute",
-    top: 0,
-    right: 0,
-    left: 0,
-    zIndex: 0,
-    opacity: 0.1
-  },
-  content: {
-    paddingTop: 220,
-    position: "relative",
-    zIndex: 1,
-
-    [theme.fn.smallerThan("sm")]: {
-      paddingTop: 120
-    }
-  },
-  title: {
-    textAlign: "center",
-    fontWeight: 900,
-    fontSize: 38,
-    color: "white",
-    [theme.fn.smallerThan("sm")]: {
-      fontSize: 32
-    }
-  },
-  description: {
-    maxWidth: 540,
-    margin: "auto",
-    marginTop: theme.spacing.xl,
-    marginBottom: `calc(${theme.spacing.lg} * 1.5)`
-  }
-}));
-
 const Custom404Page = () => {
-  const { classes } = useStyles();
   const router = useRouter();
 
   return (
@@ -76,14 +33,14 @@ const Custom404Page = () => {
         <div className={classes.content}>
           <Title className={classes.title}>nothing to see here</Title>
           <Text
-            color="dimmed"
+            c="dimmed"
             size="lg"
-            align="center"
+            ta="center"
             className={classes.description}
           >
             page you are trying to open does not exist
           </Text>
-          <Group position="center">
+          <Group justify="center">
             <Button size="md" onClick={() => router.replace("/")}>
               take me back to home page
             </Button>

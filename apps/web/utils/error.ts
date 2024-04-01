@@ -5,9 +5,9 @@ export const parseapierror = (error: AxiosError<ApiError>) => {
   const errors = error?.response?.data.errors;
   const status = error?.response?.status as ErrorStatus;
 
-  if (!errors?.length)
+  if (!errors)
     return {
-      messages: [error?.message ?? "something went wrong"],
+      messages: [error.message],
       map: {},
       errors,
       status

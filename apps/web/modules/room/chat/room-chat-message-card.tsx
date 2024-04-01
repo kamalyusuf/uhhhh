@@ -9,11 +9,11 @@ export const RoomChatMessageCard = ({ message }: Props) => {
   return (
     <Group
       align="center"
-      position="center"
+      justify="center"
       style={{ paddingLeft: 7, paddingRight: 7 }}
     >
       <Box
-        sx={{
+        style={{
           wordBreak: "break-all",
           display: "block",
           overflow: "hidden",
@@ -22,12 +22,12 @@ export const RoomChatMessageCard = ({ message }: Props) => {
       >
         <Text
           size="sm"
-          sx={{ color: `${message.color}`, display: "inline", fontSize: 14 }}
+          style={{ color: `${message.color}`, display: "inline", fontSize: 14 }}
         >
           {message.creator.display_name}
         </Text>
         <span style={{ color: "white", fontSize: 14 }}>: </span>
-        <Text color="white" sx={{ display: "inline", fontSize: 14 }}>
+        <Text c="white" style={{ display: "inline", fontSize: 14 }}>
           {message.content}
         </Text>
       </Box>

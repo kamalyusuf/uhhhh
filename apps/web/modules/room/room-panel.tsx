@@ -74,18 +74,18 @@ export const RoomPanel = ({ room, actions }: Props) => {
   return (
     <>
       <Group style={{ flex: 1 }}>
-        <Stack spacing={0} style={{ width: "100%" }}>
+        <Stack gap={0} style={{ width: "100%" }}>
           {roomstore.warn_message ? (
             <Notification
               color="yellow"
-              sx={{ width: "100%" }}
+              style={{ width: "100%" }}
               onClose={() => roomstore.set({ warn_message: "" })}
             >
               {roomstore.warn_message}
             </Notification>
           ) : null}
 
-          <Group position="right">
+          <Group justify="right">
             <ActionIcon color="indigo" variant="transparent" onClick={open}>
               <IconInfoCircle />
             </ActionIcon>
@@ -93,17 +93,17 @@ export const RoomPanel = ({ room, actions }: Props) => {
 
           <Space h="md" />
 
-          <Group position="apart">
-            <Stack spacing={0}>
+          <Group justify="space-between">
+            <Stack gap={0}>
               <Title order={3}>{room.name}</Title>
               {room.description ? (
-                <Text color="indigo" size="xs">
+                <Text c="indigo" size="xs">
                   {room.description}
                 </Text>
               ) : null}
             </Stack>
 
-            <Text color="white" size="sm" italic>
+            <Text c="white" size="sm" fs="italic">
               {elapsed}
             </Text>
           </Group>
@@ -111,15 +111,15 @@ export const RoomPanel = ({ room, actions }: Props) => {
 
         <Divider variant="solid" color="indigo" style={{ width: "100%" }} />
 
-        <Group position="apart" style={{ width: "100%" }}>
+        <Group justify="space-between" style={{ width: "100%" }}>
           <ToggleMuteButton toggle={actions.togglemute} />
-          <Group spacing={20}>
+          <Group gap={20}>
             <Button
               size="xs"
               radius="xl"
               variant="subtle"
               color="indigo"
-              leftIcon={<AiOutlineShareAlt />}
+              leftSection={<AiOutlineShareAlt />}
               onClick={() => {
                 clipboard.copy(window.location);
               }}
@@ -135,7 +135,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
               onClick={leave}
               disabled={leaving}
               loading={leaving}
-              leftIcon={<IoExitOutline />}
+              leftSection={<IoExitOutline />}
             >
               leave
             </Button>
@@ -154,7 +154,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
           offsetScrollbars
         >
           <Group
-            spacing={25}
+            gap={25}
             style={{
               paddingTop: 5,
               paddingBottom: 5
@@ -181,7 +181,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
       </Group>
 
       <Modal opened={opened} onClose={close} title="keyboard shortcuts">
-        <Stack spacing={7}>
+        <Stack gap={7}>
           <KeyboardShortcut shortcut="m" label="mute" />
           <KeyboardShortcut shortcut="s" label="share" />
           <KeyboardShortcut shortcut="l" label="leave" />

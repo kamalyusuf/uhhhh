@@ -2,7 +2,7 @@ import { Button, Container, Paper, PasswordInput, Stack } from "@mantine/core";
 import { useState } from "react";
 import type { Room } from "types";
 import { Layout } from "../../components/_layout";
-import { useSocket } from "../../hooks/use-socket";
+import { useSocket } from "../../modules/socket/socket-provider";
 import { request } from "../../utils/request";
 import { toast } from "react-toastify";
 import { micenabled } from "../../utils/mic";

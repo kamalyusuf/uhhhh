@@ -18,7 +18,7 @@ const connect = async () => {
   await retry(
     async () => {
       await mongoose.connect(env.MONGO_URL, {
-        serverSelectionTimeoutMS: 5000
+        serverSelectionTimeoutMS: 2000
       });
 
       logger.info(`mongoose connected on ${mongoose.connection.host}`);

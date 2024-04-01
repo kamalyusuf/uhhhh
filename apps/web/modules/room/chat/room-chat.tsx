@@ -47,7 +47,7 @@ export const RoomChat = () => {
 
   return (
     <Box
-      sx={(theme) => ({
+      style={(theme) => ({
         borderWidth: 1,
         borderStyle: "solid",
         borderColor: theme.colors.indigo[6],

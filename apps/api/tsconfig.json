@@ -1,12 +1,12 @@
 {
   "extends": "tsconfig/base.json",
   "compilerOptions": {
+    "lib": ["ES2015"],
     "outDir": "./dist",
     "rootDir": "./src",
-    "noUnusedParameters": true,
     "baseUrl": "./",
     "isolatedModules": false,
-    "target": "es5",
+    "target": "ES2015",
     "module": "CommonJS",
     "declaration": false,
     "declarationMap": false

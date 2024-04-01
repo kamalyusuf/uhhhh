@@ -4,7 +4,6 @@ import { Layout } from "./_layout";
 import {
   IconAlertTriangle,
   IconAlertCircle,
-  type Icon,
   IconCircleCheck,
   IconInfoCircle
 } from "@tabler/icons-react";
@@ -14,21 +13,21 @@ import type { ApiError, EventError } from "types";
 import { Container } from "./_container";
 import { type CSSProperties } from "react";
 
-interface Props {
+interface AlertProps {
   type: "success" | "error" | "warning" | "info";
-  message: AxiosError<ApiError> | string | EventError | Error;
+  message: AxiosError<ApiError> | string | EventError;
   wrap?: boolean;
   style?: CSSProperties;
 }
 
-const icons: Record<Props["type"], Icon> = {
+const icons = {
   warning: IconAlertTriangle,
   success: IconCircleCheck,
   info: IconInfoCircle,
   error: IconAlertCircle
 };
 
-export const Alert = ({ type, message, wrap, style }: Props) => {
+export const Alert = ({ type, message, wrap, style }: AlertProps) => {
   const color = c.colors[type];
   const Icon = icons[type];
 
@@ -39,16 +38,28 @@ export const Alert = ({ type, message, wrap, style }: Props) => {
           shadow="md"
           p={20}
           radius="md"
-          sx={{
+          style={{
             backgroundColor: c.colors.shade,
             borderColor: c.colors.shade
           }}
         >
-          <Group spacing={20} align="center">
+          <Group gap={20} align="center">
             <Icon size={28} strokeWidth={2} color={color} />
-            <Text weight={500} size="lg" style={{ color }}>
-              {msg(message)}
-            </Text>
+
+            {typeof message === "string" ? (
+              <Text fw={500} size="lg" c={color}>
+                {message}
+              </Text>
+            ) : (
+              ("errors" in message
+                ? message.errors.map((m) => m.message)
+                : parseapierror(message).messages
+              ).map((m) => (
+                <Text fw={500} size="lg" c={color}>
+                  {m}
+                </Text>
+              ))
+            )}
           </Group>
         </Paper>
       </Center>
@@ -57,13 +68,3 @@ export const Alert = ({ type, message, wrap, style }: Props) => {
 
   return wrap ? <Layout>{component}</Layout> : component;
 };
-
-function msg(message: Props["message"]) {
-  if (typeof message === "string") return message;
-
-  if (message instanceof AxiosError) return parseapierror(message).messages[0];
-
-  if ("errors" in message) return message.errors[0].message;
-
-  return message.message;
-}

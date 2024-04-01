@@ -14,7 +14,7 @@ import mongoose from "mongoose";
 import cookiesession from "cookie-session";
 import type Joi from "joi";
 import { simplepass, usepass } from "express-simple-pass";
-import { explore } from "mongoose-explore";
+import { MongooseExplorer } from "mongoose-explore";
 import { RoomProps } from "./modules/room/room.model";
 import { MediasoupRoom } from "./modules/mediasoup/room";
 import { shouldcapture } from "./utils/error";
@@ -69,18 +69,16 @@ simplepass({
   redirect: "/explorer"
 });
 
-explore({
-  app,
+const explorer = new MongooseExplorer({
   mongoose,
   rootpath: "/explorer",
-  authorize: usepass,
-  models: {
+  resources: {
     Room: {
       properties: {
         password: {
           filterable: false,
           editable: false,
-          htmls: {
+          renderers: {
             list: () => "✔️",
             view: () => "✔️"
           }
@@ -95,6 +93,8 @@ explore({
     }
   }
 });
+
+app.use(explorer.rootpath, usepass, explorer.router());
 
 app.use("/api/rooms", roomrouter);
 

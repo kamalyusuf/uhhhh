@@ -33,11 +33,6 @@ export const PeerBadge = ({
         p={15}
         size="lg"
         color={me ? "red" : "indigo"}
-        styles={{
-          inner: {
-            color: "white"
-          }
-        }}
         style={{
           boxShadow: speaker
             ? `0px 0px 6px 3px ${me ? c.colors.red : c.colors.indigo}`
@@ -57,12 +52,12 @@ export const PeerBadge = ({
         {me ? "you" : peer.display_name}
       </Badge>
 
-      {me ? null : <Audio consumer={consumer} volume={volume} />}
+      {me ? null : <Audio consumer={consumer!} volume={volume ?? 100} />}
 
       <Modal opened={opened} onClose={close} title={peer.display_name}>
         <Stack>
-          <Stack spacing={0}>
-            <Text color="dark" weight="bold">
+          <Stack gap={0}>
+            <Text c="dark" fw="bold">
               volume
             </Text>
             <Slider

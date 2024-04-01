@@ -14,7 +14,7 @@ export const RoomCard = ({ room }: Props) => {
   const router = useRouter();
 
   return (
-    <Group position="apart" align="center">
+    <Group justify="space-between" align="center">
       <Group align="baseline">
         <ThemeIcon
           variant="light"
@@ -23,7 +23,7 @@ export const RoomCard = ({ room }: Props) => {
         >
           <MdRoom />
         </ThemeIcon>
-        <Stack spacing={0}>
+        <Stack gap={0}>
           <Group align="center">
             <Title order={3}>{room.name}</Title>
             {room.status === RoomStatus.PROTECTED ? (
@@ -39,10 +39,10 @@ export const RoomCard = ({ room }: Props) => {
               </ThemeIcon>
             ) : null}
           </Group>
-          <Text color="indigo" size="sm">
+          <Text c="indigo" size="sm">
             {room.description}
           </Text>
-          <Group align="center" spacing={10}>
+          <Group align="center" gap={10}>
             <ThemeIcon
               variant="light"
               style={{ backgroundColor: "transparent" }}
@@ -51,11 +51,11 @@ export const RoomCard = ({ room }: Props) => {
             >
               <GoDotFill />
             </ThemeIcon>
-            <Text color="white" size="sm">
+            <Text c="white" size="sm">
               {room.members_count}
             </Text>
           </Group>
-          <Text color="indigo" size="sm" style={{ fontStyle: "italic" }}>
+          <Text c="indigo" size="sm" style={{ fontStyle: "italic" }}>
             created by: {room.creator.display_name}
           </Text>
         </Stack>

@@ -13,14 +13,14 @@ export const NavBar = () => {
 
   return (
     <Box
-      sx={() => ({
+      style={{
         width: "100%",
         paddingTop: 20,
         paddingBottom: 20
-      })}
+      }}
     >
       <Container>
-        <Group position="apart" align="center">
+        <Group justify="space-between" align="center">
           <Link href="/" legacyBehavior passHref scroll={false}>
             <Title
               order={2}
@@ -35,7 +35,7 @@ export const NavBar = () => {
 
           {user ? (
             <Button
-              rightIcon={<HiUser />}
+              rightSection={<HiUser />}
               size="sm"
               onClick={() => router.push("/me")}
               style={{

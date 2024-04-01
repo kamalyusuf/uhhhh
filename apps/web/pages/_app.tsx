@@ -1,3 +1,4 @@
+import "@mantine/core/styles.css";
 import "react-toastify/dist/ReactToastify.css";
 import "../styles/globals.scss";
 import "nprogress/nprogress.css";
@@ -61,7 +62,7 @@ const App = ({ Component: C, pageProps }: AppProps) => {
         />
       </Head>
 
-      <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
+      <MantineProvider theme={theme}>
         {isFirefox ? (
           <Alert
             type="warning"

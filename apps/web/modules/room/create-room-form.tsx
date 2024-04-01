@@ -9,7 +9,7 @@ import {
 } from "@mantine/core";
 import { Field, FieldProps, Form, Formik } from "formik";
 import { useRouter } from "next/router";
-import { useSocket } from "../../hooks/use-socket";
+import { useSocket } from "../../modules/socket/socket-provider";
 import { request } from "../../utils/request";
 import { RoomVisibility } from "types";
 import { toast } from "react-toastify";
@@ -69,7 +69,7 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
     >
       {({ isSubmitting, values }) => (
         <Form>
-          <Text size="xs" color="yellow" style={{ fontStyle: "italic" }}>
+          <Text size="xs" c="yellow" style={{ fontStyle: "italic" }}>
             note: rooms are automatically deleted upon leaving
           </Text>
           <Stack>
@@ -117,7 +117,7 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
               </Field>
             ) : null}
 
-            <Group position="right" grow style={{ marginTop: 10 }}>
+            <Group justify="right" grow style={{ marginTop: 10 }}>
               <Button
                 type="submit"
                 loading={isSubmitting}

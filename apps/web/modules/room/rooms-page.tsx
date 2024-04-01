@@ -17,9 +17,9 @@ export const RoomsPage: PageComponent = () => {
   return (
     <>
       <Layout title="rooms">
-        <Box sx={{ width: "100%" }}>
+        <Box style={{ width: "100%" }}>
           <Container>
-            <Group position="apart">
+            <Group justify="space-between">
               <Title>rooms</Title>
               <ActionIcon
                 variant="filled"
