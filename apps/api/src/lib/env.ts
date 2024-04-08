@@ -11,8 +11,5 @@ export const env = cleanEnv(process.env, {
   NODE_ENV: str({
     choices: ["development", "production"] as const,
     default: "development"
-  }),
-  PASS_KEY: str()
+  })
 });
-
-console.log(env);
