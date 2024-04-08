@@ -1,5 +1,4 @@
 import "./utils/ip";
-import { mongo } from "./lib/mongo";
 import type { Server } from "http";
 import { app } from "./app";
 import { workers } from "./modules/mediasoup/workers";
@@ -13,8 +12,6 @@ let server: Server;
 
 const bootstrap = async () => {
   await workers.run();
-
-  await mongo.connect();
 
   server = await start({ app, port: env.PORT });
 

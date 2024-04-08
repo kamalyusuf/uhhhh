@@ -1,9 +1,17 @@
-import type { CallbackEvent } from "../types";
+import type { CallbackEvent, EventPayload } from "../types";
 import { MediasoupRoom } from "../../mediasoup/room";
 import { Room } from "../../room/room.model";
+import { RoomVisibility } from "types";
 
 export const handler: CallbackEvent<"create room"> = {
   on: "create room",
+  schema: (s) =>
+    s.object<EventPayload<"create room">>({
+      description: s.string().optional().valid("").max(140),
+      name: s.string(),
+      password: s.string().optional().min(5),
+      visibility: s.string().valid(...Object.values(RoomVisibility))
+    }),
   invoke: async ({ payload, cb, io, peer }) => {
     const room = await Room.create({
       ...payload,
@@ -16,14 +24,7 @@ export const handler: CallbackEvent<"create room"> = {
     });
 
     const r = {
-      _id: room._id.toString(),
-      created_at: room.created_at.toISOString(),
-      updated_at: room.updated_at.toISOString(),
-      creator: room.creator,
-      name: room.name,
-      description: room.description,
-      visibility: room.visibility,
-      status: room.status,
+      ...room.json(),
       members_count: msr.members_count
     };
 

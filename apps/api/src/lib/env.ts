@@ -1,9 +1,8 @@
-import { port, str, url, cleanEnv } from "envalid";
+import { port, str, cleanEnv } from "envalid";
 
 export const env = cleanEnv(process.env, {
   PORT: port(),
   WEB_URL: str(),
-  MONGO_URL: url(),
   LISTEN_IP: str(),
   ANNOUNCED_IP: str(),
   SENTRY_DSN: str({ devDefault: undefined }),
@@ -13,7 +12,7 @@ export const env = cleanEnv(process.env, {
     choices: ["development", "production"] as const,
     default: "development"
   }),
-	PASS_KEY: str()
+  PASS_KEY: str()
 });
 
 console.log(env);

@@ -14,6 +14,8 @@ import type {
 } from "types";
 import type { Socket, Server as SocketServer } from "socket.io";
 import type { Peer } from "../mediasoup/peer";
+import type { ObjectSchema } from "joi";
+import type { S } from "../../utils/schema";
 
 interface OutgoingTransportOptions {
   id: WebRtcTransport["id"];
@@ -67,8 +69,8 @@ export type EventCb<T extends ServerEvent> = Parameters<
 >[0] extends Function
   ? Parameters<ClientToServerEvents[T]>[0]
   : Parameters<ClientToServerEvents[T]>[1] extends Function
-  ? Parameters<ClientToServerEvents[T]>[1]
-  : undefined;
+    ? Parameters<ClientToServerEvents[T]>[1]
+    : undefined;
 
 export interface BaseParams<T extends ServerEvent> {
   io: TypedIO;
@@ -96,6 +98,7 @@ type Invoke<T extends ServerEvent> = (
 interface BaseEvent<T extends ServerEvent> {
   on: T;
   invoke: Invoke<T>;
+  schema?: (s: S) => ObjectSchema<EventPayload<T>>;
 }
 
 export interface Event<T extends ServerEvent> extends BaseEvent<T> {}

@@ -16,6 +16,7 @@ import type {
 import type { EventError, User, Anything } from "types";
 import { v } from "../../utils/validation";
 import { s } from "../../utils/schema";
+import joi from "joi";
 
 const overload = `
   (data: object, cb: Function); 
@@ -172,6 +173,15 @@ export const onerror = ({
     socket.emit(ev, new SocketEventError(errors, event.on));
 
     return;
+  }
+
+  if (error instanceof joi.ValidationError) {
+    const errors = error.details.map((ve) => ({
+      message: ve.message,
+      path: ve.path[0]?.toString()
+    }));
+
+    return socket.emit(ev, { event: event.on, errors });
   }
 
   logger.error(error, {
