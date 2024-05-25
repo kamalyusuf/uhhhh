@@ -3,7 +3,7 @@ import type { Anything, AnyObject } from "types";
 import winston, { format as f } from "winston";
 import { env } from "./env";
 import { Sentry } from "./sentry";
-import { shouldcapture } from "../utils/error";
+import { CustomError } from "@kamalyb/errors";
 
 const format = f.printf(({ level, message, timestamp, stack, extra }) => {
   const log = `${timestamp} ${level}: ${message}`;
@@ -115,7 +115,7 @@ class Logger {
     const o = (typeof a === "string" ? c : b) as Options;
     const message = typeof a === "string" ? a : a.message;
 
-    const tocapture = shouldcapture(error);
+    const tocapture = !(error instanceof CustomError);
 
     if (tocapture && env.isProduction)
       Sentry.captureException(error, (scope) => {

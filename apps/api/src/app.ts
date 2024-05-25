@@ -6,7 +6,6 @@ import helmet from "helmet";
 import { Sentry } from "./lib/sentry";
 import { CustomError, NotFoundError } from "@kamalyb/errors";
 import { router as roomrouter } from "./modules/room/room.route";
-import { shouldcapture } from "./utils/error";
 
 export const app = express();
 
@@ -38,7 +37,11 @@ app.use((req, _res, next) => {
   next(new NotFoundError(`route: ${req.method} ${req.url} not found`));
 });
 
-app.use(Sentry.Handlers.errorHandler({ shouldHandleError: shouldcapture }));
+app.use(
+  Sentry.Handlers.errorHandler({
+    shouldHandleError: (error) => !(error instanceof CustomError)
+  })
+);
 
 app.use(
   (

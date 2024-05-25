@@ -35,7 +35,11 @@ export class MediasoupRoom {
   }
 
   static async create({ io, doc }: { io: TypedIO; doc: Room }) {
-    const router = await workers.next()!.createRouter({
+    const worker = workers.next();
+
+    if (!worker) throw new Error("unable to get next worker");
+
+    const router = await worker.createRouter({
       mediaCodecs: [
         {
           kind: "audio",
@@ -82,7 +86,7 @@ export class MediasoupRoom {
   }
 
   static async findorcreate(io: TypedIO, doc: Room): Promise<MediasoupRoom> {
-    const room = this.rooms.get(doc._id.toString());
+    const room = this.rooms.get(doc._id);
 
     if (room) return room;
 
@@ -264,7 +268,7 @@ export class MediasoupRoom {
     if (this.members_count === 0) {
       this.router.close();
 
-      const deleted = await Room.delete(this.id);
+      const deleted = Room.delete(this.id);
 
       if (deleted && this.doc.ispublic())
         this.io.emit("delete room", { room_id: this.id });
