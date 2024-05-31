@@ -1,6 +1,6 @@
 import { Group, Box, Button, Title } from "@mantine/core";
 import Link from "next/link";
-import { Container } from "./_container";
+import { Container } from "./container";
 import { HiUser } from "react-icons/hi";
 import { useUserStore } from "../store/user";
 import { useRouter } from "next/router";

@@ -1,4 +1,4 @@
-import { Alert } from "../../components/_alert";
+import { Alert } from "../../components/alert";
 import { useRoomStore } from "../../store/room";
 
 export const RoomError = () => {
@@ -15,10 +15,10 @@ export const RoomError = () => {
         deviceerror
           ? "please refresh the page"
           : micerror
-          ? "microphone access is denied"
-          : devicemissingerror
-          ? "no microphone(s) detected"
-          : "could not join room. try refreshing the page"
+            ? "microphone access is denied"
+            : devicemissingerror
+              ? "no microphone(s) detected"
+              : "could not join room. try refreshing the page"
       }
       wrap
     />

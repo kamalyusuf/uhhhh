@@ -5,7 +5,7 @@ export const env = cleanEnv(process.env, {
   WEB_URL: str(),
   LISTEN_IP: str(),
   ANNOUNCED_IP: str(),
-  SENTRY_DSN: str({ devDefault: undefined }),
+  SENTRY_DSN: str({ default: undefined }),
   MEDIASOUP_MIN_PORT: port(),
   MEDIASOUP_MAX_PORT: port(),
   NODE_ENV: str({

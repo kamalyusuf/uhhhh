@@ -9,21 +9,6 @@ import { router as roomrouter } from "./modules/room/room.route";
 
 export const app = express();
 
-if (env.isProduction)
-  Sentry.init({
-    dsn: env.SENTRY_DSN,
-    integrations: [
-      new Sentry.Integrations.Http({ tracing: true }),
-      new Sentry.Integrations.Express({ app }),
-      ...Sentry.autoDiscoverNodePerformanceMonitoringIntegrations()
-    ],
-    tracesSampleRate: 1.0,
-    environment: env.NODE_ENV
-  });
-
-app.use(Sentry.Handlers.requestHandler());
-app.use(Sentry.Handlers.tracingHandler());
-
 app.set("trust proxy", true);
 app.use(express.json({ limit: "500kb" }));
 app.use(helmet());
@@ -37,11 +22,7 @@ app.use((req, _res, next) => {
   next(new NotFoundError(`route: ${req.method} ${req.url} not found`));
 });
 
-app.use(
-  Sentry.Handlers.errorHandler({
-    shouldHandleError: (error) => !(error instanceof CustomError)
-  })
-);
+Sentry.setupExpressErrorHandler(app);
 
 app.use(
   (

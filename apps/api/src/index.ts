@@ -1,5 +1,6 @@
+import "./instrument";
 import "./utils/ip";
-import type { Server } from "http";
+import type { Server } from "node:http";
 import { app } from "./app";
 import { workers } from "./modules/mediasoup/workers";
 import { logger } from "./lib/logger";

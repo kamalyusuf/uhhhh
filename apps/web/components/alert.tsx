@@ -1,6 +1,6 @@
 import { Center, Group, Paper, Text } from "@mantine/core";
 import { c } from "../utils/constants";
-import { Layout } from "./_layout";
+import { Layout } from "./layout";
 import {
   IconAlertTriangle,
   IconAlertCircle,
@@ -10,7 +10,7 @@ import {
 import { parseapierror } from "../utils/error";
 import { AxiosError } from "axios";
 import type { ApiError, EventError } from "types";
-import { Container } from "./_container";
+import { Container } from "./container";
 import { type CSSProperties } from "react";
 
 interface AlertProps {

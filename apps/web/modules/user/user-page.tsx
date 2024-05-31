@@ -8,7 +8,7 @@ import {
   Divider,
   Stack
 } from "@mantine/core";
-import { Layout } from "../../components/_layout";
+import { Layout } from "../../components/layout";
 import { PageComponent } from "../../types";
 import { toast } from "react-toastify";
 import { useState } from "react";

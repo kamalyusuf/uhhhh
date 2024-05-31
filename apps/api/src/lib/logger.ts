@@ -91,7 +91,7 @@ class Logger {
   }
 
   warn(message: string, extra?: AnyObject) {
-    if (env.isProduction)
+    if (env.SENTRY_DSN)
       Sentry.withScope((scope) => {
         scope.setLevel("warning");
 
@@ -117,7 +117,7 @@ class Logger {
 
     const tocapture = !(error instanceof CustomError);
 
-    if (tocapture && env.isProduction)
+    if (tocapture && env.SENTRY_DSN)
       Sentry.captureException(error, (scope) => {
         scope.setExtras({ message, ...(o?.extra ?? {}) });
 

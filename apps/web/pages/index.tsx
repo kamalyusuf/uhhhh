@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { useUserStore } from "../store/user";
 import { toast } from "react-toastify";
-import { Layout } from "../components/_layout";
+import { Layout } from "../components/layout";
 import type { PageComponent } from "../types";
 
 const HomePage: PageComponent = () => {

@@ -1,4 +1,4 @@
-import os from "os";
+import os from "node:os";
 import { logger } from "../lib/logger";
 
 const ifaces = os.networkInterfaces();

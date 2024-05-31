@@ -1,4 +1,4 @@
-import { Server } from "http";
+import { Server } from "node:http";
 import { logger } from "../lib/logger";
 
 const closeserver = (server: Server) =>

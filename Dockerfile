@@ -24,7 +24,7 @@ RUN \
 
 RUN \
     apt install -y curl dirmngr apt-transport-https lsb-release ca-certificates && \
-    curl -sL https://deb.nodesource.com/setup_16.x | bash - && \
+    curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
     apt-get install -y nodejs
 
 RUN npm install -g yarn
