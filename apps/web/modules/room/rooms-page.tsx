@@ -1,12 +1,12 @@
 import { useState } from "react";
-import { Layout } from "../../components/_layout";
+import { Layout } from "../../components/layout";
 import { Box, Group, Divider, Space, ActionIcon, Title } from "@mantine/core";
-import { Container } from "../../components/_container";
+import { Container } from "../../components/container";
 import { MdOutlineAdd } from "react-icons/md";
 import { CreateRoomModal } from "./create-room-modal";
 import type { PageComponent } from "../../types";
 import { useMounted } from "../../hooks/use-mounted";
-import { Rooms } from "./_rooms";
+import { Rooms } from "./rooms";
 
 export const RoomsPage: PageComponent = () => {
   const [opened, setopened] = useState(false);
@@ -17,9 +17,9 @@ export const RoomsPage: PageComponent = () => {
   return (
     <>
       <Layout title="rooms">
-        <Box sx={{ width: "100%" }}>
+        <Box style={{ width: "100%" }}>
           <Container>
-            <Group position="apart">
+            <Group justify="space-between">
               <Title>rooms</Title>
               <ActionIcon
                 variant="filled"

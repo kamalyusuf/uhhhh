@@ -1,6 +1,6 @@
 import * as mediasoup from "mediasoup";
 import { Worker } from "mediasoup/node/lib/types";
-import os from "os";
+import os from "node:os";
 import { logger } from "../../lib/logger";
 import { env } from "../../lib/env";
 

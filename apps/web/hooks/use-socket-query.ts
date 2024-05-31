@@ -11,7 +11,7 @@ import {
   useQuery
 } from "@tanstack/react-query";
 import type { ExtraQueryKeys } from "../types";
-import { useSocket } from "./use-socket";
+import { useSocket } from "../modules/socket/socket-provider";
 
 type Params<T extends ServerEvent> = SocketRequestParams<T>[0] extends
   | undefined
@@ -19,9 +19,9 @@ type Params<T extends ServerEvent> = SocketRequestParams<T>[0] extends
   ? never
   : SocketRequestParams<T>[0];
 
-type Options<T extends ServerEvent> = UseQueryOptions<
-  SocketRequestResponse<T>,
-  SocketEventError
+type Options<T extends ServerEvent> = Omit<
+  UseQueryOptions<SocketRequestResponse<T>, SocketEventError>,
+  "queryKey" | "queryFn"
 >;
 
 export const useSocketQuery = <T extends ServerEvent>(
@@ -42,9 +42,9 @@ export const useSocketQuery = <T extends ServerEvent>(
       : ({} as Parameters<typeof request<T>>[0]["payload"]);
   const options = args[1] && !Array.isArray(args[1]) ? args[1] : args[2];
 
-  return useQuery<SocketRequestResponse<T>, SocketEventError>(
-    Array.isArray(key) ? key : [key],
-    () => {
+  return useQuery<SocketRequestResponse<T>, SocketEventError>({
+    queryKey: Array.isArray(key) ? key : [key],
+    queryFn: () => {
       if (!socket) throw new Error("socket not initialized");
 
       if (!socket.connected) throw new Error("socket not connected");
@@ -55,12 +55,10 @@ export const useSocketQuery = <T extends ServerEvent>(
         payload
       });
     },
-    {
-      ...(options ?? {}),
-      enabled:
-        typeof window !== "undefined" &&
-        state === "connected" &&
-        (options?.enabled ?? true)
-    }
-  );
+    ...(options ?? {}),
+    enabled:
+      typeof window !== "undefined" &&
+      state === "connected" &&
+      (options?.enabled ?? true)
+  });
 };

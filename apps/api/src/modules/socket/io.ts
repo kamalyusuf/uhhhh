@@ -9,6 +9,7 @@ import type { User } from "types";
 import { ondisconnect } from "./events/disconnect";
 import { env } from "../../lib/env";
 import { authenticate, onerror, validateargs } from "./utils";
+import { s } from "../../utils/schema";
 
 class SocketIO {
   private io?: TypedIO;
@@ -52,6 +53,9 @@ class SocketIO {
             t = validateargs(...args);
 
             __request__ = t.__request__;
+
+            if (event.schema && t.eventpayload)
+              await s.validateasync(event.schema(s), t.eventpayload);
 
             await event.invoke({
               io: this.io,

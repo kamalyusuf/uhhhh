@@ -4,7 +4,7 @@ import { workers } from "./workers";
 import { NotFoundError } from "@kamalyb/errors";
 import type { TypedIO } from "../socket/types";
 import { logger } from "../../lib/logger";
-import { Room, type RoomDocument } from "../room/room.model";
+import { Room } from "../room/room.model";
 
 export class MediasoupRoom {
   private static rooms: Map<string, MediasoupRoom> = new Map();
@@ -15,7 +15,7 @@ export class MediasoupRoom {
   public in_session_at?: Date;
 
   private io: TypedIO;
-  private doc: RoomDocument;
+  private doc: Room;
 
   private constructor({
     router,
@@ -24,7 +24,7 @@ export class MediasoupRoom {
   }: {
     router: Router;
     io: TypedIO;
-    doc: RoomDocument;
+    doc: Room;
   }) {
     this.id = doc._id.toString();
     this.router = router;
@@ -34,8 +34,12 @@ export class MediasoupRoom {
     this.peers = new Map<string, Peer>();
   }
 
-  static async create({ io, doc }: { io: TypedIO; doc: RoomDocument }) {
-    const router = await workers.next().createRouter({
+  static async create({ io, doc }: { io: TypedIO; doc: Room }) {
+    const worker = workers.next();
+
+    if (!worker) throw new Error("unable to get next worker");
+
+    const router = await worker.createRouter({
       mediaCodecs: [
         {
           kind: "audio",
@@ -62,7 +66,7 @@ export class MediasoupRoom {
 
     for (const room of this.rooms.values())
       rooms.push({
-        ...room.doc.toJSON(),
+        ...room.doc.json(),
         members: room.findusers()
       });
 
@@ -81,11 +85,8 @@ export class MediasoupRoom {
     return this.rooms.get(room_id);
   }
 
-  static async findorcreate(
-    io: TypedIO,
-    doc: RoomDocument
-  ): Promise<MediasoupRoom> {
-    const room = this.rooms.get(doc._id.toString());
+  static async findorcreate(io: TypedIO, doc: Room): Promise<MediasoupRoom> {
+    const room = this.rooms.get(doc._id);
 
     if (room) return room;
 
@@ -267,7 +268,7 @@ export class MediasoupRoom {
     if (this.members_count === 0) {
       this.router.close();
 
-      const deleted = await Room.delete(this.id);
+      const deleted = Room.delete(this.id);
 
       if (deleted && this.doc.ispublic())
         this.io.emit("delete room", { room_id: this.id });

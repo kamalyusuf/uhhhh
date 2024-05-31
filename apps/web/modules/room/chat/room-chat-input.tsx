@@ -2,7 +2,7 @@ import { TextInput, ActionIcon, Stack } from "@mantine/core";
 import { AiOutlineSend } from "react-icons/ai";
 import { useState, useCallback, useRef } from "react";
 import { c } from "../../../utils/constants";
-import { useSocket } from "../../../hooks/use-socket";
+import { useSocket } from "../../../modules/socket/socket-provider";
 import { toast } from "react-toastify";
 import { useHotkeys } from "@mantine/hooks";
 
@@ -23,7 +23,7 @@ export const RoomChatInput = () => {
   }, [content, socket]);
 
   return (
-    <Stack spacing={5}>
+    <Stack gap={5}>
       <TextInput
         ref={ref}
         placeholder="chat..."

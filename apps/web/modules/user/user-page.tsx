@@ -8,12 +8,12 @@ import {
   Divider,
   Stack
 } from "@mantine/core";
-import { Layout } from "../../components/_layout";
+import { Layout } from "../../components/layout";
 import { PageComponent } from "../../types";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import { useUserStore } from "../../store/user";
-import { useSocket } from "../../hooks/use-socket";
+import { useSocket } from "../socket/socket-provider";
 import { DefaultMicSelector } from "../audio/default-mic-selector";
 import { useMounted } from "../../hooks/use-mounted";
 
@@ -55,7 +55,7 @@ export const UserPage: PageComponent = () => {
         <Box>
           <Center>
             <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>
-              <Stack spacing={10}>
+              <Stack gap={10}>
                 <form
                   onSubmit={(e) => {
                     e.preventDefault();

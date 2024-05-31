@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import hark from "hark";
 import { useMicStore } from "../store/mic";
-import { useSocket } from "./use-socket";
+import { useSocket } from "../modules/socket/socket-provider";
 
 export const useActiveSpeaker = () => {
   const { socket } = useSocket();

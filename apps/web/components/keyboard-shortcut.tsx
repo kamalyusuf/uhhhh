@@ -7,9 +7,9 @@ interface Props {
 
 export const KeyboardShortcut = ({ shortcut, label }: Props) => {
   return (
-    <Group spacing={20}>
+    <Group gap={20}>
       <Kbd size="md">{shortcut}</Kbd>
-      <Text color="dark" weight="bold">
+      <Text c="dark" fw="bold">
         {label}
       </Text>
     </Group>

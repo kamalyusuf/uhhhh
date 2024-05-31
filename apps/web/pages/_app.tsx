@@ -1,3 +1,4 @@
+import "@mantine/core/styles.css";
 import "react-toastify/dist/ReactToastify.css";
 import "../styles/globals.scss";
 import "nprogress/nprogress.css";
@@ -13,11 +14,11 @@ import type { PageComponent } from "../types";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Authenticate } from "../modules/auth/_authenticate";
+import { Authenticate } from "../modules/auth/authenticate";
 import { SocketHandler } from "../modules/socket/socket-handler";
 import { useMounted } from "../hooks/use-mounted";
 import { isFirefox } from "react-device-detect";
-import { Alert } from "../components/_alert";
+import { Alert } from "../components/alert";
 import { api } from "../lib/api";
 
 if (!process.env.NEXT_PUBLIC_API_URL) throw new Error("where API_URL at?");
@@ -61,7 +62,7 @@ const App = ({ Component: C, pageProps }: AppProps) => {
         />
       </Head>
 
-      <MantineProvider withGlobalStyles withNormalizeCSS theme={theme}>
+      <MantineProvider theme={theme}>
         {isFirefox ? (
           <Alert
             type="warning"

@@ -10,7 +10,7 @@ import {
 } from "@mantine/core";
 import { useUserStore } from "../store/user";
 import { toast } from "react-toastify";
-import { Layout } from "../components/_layout";
+import { Layout } from "../components/layout";
 import type { PageComponent } from "../types";
 
 const HomePage: PageComponent = () => {
@@ -20,7 +20,7 @@ const HomePage: PageComponent = () => {
 
   return (
     <>
-      <Layout spacing={50} title="uhhhh">
+      <Layout gap={50} title="uhhhh">
         <Box>
           <Center>
             <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>

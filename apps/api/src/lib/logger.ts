@@ -3,7 +3,7 @@ import type { Anything, AnyObject } from "types";
 import winston, { format as f } from "winston";
 import { env } from "./env";
 import { Sentry } from "./sentry";
-import { shouldcapture } from "../utils/error";
+import { CustomError } from "@kamalyb/errors";
 
 const format = f.printf(({ level, message, timestamp, stack, extra }) => {
   const log = `${timestamp} ${level}: ${message}`;
@@ -91,7 +91,7 @@ class Logger {
   }
 
   warn(message: string, extra?: AnyObject) {
-    if (env.isProduction)
+    if (env.SENTRY_DSN)
       Sentry.withScope((scope) => {
         scope.setLevel("warning");
 
@@ -115,9 +115,9 @@ class Logger {
     const o = (typeof a === "string" ? c : b) as Options;
     const message = typeof a === "string" ? a : a.message;
 
-    const tocapture = shouldcapture(error);
+    const tocapture = !(error instanceof CustomError);
 
-    if (tocapture && env.isProduction)
+    if (tocapture && env.SENTRY_DSN)
       Sentry.captureException(error, (scope) => {
         scope.setExtras({ message, ...(o?.extra ?? {}) });
 

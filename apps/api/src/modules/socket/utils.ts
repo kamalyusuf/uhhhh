@@ -13,9 +13,10 @@ import type {
   TypedIO,
   TypedSocket
 } from "./types";
-import type { EventError, User, Anything } from "types";
+import type { User, Anything } from "types";
 import { v } from "../../utils/validation";
 import { s } from "../../utils/schema";
+import joi from "joi";
 
 const overload = `
   (data: object, cb: Function); 
@@ -166,13 +167,17 @@ export const onerror = ({
 }) => {
   const ev = __request__ ? "request error" : "error";
 
-  if (error instanceof CustomError) {
-    const errors: EventError["errors"] = error.serialize();
+  if (error instanceof CustomError)
+    return socket.emit(ev, new SocketEventError(error.serialize(), event.on));
 
-    socket.emit(ev, new SocketEventError(errors, event.on));
-
-    return;
-  }
+  if (error instanceof joi.ValidationError)
+    return socket.emit(ev, {
+      event: event.on,
+      errors: error.details.map((ve) => ({
+        message: ve.message,
+        path: ve.path.at(0)?.toString()
+      }))
+    });
 
   logger.error(error, {
     extra: {

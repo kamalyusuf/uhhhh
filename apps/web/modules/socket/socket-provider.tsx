@@ -6,7 +6,8 @@ import {
   useState,
   useRef,
   useCallback,
-  type ReactNode
+  type ReactNode,
+  useContext
 } from "react";
 import type { TypedSocket } from "./types";
 import { useUserStore } from "../../store/user";
@@ -29,6 +30,8 @@ export const SocketContext = createContext<Context>({
   socket: null,
   state: "idle"
 });
+
+export const useSocket = () => useContext(SocketContext);
 
 const connect = (me: User | null): Promise<TypedSocket> => {
   return new Promise<TypedSocket>((resolve, reject) => {

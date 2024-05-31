@@ -3,18 +3,18 @@ import { Group, Loader } from "@mantine/core";
 import { useMediaQuery, useHotkeys } from "@mantine/hooks";
 import { type Room, RoomStatus } from "types";
 import { useRoom } from "./use-room";
-import { Layout } from "../../components/_layout";
-import { Container } from "../../components/_container";
+import { Layout } from "../../components/layout";
+import { Container } from "../../components/container";
 import { RoomChat } from "./chat/room-chat";
 import { RoomPanel } from "./room-panel";
 import type { PageComponent } from "../../types";
 import { useRoomStore } from "../../store/room";
-import { useSocket } from "../../hooks/use-socket";
+import { useSocket } from "../../modules/socket/socket-provider";
 import { RoomLogin } from "./room-login";
 import { RoomError } from "./room-error";
 import { useMounted } from "../../hooks/use-mounted";
 import { useActiveSpeaker } from "../../hooks/use-active-speaker";
-import { Alert } from "../../components/_alert";
+import { Alert } from "../../components/alert";
 import { AbsoluteCenter } from "../../components/absolute-center";
 
 interface Props {

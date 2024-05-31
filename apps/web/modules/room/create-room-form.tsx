@@ -7,13 +7,14 @@ import {
   Stack,
   PasswordInput
 } from "@mantine/core";
-import { Field, FieldProps, Form, Formik } from "formik";
 import { useRouter } from "next/router";
-import { useSocket } from "../../hooks/use-socket";
+import { useSocket } from "../socket/socket-provider";
 import { request } from "../../utils/request";
 import { RoomVisibility } from "types";
 import { toast } from "react-toastify";
 import { micenabled } from "../../utils/mic";
+import { useForm } from "@mantine/form";
+import { useState } from "react";
 
 interface Props {
   oncancel: () => void;
@@ -22,116 +23,112 @@ interface Props {
 export const CreateRoomForm = ({ oncancel }: Props) => {
   const { socket } = useSocket();
   const router = useRouter();
+  const [creating, setcreating] = useState(false);
+  const form = useForm({
+    initialValues: {
+      name: "",
+      description: "",
+      private: false,
+      require_password: false,
+      password: ""
+    },
+    validate: {
+      name: (value) =>
+        value.trim().length < 2 ? "name must be at least 2 characters" : null,
+
+      password: (value, values) =>
+        values.require_password && value && value.length < 5
+          ? "password must be at least 5 characters"
+          : null
+    }
+  });
+
+  const onsubmit = form.onSubmit(async (values) => {
+    setcreating(true);
+
+    try {
+      if (!socket) return toast.error("webserver is down");
+
+      if (!(await micenabled())) return;
+
+      const { room } = await request({
+        socket,
+        event: "create room",
+        payload: {
+          name: values.name,
+          description: values.description.trim(),
+          visibility: values.private
+            ? RoomVisibility.PRIVATE
+            : RoomVisibility.PUBLIC,
+          password:
+            values.require_password && values.password
+              ? values.password
+              : undefined
+        }
+      });
+
+      oncancel();
+      router.push(`/rooms/${room._id}`);
+    } catch (e) {
+      setcreating(false);
+    }
+  });
 
   return (
-    <Formik
-      initialValues={{
-        name: "",
-        description: "",
-        private: false,
-        require_password: false,
-        password: ""
-      }}
-      onSubmit={async (values) => {
-        if (!socket) return toast.error("webserver is down");
+    <form onSubmit={onsubmit}>
+      <Text size="xs" c="yellow" style={{ fontStyle: "italic" }}>
+        note: rooms are automatically deleted upon leaving
+      </Text>
 
-        if (!(await micenabled())) return;
+      <Stack>
+        <TextInput
+          label="name"
+          placeholder="name"
+          required
+          data-autofocus
+          autoComplete="off"
+          {...form.getInputProps("name")}
+        />
 
-        if (values.name.trim().length < 2)
-          return toast.error("name must be at least 2 characters");
+        <TextInput
+          label="description"
+          placeholder="description"
+          autoComplete="off"
+          {...form.getInputProps("description")}
+        />
 
-        if (
-          values.require_password &&
-          values.password &&
-          values.password.length < 5
-        )
-          return toast.error("password must be at least 5 characters");
+        <Checkbox
+          label="private"
+          size="sm"
+          {...form.getInputProps("private", { type: "checkbox" })}
+        />
 
-        const { room } = await request({
-          socket,
-          event: "create room",
-          payload: {
-            name: values.name,
-            description: values.description.trim(),
-            visibility: values.private
-              ? RoomVisibility.PRIVATE
-              : RoomVisibility.PUBLIC,
-            password:
-              values.require_password && values.password
-                ? values.password
-                : undefined
-          }
-        });
+        <Checkbox
+          label="password"
+          size="sm"
+          {...form.getInputProps("require_password", { type: "checkbox" })}
+        />
 
-        oncancel();
-        router.push(`/rooms/${room._id}`);
-      }}
-    >
-      {({ isSubmitting, values }) => (
-        <Form>
-          <Text size="xs" color="yellow" style={{ fontStyle: "italic" }}>
-            note: rooms are automatically deleted upon leaving
-          </Text>
-          <Stack>
-            <Field name="name">
-              {({ field }: FieldProps) => (
-                <TextInput
-                  label="name"
-                  placeholder="name"
-                  required
-                  {...field}
-                  data-autofocus
-                  autoComplete="off"
-                />
-              )}
-            </Field>
+        {form.values.require_password && (
+          <PasswordInput
+            placeholder="password"
+            {...form.getInputProps("password")}
+          />
+        )}
 
-            <Field name="description">
-              {({ field }: FieldProps) => (
-                <TextInput
-                  label="description"
-                  placeholder="description"
-                  {...field}
-                  autoComplete="off"
-                />
-              )}
-            </Field>
-
-            <Field name="private" type="checkbox">
-              {({ field }: FieldProps) => (
-                <Checkbox label="private" size="sm" {...field} />
-              )}
-            </Field>
-
-            <Field name="require_password" type="checkbox">
-              {({ field }: FieldProps) => (
-                <Checkbox label="password" size="sm" {...field} />
-              )}
-            </Field>
-
-            {values.require_password ? (
-              <Field name="password">
-                {({ field }: FieldProps) => (
-                  <PasswordInput placeholder="password" {...field} />
-                )}
-              </Field>
-            ) : null}
-
-            <Group position="right" grow style={{ marginTop: 10 }}>
-              <Button
-                type="submit"
-                loading={isSubmitting}
-                disabled={isSubmitting || !values.name.trim()}
-              >
-                create
-              </Button>
-              <Button variant="default" onClick={oncancel}>
-                cancel
-              </Button>
-            </Group>
-          </Stack>
-        </Form>
-      )}
-    </Formik>
+        <Group justify="right" grow style={{ marginTop: 10 }}>
+          <Button
+            type="submit"
+            loading={creating}
+            disabled={creating || !form.values.name.trim()}
+          >
+            create
+          </Button>
+          <Button variant="default" onClick={oncancel}>
+            cancel
+          </Button>
+        </Group>
+      </Stack>
+    </form>
   );
 };

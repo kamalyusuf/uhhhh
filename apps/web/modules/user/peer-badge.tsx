@@ -1,10 +1,10 @@
 import { Badge, Stack, Modal, Slider, Text } from "@mantine/core";
 import type { User } from "types";
 import { c } from "../../utils/constants";
-import { Audio } from "../audio/_audio";
+import { Audio } from "../audio/audio";
 import { useConsumerStore } from "../../store/consumer";
 import { AiOutlineAudioMuted } from "react-icons/ai";
-import { Icon } from "../../components/_icon";
+import { Icon } from "../../components/icon";
 import { useDisclosure } from "@mantine/hooks";
 
 export const PeerBadge = ({
@@ -33,11 +33,6 @@ export const PeerBadge = ({
         p={15}
         size="lg"
         color={me ? "red" : "indigo"}
-        styles={{
-          inner: {
-            color: "white"
-          }
-        }}
         style={{
           boxShadow: speaker
             ? `0px 0px 6px 3px ${me ? c.colors.red : c.colors.indigo}`
@@ -57,12 +52,12 @@ export const PeerBadge = ({
         {me ? "you" : peer.display_name}
       </Badge>
 
-      {me ? null : <Audio consumer={consumer} volume={volume} />}
+      {me ? null : <Audio consumer={consumer!} volume={volume ?? 100} />}
 
       <Modal opened={opened} onClose={close} title={peer.display_name}>
         <Stack>
-          <Stack spacing={0}>
-            <Text color="dark" weight="bold">
+          <Stack gap={0}>
+            <Text c="dark" fw="bold">
               volume
             </Text>
             <Slider

@@ -37,7 +37,7 @@ export const DefaultMicSelector = () => {
 
   return (
     <>
-      <Stack spacing={15}>
+      <Stack gap={15}>
         {enumerating ? (
           <Center>
             <Loader size="sm" />
@@ -46,13 +46,13 @@ export const DefaultMicSelector = () => {
           <>
             <Stack>
               {mics.length === 0 ? (
-                <Text color="red" size="sm" style={{ fontStyle: "italic" }}>
+                <Text c="red" size="sm" style={{ fontStyle: "italic" }}>
                   no microphone(s) detected
                 </Text>
               ) : (
                 <Select
                   label={
-                    <Text color="dark" style={{ fontSize: 16 }}>
+                    <Text c="dark" style={{ fontSize: 16 }}>
                       default microphone
                     </Text>
                   }

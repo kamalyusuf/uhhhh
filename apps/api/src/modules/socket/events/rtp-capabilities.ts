@@ -5,7 +5,7 @@ import { Room } from "../../room/room.model";
 export const handler: CallbackEvent<"rtp capabilities"> = {
   on: "rtp capabilities",
   invoke: async ({ payload, cb, io }) => {
-    const doc = await Room.findbyidorfail(payload.room_id);
+    const doc = Room.findbyidorfail(payload.room_id);
 
     const msr = await MediasoupRoom.findorcreate(io, doc);
 

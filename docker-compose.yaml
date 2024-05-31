@@ -1,10 +1,8 @@
 version: "3.8"
 
 services:
-  mongodb:
-    image: mongo
   api:
-    image: api
+    image: uhhhh-api
     ports:
       - "2300:2300/tcp"
       - "2000-2020:2000-2020/udp"
@@ -15,10 +13,7 @@ services:
       - MEDIASOUP_MAX_PORT=2020
       - LISTEN_IP=0.0.0.0
       - WEB_URL=http://localhost:3000
-      - MONGO_URL=mongodb://mongodb:27017/uhhhh
       - ANNOUNCED_IP=127.0.0.1
-    depends_on:
-      - mongodb
   web:
     build:
       context: .
