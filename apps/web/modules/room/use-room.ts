@@ -25,11 +25,9 @@ export const useRoom = (room_id: string) => {
   const router = useRouter();
   const producerstore = useProducerStore();
   const transportstore = useTransportStore();
-  const chatstore = useRoomChatStore((state) => ({ reset: state.reset }));
-  const roomstore = useRoomStore((state) => ({
-    reset: state.reset,
-    set: state.set
-  }));
+  const resetchatstore = useRoomChatStore((state) => state.reset);
+  const resetroomstore = useRoomStore((state) => state.reset);
+  const setroomstore = useRoomStore((state) => state.set);
   const micstore = useMicStore((state) => ({
     reset: state.reset,
     id: state.id,
@@ -45,7 +43,7 @@ export const useRoom = (room_id: string) => {
   const leave = useCallback(async () => {
     if (!socket) return;
 
-    roomstore.set({ state: "disconnecting" });
+    setroomstore({ state: "disconnecting" });
 
     await request({
       socket,
@@ -57,14 +55,14 @@ export const useRoom = (room_id: string) => {
     transportstore.reset();
     producerstore.reset();
     peerstore.reset();
-    roomstore.reset();
-    chatstore.reset();
+    resetroomstore();
+    resetchatstore();
   }, [socket]);
 
   const join = useCallback(async () => {
     if (!socket) return;
 
-    roomstore.set({ state: "connecting" });
+    setroomstore({ state: "connecting" });
 
     if (producerstore.producer) producerstore.reset();
 
@@ -217,7 +215,7 @@ export const useRoom = (room_id: string) => {
       for (const peer of peers) peerstore.add(peer);
 
       if (!device.canProduce("audio")) {
-        roomstore.set({
+        setroomstore({
           state: "connected",
           warn_message: "cannot consume your audio due to some unknown error"
         });
@@ -258,7 +256,7 @@ export const useRoom = (room_id: string) => {
 
       producerstore.add(producer);
 
-      roomstore.set({ state: "connected" });
+      setroomstore({ state: "connected" });
     } catch (e) {
       const error = e as Error;
       console.log("[useRoom.join] error", error);
@@ -267,8 +265,8 @@ export const useRoom = (room_id: string) => {
       transportstore.reset();
       producerstore.reset();
       peerstore.reset();
-      chatstore.reset();
-      roomstore.set({
+      resetchatstore();
+      setroomstore({
         state: "error",
         error_message: error.message,
         active_speakers: {},

@@ -1,8 +1,8 @@
 import { Box, Stack } from "@mantine/core";
 import { useRef, useEffect } from "react";
-import { RoomChatInput } from "./room-chat-input";
+import { ChatMessageInput } from "./chat-message-input";
 import { Virtuoso } from "react-virtuoso";
-import { RoomChatMessageCard } from "./room-chat-message-card";
+import { ChatMessageCard } from "./chat-message-card";
 import { useRoomChatStore } from "../../../store/room-chat";
 import { Message } from "../../../types";
 import { useUserStore } from "../../../store/user";
@@ -40,7 +40,7 @@ const useForceScrollToBottom = (messages: Message[]) => {
   return check;
 };
 
-export const RoomChat = () => {
+export const Chat = () => {
   const virtuoso = useRef(null);
   const messages = useRoomChatStore((state) => state.messages);
   const force = useForceScrollToBottom(messages);
@@ -68,7 +68,7 @@ export const RoomChat = () => {
           }
           overscan={0}
           itemContent={(_, item) => (
-            <RoomChatMessageCard key={item._id} message={item} />
+            <ChatMessageCard key={item._id} message={item} />
           )}
           followOutput={(bottom) => {
             if (force()) return "smooth";
@@ -76,7 +76,7 @@ export const RoomChat = () => {
             return bottom ? "smooth" : false;
           }}
         />
-        <RoomChatInput />
+        <ChatMessageInput />
       </Stack>
     </Box>
   );

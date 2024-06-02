@@ -5,8 +5,8 @@ import { Container } from "../../components/container";
 import { MdOutlineAdd } from "react-icons/md";
 import { CreateRoomModal } from "./create-room-modal";
 import type { PageComponent } from "../../types";
-import { useMounted } from "../../hooks/use-mounted";
 import { Rooms } from "./rooms";
+import { useMounted } from "@mantine/hooks";
 
 export const RoomsPage: PageComponent = () => {
   const [opened, setopened] = useState(false);

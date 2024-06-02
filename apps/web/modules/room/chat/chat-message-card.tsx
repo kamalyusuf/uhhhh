@@ -5,7 +5,7 @@ interface Props {
   message: Message;
 }
 
-export const RoomChatMessageCard = ({ message }: Props) => {
+export const ChatMessageCard = ({ message }: Props) => {
   return (
     <Group
       align="center"

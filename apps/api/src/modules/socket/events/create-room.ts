@@ -7,8 +7,8 @@ export const handler: CallbackEvent<"create room"> = {
   on: "create room",
   schema: (s) =>
     s.object<EventPayload<"create room">>({
-      description: s.string().optional().valid("").max(140),
-      name: s.string(),
+      description: s.string().optional().valid("").max(140).trim(),
+      name: s.string().min(3).trim(),
       password: s.string().optional().min(5),
       visibility: s.string().valid(...Object.values(RoomVisibility))
     }),

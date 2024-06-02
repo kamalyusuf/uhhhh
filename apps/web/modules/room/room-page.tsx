@@ -1,18 +1,17 @@
 import { useState, useEffect, useRef } from "react";
 import { Group, Loader } from "@mantine/core";
-import { useMediaQuery, useHotkeys } from "@mantine/hooks";
+import { useMediaQuery, useHotkeys, useMounted } from "@mantine/hooks";
 import { type Room, RoomStatus } from "types";
 import { useRoom } from "./use-room";
 import { Layout } from "../../components/layout";
 import { Container } from "../../components/container";
-import { RoomChat } from "./chat/room-chat";
+import { Chat } from "./chat/chat";
 import { RoomPanel } from "./room-panel";
 import type { PageComponent } from "../../types";
 import { useRoomStore } from "../../store/room";
 import { useSocket } from "../../modules/socket/socket-provider";
 import { RoomLogin } from "./room-login";
 import { RoomError } from "./room-error";
-import { useMounted } from "../../hooks/use-mounted";
 import { useActiveSpeaker } from "../../hooks/use-active-speaker";
 import { Alert } from "../../components/alert";
 import { AbsoluteCenter } from "../../components/absolute-center";
@@ -81,7 +80,7 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
                 togglemute
               }}
             />
-            {!matches ? <RoomChat /> : null}
+            {!matches ? <Chat /> : null}
           </Group>
         </Container>
       </Layout>

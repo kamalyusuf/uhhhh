@@ -17,10 +17,8 @@ export const PeerBadge = ({
   me: boolean;
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
-  const { consumers, setvolume } = useConsumerStore((state) => ({
-    consumers: state.consumers,
-    setvolume: state.setvolume
-  }));
+  const consumers = useConsumerStore((state) => state.consumers);
+  const setvolume = useConsumerStore((state) => state.setvolume);
 
   const consumer = consumers[peer._id]?.consumer;
   const paused = consumers[peer._id]?.paused;

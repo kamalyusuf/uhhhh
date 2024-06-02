@@ -2,11 +2,11 @@ import { TextInput, ActionIcon, Stack } from "@mantine/core";
 import { AiOutlineSend } from "react-icons/ai";
 import { useState, useCallback, useRef } from "react";
 import { c } from "../../../utils/constants";
-import { useSocket } from "../../../modules/socket/socket-provider";
+import { useSocket } from "../../socket/socket-provider";
 import { toast } from "react-toastify";
 import { useHotkeys } from "@mantine/hooks";
 
-export const RoomChatInput = () => {
+export const ChatMessageInput = () => {
   const [content, setcontent] = useState("");
   const { socket } = useSocket();
   const ref = useRef<HTMLInputElement>(null);

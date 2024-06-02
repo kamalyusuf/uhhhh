@@ -42,11 +42,11 @@ const HomePage: PageComponent = () => {
                   onClick={() => {
                     const n = name.trim();
 
-                    if (!n) return toast.warn("where yo name at?");
+                    if (!n) return toast.error("where yo name at?");
 
-                    if (n.length < 2)
+                    if (n.length < 3)
                       return toast.error(
-                        "name should be at least 2 characters"
+                        "name should be at least 3 characters"
                       );
 
                     if (!/^[a-z0-9]+$/i.test(n))

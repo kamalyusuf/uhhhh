@@ -174,7 +174,10 @@ export interface ClientToServerEvents<
 
   "chat message": (t: { content: string }) => void;
 
-  "update display name": (t: { new_display_name: string }) => void;
+  "update display name": (
+    t: { new_display_name: string },
+    cb: Cb<{ ok: false } | { ok: true; peer: User }>
+  ) => void;
 
   "room login": (
     t: { room_id: string; password: string },

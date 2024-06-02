@@ -6,7 +6,8 @@ import {
   Checkbox,
   Button,
   Divider,
-  Stack
+  Stack,
+  Switch
 } from "@mantine/core";
 import { Layout } from "../../components/layout";
 import { PageComponent } from "../../types";
@@ -15,46 +16,43 @@ import { useState } from "react";
 import { useUserStore } from "../../store/user";
 import { useSocket } from "../socket/socket-provider";
 import { DefaultMicSelector } from "../audio/default-mic-selector";
-import { useMounted } from "../../hooks/use-mounted";
+import { useSettingsStore } from "../../store/settings";
+import { request } from "../../utils/request";
 
-export const UserPage: PageComponent = () => {
-  const { user, update } = useUserStore((state) => ({
-    user: state.user,
-    update: state.update
-  }));
-  const [name, setname] = useState<string>(user?.display_name ?? "");
-  const mounted = useMounted();
+export const SettingsPage: PageComponent = () => {
+  const user = useUserStore((state) => state.user)!;
+  const update = useUserStore((state) => state.update);
+  const [name, setname] = useState(user?.display_name ?? "");
   const { socket } = useSocket();
+  const autojoin = useSettingsStore((state) => state.auto_join_room);
+  const setsettings = useSettingsStore((state) => state.set);
   const [remember, setremember] = useState(
     localStorage.getItem("remember me") === "true"
   );
 
-  if (!mounted) return null;
-
-  const onsubmit = () => {
+  const onsubmit = async () => {
     if (!socket) return toast.error("webserver is down");
 
-    const n = name.trim();
-
-    if (!n) return toast.warn("where yo name at?");
-
-    if (n.length < 2) return toast.warn("name should be at least 2 characters");
-
-    update(name, remember);
-
-    socket.emit("update display name", {
-      new_display_name: name
+    const res = await request({
+      socket,
+      event: "update display name",
+      payload: {
+        new_display_name: name
+      }
     });
 
+    if (!res.ok) return;
+
+    update(res.peer.display_name, remember);
     toast.success("saved");
   };
 
   return (
     <>
-      <Layout title={user?.display_name ?? "uhhhh"}>
+      <Layout title={`${user.display_name} settings`}>
         <Box>
           <Center>
-            <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>
+            <Paper p="xl" shadow="sm" radius="md" style={{ width: 350 }}>
               <Stack gap={10}>
                 <form
                   onSubmit={(e) => {
@@ -80,7 +78,19 @@ export const UserPage: PageComponent = () => {
                     <Button type="submit">update</Button>
                   </Stack>
                 </form>
+
                 <Divider size="xs" color="indigo" />
+
+                <Switch
+                  label="automatically join created room"
+                  checked={autojoin}
+                  onChange={(event) =>
+                    setsettings({ auto_join_room: event.currentTarget.checked })
+                  }
+                />
+
+                <Divider size="xs" color="indigo" />
+
                 <DefaultMicSelector />
               </Stack>
             </Paper>
@@ -91,4 +101,4 @@ export const UserPage: PageComponent = () => {
   );
 };
 
-UserPage.authenticate = "yes";
+SettingsPage.authenticate = "yes";

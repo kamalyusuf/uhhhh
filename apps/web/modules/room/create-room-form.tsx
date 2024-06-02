@@ -15,6 +15,7 @@ import { toast } from "react-toastify";
 import { micenabled } from "../../utils/mic";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
+import { useSettingsStore } from "../../store/settings";
 
 interface Props {
   oncancel: () => void;
@@ -24,6 +25,7 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
   const { socket } = useSocket();
   const router = useRouter();
   const [creating, setcreating] = useState(false);
+  const autojoin = useSettingsStore((state) => state.auto_join_room);
   const form = useForm({
     initialValues: {
       name: "",
@@ -31,15 +33,6 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
       private: false,
       require_password: false,
       password: ""
-    },
-    validate: {
-      name: (value) =>
-        value.trim().length < 2 ? "name must be at least 2 characters" : null,
-
-      password: (value, values) =>
-        values.require_password && value && value.length < 5
-          ? "password must be at least 5 characters"
-          : null
     }
   });
 
@@ -56,19 +49,17 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
         event: "create room",
         payload: {
           name: values.name,
-          description: values.description.trim(),
+          description: values.description,
+          password: (values.require_password && values.password) || undefined,
           visibility: values.private
             ? RoomVisibility.PRIVATE
-            : RoomVisibility.PUBLIC,
-          password:
-            values.require_password && values.password
-              ? values.password
-              : undefined
+            : RoomVisibility.PUBLIC
         }
       });
 
       oncancel();
-      router.push(`/rooms/${room._id}`);
+
+      router[autojoin ? "push" : "prefetch"](`/rooms/${room._id}`);
     } catch (e) {
       setcreating(false);
     }

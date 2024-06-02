@@ -37,7 +37,7 @@ export const NavBar = () => {
             <Button
               rightSection={<HiUser />}
               size="sm"
-              onClick={() => router.push("/me")}
+              onClick={() => router.push("/settings")}
               style={{
                 pointerEvents: state === "connected" ? "none" : undefined
               }}

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useMicStore } from "../../store/mic";
 import { Stack, Text, Select, Button, Loader, Center } from "@mantine/core";
 import { toast } from "react-toastify";
@@ -6,12 +6,10 @@ import { toast } from "react-toastify";
 export const DefaultMicSelector = () => {
   const [mics, setmics] = useState<{ id: string; label: string }[]>([]);
   const [enumerating, setenumerating] = useState(true);
-  const micstore = useMicStore((state) => ({
-    id: state.id,
-    setdefaultmicid: state.setdefaultmicid
-  }));
+  const micid = useMicStore((state) => state.id);
+  const setdefaultmic = useMicStore((state) => state.setdefaultmicid);
 
-  const enumerate = () => {
+  const enumerate = useCallback(() => {
     setenumerating(true);
 
     navigator.mediaDevices
@@ -29,7 +27,7 @@ export const DefaultMicSelector = () => {
         toast.error(error.message);
       })
       .finally(() => setenumerating(false));
-  };
+  }, []);
 
   useEffect(() => {
     enumerate();
@@ -65,11 +63,11 @@ export const DefaultMicSelector = () => {
                     })),
                     { value: "-", label: "-" }
                   ]}
-                  value={micstore.id}
+                  value={micid}
                   onChange={(value) => {
                     if (!value) return;
 
-                    micstore.setdefaultmicid(value);
+                    setdefaultmic(value);
 
                     toast.success("saved");
                   }}

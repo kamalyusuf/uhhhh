@@ -2,11 +2,11 @@ import { create } from "zustand";
 import { combine, devtools } from "zustand/middleware";
 import { nanoid } from "nanoid";
 import type { User } from "types";
-import Joi from "joi";
+import joi from "joi";
 
-const schema = Joi.object<User, true>({
-  _id: Joi.string(),
-  display_name: Joi.string()
+const schema = joi.object<User, true>({
+  _id: joi.string(),
+  display_name: joi.string()
 });
 
 const initial = (): User | null => {

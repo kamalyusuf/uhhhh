@@ -16,10 +16,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Authenticate } from "../modules/auth/authenticate";
 import { SocketHandler } from "../modules/socket/socket-handler";
-import { useMounted } from "../hooks/use-mounted";
 import { isFirefox } from "react-device-detect";
 import { Alert } from "../components/alert";
 import { api } from "../lib/api";
+import { useMounted } from "@mantine/hooks";
 
 if (!process.env.NEXT_PUBLIC_API_URL) throw new Error("where API_URL at?");
 

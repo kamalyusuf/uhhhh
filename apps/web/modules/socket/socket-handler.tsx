@@ -10,19 +10,15 @@ import { useUpdateSocketQuery } from "../../hooks/use-update-socket-query";
 
 export const SocketHandler = () => {
   const { socket } = useSocket();
-  const chatstore = useRoomChatStore((state) => ({ add: state.add }));
   const updatequery = useUpdateSocketQuery();
-  const peerstore = usePeerStore((state) => ({
-    add: state.add,
-    remove: state.remove
-  }));
-  const roomstore = useRoomStore((state) => ({
-    setactivespeaker: state.setactivespeaker,
-    set: state.set
-  }));
-  const transportstore = useTransportStore((state) => ({
-    receive_transport: state.receive_transport
-  }));
+  const addchat = useRoomChatStore((state) => state.add);
+  const setactivespeaker = useRoomStore((state) => state.setactivespeaker);
+  const setroomstore = useRoomStore((state) => state.set);
+  const addpeer = usePeerStore((state) => state.add);
+  const removepeer = usePeerStore((state) => state.remove);
+  const receivetransport = useTransportStore(
+    (state) => state.receive_transport
+  );
   const consumerstore = useConsumerStore((state) => ({
     add: state.add,
     remove: state.remove,
@@ -48,9 +44,9 @@ export const SocketHandler = () => {
         app_data,
         producer_paused
       }) => {
-        if (!transportstore.receive_transport) return;
+        if (!receivetransport) return;
 
-        const consumer = await transportstore.receive_transport.consume({
+        const consumer = await receivetransport.consume({
           id,
           producerId: producer_id,
           kind,
@@ -74,7 +70,7 @@ export const SocketHandler = () => {
     );
 
     socket.on("new peer", ({ peer }) => {
-      peerstore.add(peer);
+      addpeer(peer);
 
       toast.info(`${peer.display_name} has joined the room`);
     });
@@ -92,11 +88,11 @@ export const SocketHandler = () => {
     });
 
     socket.on("peer left", ({ peer }) => {
-      peerstore.remove(peer._id);
+      removepeer(peer._id);
     });
 
     socket.on("active speaker", ({ peer_id, speaking }) => {
-      roomstore.setactivespeaker(peer_id, speaking);
+      setactivespeaker(peer_id, speaking);
     });
 
     socket.on("delete room", ({ room_id }) => {
@@ -114,7 +110,7 @@ export const SocketHandler = () => {
     });
 
     socket.on("chat message", ({ message }) => {
-      chatstore.add(message);
+      addchat(message);
     });
 
     socket.on("update room members count", ({ room_id, members_count }) => {
@@ -126,13 +122,13 @@ export const SocketHandler = () => {
     });
 
     socket.on("room session at", ({ in_session_at }) => {
-      roomstore.set({ in_session_at });
+      setroomstore({ in_session_at });
     });
 
     return () => {
       socket.removeAllListeners();
     };
-  }, [socket, transportstore.receive_transport]);
+  }, [socket, receivetransport]);
 
   return null;
 };
