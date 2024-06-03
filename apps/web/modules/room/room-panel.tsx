@@ -42,14 +42,12 @@ export const RoomPanel = ({ room, actions }: Props) => {
   const clipboard = useClipboard({ timeout: 1500 });
   const elapsed = useRoomTimeElapsed();
   const [opened, { open, close }] = useDisclosure(false);
-  const roomstore = useRoomStore((state) => ({
-    state: state.state,
-    warn_message: state.warn_message,
-    set: state.set,
-    active_speakers: state.active_speakers
-  }));
+  const roomstate = useRoomStore((state) => state.state);
+  const warning = useRoomStore((state) => state.warn_message);
+  const activespeakers = useRoomStore((state) => state.active_speakers);
+  const setroomstore = useRoomStore((state) => state.set);
 
-  const leaving = roomstore.state === "disconnecting";
+  const leaving = roomstate === "disconnecting";
 
   useHotkeys([
     [
@@ -75,15 +73,15 @@ export const RoomPanel = ({ room, actions }: Props) => {
     <>
       <Group style={{ flex: 1 }}>
         <Stack gap={0} style={{ width: "100%" }}>
-          {roomstore.warn_message ? (
+          {!!warning && (
             <Notification
               color="yellow"
               style={{ width: "100%" }}
-              onClose={() => roomstore.set({ warn_message: "" })}
+              onClose={() => setroomstore({ warn_message: "" })}
             >
-              {roomstore.warn_message}
+              {warning}
             </Notification>
-          ) : null}
+          )}
 
           <Group justify="right">
             <ActionIcon color="indigo" variant="transparent" onClick={open}>
@@ -162,7 +160,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
           >
             <PeerBadge
               peer={user}
-              speaker={roomstore.active_speakers[user._id]}
+              speaker={activespeakers[user._id]}
               me={true}
             />
 
@@ -172,7 +170,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
                 <PeerBadge
                   key={peer._id}
                   peer={peer}
-                  speaker={roomstore.active_speakers[peer._id]}
+                  speaker={activespeakers[peer._id]}
                   me={false}
                 />
               ))}

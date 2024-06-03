@@ -20,7 +20,7 @@ export const Rooms = () => {
     return (
       <Alert
         type="error"
-        message="webserver is down"
+        message="web server is down"
         style={{ marginTop: 20 }}
       />
     );

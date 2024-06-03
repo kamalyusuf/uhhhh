@@ -37,13 +37,13 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
   });
 
   const onsubmit = form.onSubmit(async (values) => {
+    if (!socket) return toast.error("web server is down");
+
+    if (!(await micenabled())) return;
+
     setcreating(true);
 
     try {
-      if (!socket) return toast.error("webserver is down");
-
-      if (!(await micenabled())) return;
-
       const { room } = await request({
         socket,
         event: "create room",

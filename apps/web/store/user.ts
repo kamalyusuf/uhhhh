@@ -4,6 +4,8 @@ import { nanoid } from "nanoid";
 import type { User } from "types";
 import joi from "joi";
 
+export const REMEMBER_ME_KEY = "remember me";
+
 const schema = joi.object<User, true>({
   _id: joi.string(),
   display_name: joi.string()
@@ -11,7 +13,8 @@ const schema = joi.object<User, true>({
 
 const initial = (): User | null => {
   const remember =
-    typeof localStorage !== "undefined" && localStorage.getItem("remember me");
+    typeof localStorage !== "undefined" &&
+    localStorage.getItem(REMEMBER_ME_KEY);
   const who =
     typeof localStorage !== "undefined" && localStorage.getItem("user");
 
@@ -44,7 +47,7 @@ export const useUserStore = create(
             const user = { _id: nanoid(24), display_name };
 
             if (remember) {
-              localStorage.setItem("remember me", JSON.stringify(true));
+              localStorage.setItem(REMEMBER_ME_KEY, JSON.stringify(true));
               localStorage.setItem("user", JSON.stringify(user));
             }
 
@@ -57,7 +60,7 @@ export const useUserStore = create(
 
             const user = { _id: state.user._id, display_name };
 
-            localStorage.setItem("remember me", JSON.stringify(remember));
+            localStorage.setItem(REMEMBER_ME_KEY, JSON.stringify(remember));
 
             if (remember) localStorage.setItem("user", JSON.stringify(user));
             else localStorage.removeItem("user");

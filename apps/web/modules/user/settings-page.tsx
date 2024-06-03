@@ -13,7 +13,7 @@ import { Layout } from "../../components/layout";
 import { PageComponent } from "../../types";
 import { toast } from "react-toastify";
 import { useState } from "react";
-import { useUserStore } from "../../store/user";
+import { REMEMBER_ME_KEY, useUserStore } from "../../store/user";
 import { useSocket } from "../socket/socket-provider";
 import { DefaultMicSelector } from "../audio/default-mic-selector";
 import { useSettingsStore } from "../../store/settings";
@@ -22,16 +22,16 @@ import { request } from "../../utils/request";
 export const SettingsPage: PageComponent = () => {
   const user = useUserStore((state) => state.user)!;
   const update = useUserStore((state) => state.update);
-  const [name, setname] = useState(user?.display_name ?? "");
+  const [name, setname] = useState(user.display_name);
   const { socket } = useSocket();
   const autojoin = useSettingsStore((state) => state.auto_join_room);
   const setsettings = useSettingsStore((state) => state.set);
   const [remember, setremember] = useState(
-    localStorage.getItem("remember me") === "true"
+    localStorage.getItem(REMEMBER_ME_KEY) === "true"
   );
 
   const onsubmit = async () => {
-    if (!socket) return toast.error("webserver is down");
+    if (!socket) return toast.error("web server is down");
 
     const res = await request({
       socket,

@@ -33,7 +33,7 @@ export const NavBar = () => {
             </Title>
           </Link>
 
-          {user ? (
+          {!!user && (
             <Button
               rightSection={<HiUser />}
               size="sm"
@@ -44,7 +44,7 @@ export const NavBar = () => {
             >
               {user.display_name}
             </Button>
-          ) : null}
+          )}
         </Group>
       </Container>
     </Box>

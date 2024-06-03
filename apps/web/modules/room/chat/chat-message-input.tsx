@@ -14,7 +14,7 @@ export const ChatMessageInput = () => {
   useHotkeys([["c", () => ref.current?.focus()]]);
 
   const send = useCallback(() => {
-    if (!socket) return toast.error("webserver is down");
+    if (!socket) return toast.error("web server is down");
 
     if (!content.trim()) return;
 
