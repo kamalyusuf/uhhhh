@@ -44,7 +44,6 @@ export const Rooms = () => {
   if (data)
     return (
       <ScrollArea
-        style={{ height: 600 }}
         type="auto"
         offsetScrollbars
         styles={{ thumb: { backgroundColor: c.colors.indigo } }}

@@ -144,7 +144,6 @@ export const RoomPanel = ({ room, actions }: Props) => {
 
         <ScrollArea
           style={{
-            height: 500,
             width: "100%"
           }}
           styles={{ thumb: { backgroundColor: c.colors.indigo } }}
