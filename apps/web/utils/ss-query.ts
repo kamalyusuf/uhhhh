@@ -17,10 +17,8 @@ export const ssquery =
 
       const { status } = parseapierror(error);
 
-      if (!status || (status && status === 500)) throw e;
+      if (status === 404) return { notFound: true };
 
-      return {
-        notFound: true
-      };
+      throw e;
     }
   };

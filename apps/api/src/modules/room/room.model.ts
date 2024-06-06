@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import argon2 from "argon2";
 import { env } from "../../lib/env";
 import type { EventPayload } from "../socket/types";
+import { BadRequestError, NotFoundError } from "@kamalyb/errors";
 
 export class Room {
   static rooms = new Map<string, Room>();
@@ -67,7 +68,7 @@ export class Room {
   static findbyidorfail(id: string) {
     const room = Room.rooms.get(id);
 
-    if (!room) throw new Error("room not found");
+    if (!room) throw new NotFoundError("room not found");
 
     return room;
   }
@@ -100,7 +101,8 @@ export class Room {
   }
 
   verifypassword(plain: string) {
-    if (!this.password) throw new Error("room is not password protected");
+    if (!this.password)
+      throw new BadRequestError("room is not password protected");
 
     return argon2.verify(this.password, plain);
   }

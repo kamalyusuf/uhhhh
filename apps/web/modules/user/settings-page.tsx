@@ -25,6 +25,7 @@ export const SettingsPage: PageComponent = () => {
   const [name, setname] = useState(user.display_name);
   const { socket } = useSocket();
   const autojoin = useSettingsStore((state) => state.auto_join_room);
+  const notifyonjoin = useSettingsStore((state) => state.notify_on_join);
   const setsettings = useSettingsStore((state) => state.set);
   const [remember, setremember] = useState(
     localStorage.getItem(REMEMBER_ME_KEY) === "true"
@@ -86,6 +87,14 @@ export const SettingsPage: PageComponent = () => {
                   checked={autojoin}
                   onChange={(event) =>
                     setsettings({ auto_join_room: event.currentTarget.checked })
+                  }
+                />
+
+                <Switch
+                  label="notify when someone joins the room"
+                  checked={notifyonjoin}
+                  onChange={(event) =>
+                    setsettings({ notify_on_join: event.currentTarget.checked })
                   }
                 />
 

@@ -2,11 +2,11 @@ import { Alert } from "../../components/alert";
 import { useRoomStore } from "../../store/room";
 
 export const RoomError = () => {
-  const errormessage = useRoomStore((state) => state.error_message);
+  const error = useRoomStore((state) => state.error);
 
-  const deviceerror = errormessage === "already loaded";
-  const micerror = errormessage === "Permission denied";
-  const devicemissingerror = errormessage === "Requested device not found";
+  const deviceerror = error === "already loaded";
+  const micerror = error === "Permission denied";
+  const devicemissingerror = error === "Requested device not found";
 
   return (
     <Alert
@@ -18,7 +18,7 @@ export const RoomError = () => {
             ? "microphone access is denied"
             : devicemissingerror
               ? "no microphone(s) detected"
-              : "could not join room. try refreshing the page"
+              : error ?? "could not join room"
       }
       wrap
     />

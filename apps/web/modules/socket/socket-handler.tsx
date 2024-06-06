@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import { useRoomStore } from "../../store/room";
 import { useRoomChatStore } from "../../store/room-chat";
 import { useUpdateSocketQuery } from "../../hooks/use-update-socket-query";
+import { useSettingsStore } from "../../store/settings";
 
 export const SocketHandler = () => {
   const { socket } = useSocket();
@@ -16,6 +17,7 @@ export const SocketHandler = () => {
   const setroomstore = useRoomStore((state) => state.set);
   const addpeer = usePeerStore((state) => state.add);
   const removepeer = usePeerStore((state) => state.remove);
+  const notifyonjoin = useSettingsStore((state) => state.notify_on_join);
   const receivetransport = useTransportStore(
     (state) => state.receive_transport
   );
@@ -72,7 +74,7 @@ export const SocketHandler = () => {
     socket.on("new peer", ({ peer }) => {
       addpeer(peer);
 
-      toast.info(`${peer.display_name} has joined the room`);
+      if (notifyonjoin) toast.info(`${peer.display_name} has joined the room`);
     });
 
     socket.on("consumer closed", ({ peer_id }) => {
@@ -128,7 +130,7 @@ export const SocketHandler = () => {
     return () => {
       socket.removeAllListeners();
     };
-  }, [socket, receivetransport]);
+  }, [socket, receivetransport, notifyonjoin]);
 
   return null;
 };

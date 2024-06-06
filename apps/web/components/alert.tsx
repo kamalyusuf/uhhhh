@@ -1,4 +1,4 @@
-import { Center, Group, Paper, Text } from "@mantine/core";
+import { Center, Group, Paper, Stack, Text } from "@mantine/core";
 import { c } from "../utils/constants";
 import { Layout } from "./layout";
 import {
@@ -15,7 +15,7 @@ import { type CSSProperties } from "react";
 
 interface AlertProps {
   type: "success" | "error" | "warning" | "info";
-  message: AxiosError<ApiError> | string | EventError;
+  message: AxiosError<ApiError> | string | string[] | EventError;
   wrap?: boolean;
   style?: CSSProperties;
 }
@@ -46,19 +46,29 @@ export const Alert = ({ type, message, wrap, style }: AlertProps) => {
           <Group gap={20} align="center">
             <Icon size={28} strokeWidth={2} color={color} />
 
-            {typeof message === "string" ? (
+            {Array.isArray(message) ? (
+              <Stack gap={5}>
+                {message.map((m) => (
+                  <Text key={m} fw={500} size="lg" c={color}>
+                    {m}
+                  </Text>
+                ))}
+              </Stack>
+            ) : typeof message === "string" ? (
               <Text fw={500} size="lg" c={color}>
                 {message}
               </Text>
             ) : (
-              ("errors" in message
-                ? message.errors.map((m) => m.message)
-                : parseapierror(message).messages
-              ).map((m) => (
-                <Text fw={500} size="lg" c={color}>
-                  {m}
-                </Text>
-              ))
+              <Stack gap={5}>
+                {("errors" in message
+                  ? message.errors.map((m) => m.message)
+                  : parseapierror(message).messages
+                ).map((m) => (
+                  <Text key={m} fw={500} size="lg" c={color}>
+                    {m}
+                  </Text>
+                ))}
+              </Stack>
             )}
           </Group>
         </Paper>

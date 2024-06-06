@@ -1,3 +1,4 @@
+import type { EventError } from "types";
 import { create } from "zustand";
 import { combine, devtools } from "zustand/middleware";
 
@@ -16,7 +17,7 @@ export const useRoomStore = create(
       {
         state: "idle" as State,
         active_speakers: {} as Record<string, boolean>,
-        error_message: undefined as string | undefined,
+        error: undefined as string | EventError | undefined,
         warn_message: undefined as string | undefined,
         in_session_at: undefined as string | undefined
       },
@@ -38,7 +39,7 @@ export const useRoomStore = create(
           set({
             state: "disconnected",
             active_speakers: {},
-            error_message: undefined,
+            error: undefined,
             warn_message: undefined,
             in_session_at: undefined
           })

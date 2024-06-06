@@ -4,7 +4,8 @@ import { SocketEventError } from "./socket-event-error";
 import {
   CustomError,
   JoiValidationError,
-  NotAuthorizedError
+  NotAuthorizedError,
+  UnprocessableEntityError
 } from "@kamalyb/errors";
 import type {
   E,
@@ -49,13 +50,14 @@ export const validateargs = (
   let __request__ = false;
 
   const set = (p: { [key: string]: unknown }) => {
-    if (!v.isobject(p)) throw new Error("expected data to be an object");
+    if (!v.isobject(p))
+      throw new UnprocessableEntityError("expected data to be an object");
 
     if (typeof p.__request__ === "undefined")
       return p as EventPayload<ServerEvent>;
 
     if (!p.payload)
-      throw new Error(
+      throw new UnprocessableEntityError(
         `expected payload to be contained in 'payload' property if __request__ (i.e the request is coming from 'socketrequest' function) is present [and must be true]`
       );
 
@@ -75,15 +77,17 @@ export const validateargs = (
   };
 
   if (data && cb) {
-    if (!v.isobject(data)) throw new Error("expected data to be an object");
+    if (!v.isobject(data))
+      throw new UnprocessableEntityError("expected data to be an object");
 
     if (!v.isfunction(cb))
-      throw new Error("expected callback to be a function");
+      throw new UnprocessableEntityError("expected callback to be a function");
 
     eventpayload = set(data);
     callbackfn = cb;
   } else if (data && !cb && typeof data !== "function") {
-    if (!v.isobject(data)) throw new Error("expected data to be an object");
+    if (!v.isobject(data))
+      throw new UnprocessableEntityError("expected data to be an object");
 
     eventpayload = set(data);
     callbackfn = undefined;
@@ -95,7 +99,7 @@ export const validateargs = (
     callbackfn = undefined;
   } else if (!data && cb) {
     if (!v.isfunction(cb))
-      throw new Error("expected callback to be a function");
+      throw new UnprocessableEntityError("expected callback to be a function");
 
     eventpayload = undefined;
     callbackfn = cb;
@@ -157,6 +161,7 @@ export const onerror = ({
   error,
   socket,
   event,
+  peer,
   __request__
 }: {
   error: Error;
@@ -181,7 +186,9 @@ export const onerror = ({
 
   logger.error(error, {
     extra: {
-      event: event.on
+      event: event.on,
+      user: peer.user,
+      __request__
     }
   });
 

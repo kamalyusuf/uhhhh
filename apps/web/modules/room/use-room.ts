@@ -10,6 +10,7 @@ import { usePeerStore } from "../../store/peer";
 import { useProducerStore } from "../../store/producer";
 import { useMicStore } from "../../store/mic";
 import { useRoomChatStore } from "../../store/room-chat";
+import type { EventError } from "types";
 
 const loaddevice = () => {
   let handlername = detectDevice();
@@ -268,7 +269,7 @@ export const useRoom = (room_id: string) => {
       resetchatstore();
       setroomstore({
         state: "error",
-        error_message: error.message,
+        error: "errors" in error ? (error as EventError) : error.message,
         active_speakers: {},
         warn_message: ""
       });
