@@ -12,7 +12,7 @@ export const handler: CallbackEvent<"create room"> = {
       password: s.string().optional().min(5),
       visibility: s.string().valid(...Object.values(RoomVisibility))
     }),
-  invoke: async ({ payload, cb, io, peer }) => {
+  invoke: async ({ payload, cb, io, peer, socket }) => {
     const room = await Room.create({
       ...payload,
       creator: peer.user
@@ -28,7 +28,7 @@ export const handler: CallbackEvent<"create room"> = {
       members_count: msr.members_count
     };
 
-    if (room.ispublic()) io.emit("create room", { room: r });
+    if (room.ispublic()) socket.broadcast.emit("create room", { room: r });
 
     cb({
       room: r

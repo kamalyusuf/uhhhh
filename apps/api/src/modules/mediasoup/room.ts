@@ -270,8 +270,11 @@ export class MediasoupRoom {
 
       const deleted = Room.delete(this.id);
 
-      if (deleted && this.doc.ispublic())
-        this.io.emit("delete room", { room_id: this.id });
+      if (deleted) {
+        if (this.doc.ispublic())
+          this.io.emit("delete room", { room_id: this.id });
+        else peer.socket.emit("delete room", { room_id: this.id });
+      }
 
       MediasoupRoom.remove(this.id);
     }

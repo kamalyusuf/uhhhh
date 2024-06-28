@@ -107,7 +107,7 @@ export const SocketHandler = () => {
 
     socket.on("create room", ({ room }) => {
       updatequery("rooms", (draft) => {
-        draft.rooms.push(room);
+        draft.rooms.unshift(room);
       });
     });
 

@@ -20,6 +20,7 @@ import { isFirefox } from "react-device-detect";
 import { Alert } from "../components/alert";
 import { api } from "../lib/api";
 import { useMounted } from "@mantine/hooks";
+import { Analytics } from "@vercel/analytics/react";
 
 if (!process.env.NEXT_PUBLIC_API_URL) throw new Error("where API_URL at?");
 
@@ -85,6 +86,9 @@ const App = ({ Component: C, pageProps }: AppProps) => {
                 <Component {...pageProps} />
               )}
             </>
+            {process.env.NODE_ENV === "production" && (
+              <Analytics mode="production" />
+            )}
             <ToastContainer
               position="bottom-center"
               autoClose={3000}

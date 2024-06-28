@@ -100,7 +100,7 @@ export class Room {
     };
   }
 
-  verifypassword(plain: string) {
+  verifypassword(plain: string): Promise<boolean> {
     if (!this.password)
       throw new BadRequestError("room is not password protected");
 

@@ -3,6 +3,6 @@ import { Room } from "./room.model";
 
 export const router = Router();
 
-router.get("/:id", async (req, res) => {
+router.get("/:id", (req, res) => {
   res.json(Room.findbyidorfail(req.params.id).json());
 });

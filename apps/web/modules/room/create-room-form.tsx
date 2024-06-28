@@ -16,6 +16,7 @@ import { micenabled } from "../../utils/mic";
 import { useForm } from "@mantine/form";
 import { useState } from "react";
 import { useSettingsStore } from "../../store/settings";
+import { useUpdateSocketQuery } from "../../hooks/use-update-socket-query";
 
 interface Props {
   oncancel: () => void;
@@ -26,6 +27,7 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
   const router = useRouter();
   const [creating, setcreating] = useState(false);
   const autojoin = useSettingsStore((state) => state.auto_join_room);
+  const update = useUpdateSocketQuery();
   const form = useForm({
     initialValues: {
       name: "",
@@ -59,7 +61,15 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
 
       oncancel();
 
-      router[autojoin ? "push" : "prefetch"](`/rooms/${room._id}`);
+      update("rooms", (draft) => {
+        draft.rooms.unshift(room);
+      });
+
+      router[
+        autojoin || room.visibility === RoomVisibility.PRIVATE
+          ? "push"
+          : "prefetch"
+      ](`/rooms/${room._id}`);
     } catch (e) {
       setcreating(false);
     }
