@@ -1,22 +1,19 @@
-import { create, type StoreApi } from "zustand";
-import { devtools, persist } from "zustand/middleware";
+import { createstore, type Set } from "../utils/store";
 
 interface SettingsStore {
   auto_join_room: boolean;
   notify_on_join: boolean;
-  set: StoreApi<Omit<SettingsStore, "set">>["setState"];
+  message_timestamp: boolean;
+  set: Set<SettingsStore>;
 }
 
-export const useSettingsStore = create<SettingsStore>()(
-  devtools(
-    persist(
-      (set) => ({
-        auto_join_room: true,
-        notify_on_join: true,
-        set
-      }),
-      { name: "SettingsStore" }
-    ),
-    { name: "Settings" }
-  )
+export const useSettingsStore = createstore<SettingsStore>(
+  "Settings",
+  (set) => ({
+    auto_join_room: true,
+    notify_on_join: true,
+    message_timestamp: true,
+    set
+  }),
+  { persist: true }
 );

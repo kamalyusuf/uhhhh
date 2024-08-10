@@ -6,23 +6,17 @@ export const parseapierror = (
 ): {
   errors: ApiError["errors"];
   map: Record<string, string>;
-  messages: string[];
   status?: ErrorStatus;
 } => {
   if (!error.response?.data.errors)
     return {
       errors: [{ message: error.message }],
-      map: {},
-      messages: [error.message],
-      status: error.status as ErrorStatus
+      map: {}
     };
 
   const errors = error.response.data.errors;
 
-  const messages = errors.map((e) => e.message);
-
   return {
-    messages,
     errors,
     status: error.response.status as ErrorStatus,
     map: errors.reduce<Record<string, string>>((map, e) => {

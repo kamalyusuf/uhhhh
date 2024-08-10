@@ -1,18 +1,15 @@
-import type { CallbackEvent } from "../types";
-import { MediasoupRoom } from "../../mediasoup/room";
+import type { CallbackEvent } from "../types.js";
+import { MediasoupRoom } from "../../mediasoup/room.js";
 
 export const handler: CallbackEvent<"leave"> = {
   on: "leave",
-  invoke: async ({ peer, socket, cb }) => {
+  invoke: async ({ peer, cb }) => {
     if (!peer.active_room_id) return cb();
 
     const rid = peer.active_room_id;
     const room = MediasoupRoom.findbyid(rid);
 
     await room.leave(peer);
-
-    socket.leave(rid);
-    socket.to(rid).emit("peer left", { peer: peer.user });
 
     cb();
   }

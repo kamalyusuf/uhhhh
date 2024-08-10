@@ -3,9 +3,10 @@ import type {
   Consumer,
   Transport,
   RtpCapabilities
-} from "mediasoup/node/lib/types";
+} from "mediasoup/node/lib/types.js";
 import type { User } from "types";
-import type { ServerToClientEvents, TypedSocket } from "../socket/types";
+import type { ServerToClientEvents, TypedSocket } from "../socket/types.js";
+import type { AppData } from "./types.js";
 
 export class Peer {
   private static peers: Map<string, Peer> = new Map();
@@ -15,7 +16,7 @@ export class Peer {
   public rtp_capabilities?: RtpCapabilities;
   public producers: Map<string, Producer>;
   public consumers: Map<string, Consumer>;
-  public transports: Map<string, Transport>;
+  public transports: Map<string, Transport<AppData>>;
   public socket: TypedSocket;
 
   private constructor({ user, socket }: { user: User; socket: TypedSocket }) {

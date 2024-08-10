@@ -1,8 +1,9 @@
-import { Room as RoomType, RoomStatus, User, RoomVisibility } from "types";
+import { RoomVisibility, RoomStatus } from "types";
+import type { Room as RoomType, User } from "types";
 import { randomUUID } from "node:crypto";
 import argon2 from "argon2";
-import { env } from "../../lib/env";
-import type { EventPayload } from "../socket/types";
+import { env } from "../../lib/env.js";
+import type { EventPayload } from "../socket/types.js";
 import { BadRequestError, NotFoundError } from "@kamalyb/errors";
 
 export class Room {

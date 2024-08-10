@@ -1,5 +1,5 @@
-import type { CallbackEvent } from "../types";
-import { NoTransportFoundError } from "../utils";
+import type { CallbackEvent } from "../types.js";
+import { NoTransportFoundError } from "../utils.js";
 
 export const handler: CallbackEvent<"connect transport"> = {
   on: "connect transport",

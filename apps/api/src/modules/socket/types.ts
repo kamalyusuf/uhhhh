@@ -5,7 +5,7 @@ import type {
   RtpParameters,
   WebRtcTransport,
   ConsumerType
-} from "mediasoup/node/lib/types";
+} from "mediasoup/node/lib/types.js";
 import type {
   ServerToClientEvents as TServerToClientEvents,
   ClientToServerEvents as TClientToServerEvents,
@@ -13,9 +13,9 @@ import type {
   SocketData
 } from "types";
 import type { Socket, Server as SocketServer } from "socket.io";
-import type { Peer } from "../mediasoup/peer";
+import type { Peer } from "../mediasoup/peer.js";
 import type { ObjectSchema } from "joi";
-import type { S } from "../../utils/schema";
+import type { S } from "../../utils/schema.js";
 
 interface OutgoingTransportOptions {
   id: WebRtcTransport["id"];

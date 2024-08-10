@@ -1,40 +1,32 @@
-import { create } from "zustand";
-import { combine, devtools } from "zustand/middleware";
 import type { User } from "types";
+import { createstore } from "../utils/store";
+import { produce } from "immer";
 
-export const usePeerStore = create(
-  devtools(
-    combine(
-      {
-        peers: {} as Record<string, User>
-      },
-      (set) => ({
-        add: (peer: User) =>
-          set((state) => {
-            return {
-              peers: {
-                ...state.peers,
-                [peer._id]: peer
-              }
-            };
-          }),
+interface PeerStore {
+  peers: Record<string, User>;
+  add: (peer: User) => void;
+  remove: (peer_id: string) => void;
+  reset: () => void;
+}
 
-        remove: (peer_id: string) =>
-          // @ts-ignore
-          set((state) => {
-            if (!state.peers[peer_id]) return state;
+export const usePeerStore = createstore<PeerStore>("Peer", (set) => ({
+  peers: {},
+  add: (peer) =>
+    set((state) => {
+      return {
+        peers: {
+          ...state.peers,
+          [peer._id]: peer
+        }
+      };
+    }),
 
-            return {
-              peers: {
-                ...state.peers,
-                [peer_id]: undefined
-              }
-            };
-          }),
-
-        reset: () => set({ peers: {} })
+  remove: (peer_id) =>
+    set((state) =>
+      produce(state, (draft) => {
+        delete draft.peers[peer_id];
       })
     ),
-    { name: "Peer" }
-  )
-);
+
+  reset: () => set({ peers: {} })
+}));

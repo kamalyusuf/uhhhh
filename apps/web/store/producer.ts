@@ -1,36 +1,37 @@
 import type { Producer } from "mediasoup-client/lib/types";
-import { create } from "zustand";
-import { combine, devtools } from "zustand/middleware";
+import { createstore, type Set } from "../utils/store";
 
-export const useProducerStore = create(
-  devtools(
-    combine(
-      {
-        producer: null as Producer | null,
-        paused: false
-      },
-      (set) => ({
-        set,
-        add: (producer: Producer) =>
-          set((state) => {
-            if (state.producer && !state.producer.closed)
-              state.producer.close();
+interface ProducerStore {
+  producer: Producer | null;
+  paused: boolean;
+  add: (producer: Producer) => void;
+  setpaused: (paused: boolean) => void;
+  remove: () => void;
+  reset: () => void;
+  set: Set<ProducerStore>;
+}
 
-            return { producer };
-          }),
+export const useProducerStore = createstore<ProducerStore>(
+  "Producer",
+  (set) => ({
+    producer: null,
+    paused: false,
+    set,
+    add: (producer) =>
+      set((state) => {
+        if (state.producer && !state.producer.closed) state.producer.close();
 
-        reset: () =>
-          set((state) => {
-            state.producer?.close();
+        return { producer };
+      }),
 
-            return { producer: null, paused: false };
-          }),
+    setpaused: (paused) => set({ paused }),
+    remove: () => set({ producer: null, paused: false }),
 
-        setpaused: (paused: boolean) => set({ paused }),
+    reset: () =>
+      set((state) => {
+        state.producer?.close();
 
-        remove: () => set({ producer: null, paused: false })
+        return { producer: null, paused: false };
       })
-    ),
-    { name: "Producer" }
-  )
+  })
 );

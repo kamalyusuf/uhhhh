@@ -1,11 +1,12 @@
 import "express-async-errors";
 import cors from "cors";
 import express from "express";
-import { env } from "./lib/env";
+import { env } from "./lib/env.js";
 import helmet from "helmet";
-import { Sentry } from "./lib/sentry";
 import { CustomError, NotFoundError } from "@kamalyb/errors";
-import { router as roomrouter } from "./modules/room/room.route";
+import { router as roomrouter } from "./modules/room/room.route.js";
+import { setupExpressErrorHandler } from "@sentry/node";
+import listroutes from "express-list-routes";
 
 export const app = express();
 
@@ -22,7 +23,7 @@ app.use((req, _res, next) => {
   next(new NotFoundError(`route: ${req.method} ${req.url} not found`));
 });
 
-Sentry.setupExpressErrorHandler(app);
+setupExpressErrorHandler(app);
 
 app.use(
   (
@@ -44,4 +45,4 @@ app.use(
   }
 );
 
-require("express-list-routes")(app);
+listroutes(app);

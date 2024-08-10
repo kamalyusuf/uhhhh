@@ -3,31 +3,14 @@
   "display": "Next.js",
   "extends": "./base.json",
   "compilerOptions": {
-    "target": "es5",
-    "lib": [
-      "dom",
-      "dom.iterable",
-      "esnext"
-    ],
+    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmit": true,
-    "incremental": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
     "jsx": "preserve",
-		"noUnusedLocals": true,
-    "noUnusedParameters": true
-  },
-  "include": [
-    "src",
-    "next-env.d.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+    "incremental": true,
+    "noEmit": true,
+    "plugins": [{ "name": "next" }],
+    "outDir": "dist"
+  }
 }

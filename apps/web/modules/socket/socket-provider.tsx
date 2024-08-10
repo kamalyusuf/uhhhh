@@ -33,8 +33,8 @@ export const SocketContext = createContext<Context>({
 
 export const useSocket = () => useContext(SocketContext);
 
-const connect = (me: User | null): Promise<TypedSocket> => {
-  return new Promise<TypedSocket>((resolve, reject) => {
+const connect = (me: User | null): Promise<TypedSocket> =>
+  new Promise<TypedSocket>((resolve, reject) => {
     const socket: TypedSocket = io(process.env.NEXT_PUBLIC_API_URL as string, {
       rememberUpgrade: true,
       path: "/ws",
@@ -53,7 +53,6 @@ const connect = (me: User | null): Promise<TypedSocket> => {
 
     socket.io.on("error", reject);
   });
-};
 
 interface Props {
   children: ReactNode;
@@ -75,7 +74,7 @@ export const SocketProvider = ({ children }: Props) => {
       })
       .catch((e) => {
         const error = e as Error;
-        console.log(error);
+        console.error(error);
 
         setstate("error");
 

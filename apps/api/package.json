@@ -1,41 +1,41 @@
 {
   "name": "api",
   "version": "0.0.0",
-  "description": "",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
-    "build": "rimraf dist && tsc",
-    "dev": "tsx watch --clear-screen=false -r dotenv/config src/index.ts",
+    "build": "rimraf dist dev && tsc",
+    "dev": "rimraf dist dev && tsup",
     "start": "node dist/index.js"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@kamalyb/errors": "^2.0.2",
-    "@sentry/node": "^8.7.0",
-    "@sentry/profiling-node": "^8.7.0",
+    "@kamalyb/errors": "^3.1.0",
+    "@sentry/node": "^8.25.0",
+    "@sentry/profiling-node": "^8.25.0",
     "argon2": "^0.40.3",
     "consola": "^3.2.3",
     "cors": "^2.8.5",
     "envalid": "^8.0.0",
     "express": "^4.19.2",
     "express-async-errors": "^3.1.1",
-    "express-list-routes": "^1.2.1",
+    "express-list-routes": "^1.2.2",
     "helmet": "^7.1.0",
-    "joi": "^17.13.1",
-    "mediasoup": "^3.14.7",
+    "joi": "^17.13.3",
+    "mediasoup": "^3.14.9",
     "socket.io": "^4.7.5",
-    "winston": "^3.13.0"
+    "winston": "^3.14.1"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^4.17.21",
+    "@types/node": "^22.2.0",
     "dotenv": "^16.4.5",
-    "rimraf": "^5.0.7",
+    "rimraf": "^6.0.1",
     "tsconfig": "*",
-    "tsx": "^4.11.0",
+    "tsup": "^8.2.4",
+    "tsx": "^4.17.0",
     "types": "*",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.4"
   }
 }

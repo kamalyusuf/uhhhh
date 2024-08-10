@@ -25,25 +25,10 @@ export const styles: MantineThemeComponents = {
       }
     })
   },
-  Menu: {
-    styles: (theme: MantineTheme) => ({
-      itemHovered: {
-        backgroundColor: theme.colors.gray[2]
-      }
-    })
-  },
   Title: {
     defaultProps: {
       order: 2,
       c: "white"
-    },
-    styles: () => ({
-      root: {
-        fontFamily: "Finlandica, sans-serif"
-      }
-    })
-  },
-  Text: {
-    defaultProps: {}
+    }
   }
 };

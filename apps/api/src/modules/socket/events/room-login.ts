@@ -1,5 +1,5 @@
-import { Room } from "../../room/room.model";
-import type { CallbackEvent, EventPayload } from "../types";
+import { Room } from "../../room/room.model.js";
+import type { CallbackEvent, EventPayload } from "../types.js";
 import { BadRequestError } from "@kamalyb/errors";
 
 export const handler: CallbackEvent<"room login"> = {

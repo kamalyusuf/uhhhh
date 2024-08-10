@@ -1,7 +1,7 @@
 import { TextInput, ActionIcon, Stack } from "@mantine/core";
 import { AiOutlineSend } from "react-icons/ai";
 import { useState, useCallback, useRef } from "react";
-import { c } from "../../../utils/constants";
+import { CHAT_TEXT_LIMIT } from "../../../utils/constants";
 import { useSocket } from "../../socket/socket-provider";
 import { toast } from "react-toastify";
 import { useHotkeys } from "@mantine/hooks";
@@ -40,7 +40,7 @@ export const ChatMessageInput = () => {
         }}
         value={content}
         onChange={(e) =>
-          setcontent(e.currentTarget.value.slice(0, c.chat.text_limit))
+          setcontent(e.currentTarget.value.slice(0, CHAT_TEXT_LIMIT))
         }
         onKeyDown={(e) => {
           switch (e.key) {
@@ -54,14 +54,14 @@ export const ChatMessageInput = () => {
       />
       <span
         style={{
+          fontSize: 12,
           color:
-            content.length >= c.chat.text_limit
-              ? c.colors.red
-              : c.colors.indigo,
-          fontSize: 12
+            content.length >= CHAT_TEXT_LIMIT
+              ? "var(--color-danger)"
+              : "var(--color-primary)"
         }}
       >
-        character count: {content.length} (max {c.chat.text_limit})
+        character count: {content.length} (max {CHAT_TEXT_LIMIT})
       </span>
     </Stack>
   );

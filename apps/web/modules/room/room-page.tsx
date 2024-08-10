@@ -15,6 +15,8 @@ import { RoomError } from "./room-error";
 import { useActiveSpeaker } from "../../hooks/use-active-speaker";
 import { Alert } from "../../components/alert";
 import { AbsoluteCenter } from "../../components/absolute-center";
+import { useRouter } from "next/router";
+import { toast } from "react-toastify";
 
 interface Props {
   room: Room;
@@ -29,6 +31,7 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
   const [ok, setok] = useState(false);
   const matches = useMediaQuery("(max-width: 768px)");
   const called = useRef(false);
+  const { replace } = useRouter();
 
   const locked = room.status === RoomStatus.PROTECTED;
 
@@ -43,6 +46,13 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
       join();
     }
   }, [state, ok, locked]);
+
+  useEffect(() => {
+    if (roomstate !== "closed") return;
+
+    toast.error("audio connection lost");
+    replace("/rooms");
+  }, [roomstate, replace]);
 
   useHotkeys([["m", () => togglemute()]]);
 
@@ -67,6 +77,8 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
   if (locked && !ok) return <RoomLogin room={room} onok={setok} />;
 
   if (roomstate === "error") return <RoomError />;
+
+  if (roomstate === "closed") return null;
 
   if (roomstate === "connected")
     return (

@@ -1,5 +1,5 @@
 import { Server } from "node:http";
-import { logger } from "../lib/logger";
+import { logger } from "../lib/logger.js";
 
 const closeserver = (server: Server) =>
   new Promise<void>((resolve, reject) => {

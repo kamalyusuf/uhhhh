@@ -1,5 +1,5 @@
 import os from "node:os";
-import { logger } from "../lib/logger";
+import { logger } from "../lib/logger.js";
 
 const ifaces = os.networkInterfaces();
 

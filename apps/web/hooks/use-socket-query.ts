@@ -6,7 +6,7 @@ import {
 import type { Fn, EventError as SocketEventError } from "types";
 import type { ServerEvent } from "../modules/socket/types";
 import {
-  UseQueryResult,
+  type UseQueryResult,
   type UseQueryOptions,
   useQuery
 } from "@tanstack/react-query";
@@ -43,6 +43,7 @@ export const useSocketQuery = <T extends ServerEvent>(
   const options = args[1] && !Array.isArray(args[1]) ? args[1] : args[2];
 
   return useQuery<SocketRequestResponse<T>, SocketEventError>({
+    ...(options ?? {}),
     queryKey: Array.isArray(key) ? key : [key],
     queryFn: () => {
       if (!socket) throw new Error("socket not initialized");
@@ -55,10 +56,11 @@ export const useSocketQuery = <T extends ServerEvent>(
         payload
       });
     },
-    ...(options ?? {}),
     enabled:
       typeof window !== "undefined" &&
       state === "connected" &&
-      (options?.enabled ?? true)
+      (typeof options?.enabled === "function"
+        ? options.enabled
+        : (options?.enabled ?? true))
   });
 };

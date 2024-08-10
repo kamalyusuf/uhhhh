@@ -2,18 +2,19 @@
   "name": "types",
   "version": "0.0.0",
   "license": "MIT",
-  "main": "./dist/index.js",
-  "types": "./src/index.ts",
-  "source": "./src/index.ts",
-  "files": [
-    "dist/**"
-  ],
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
   "scripts": {
     "dev": "tsc -w",
-    "build": "tsc"
+    "build": "rimraf dist && tsc"
   },
   "devDependencies": {
     "tsconfig": "*",
-    "typescript": "^5.4.5"
+    "typescript": "^5.5.4"
   }
 }

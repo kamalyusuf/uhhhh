@@ -1,6 +1,6 @@
-import { MediasoupRoom } from "../../mediasoup/room";
-import type { Event, EventPayload } from "../types";
-import { NotInRoomError } from "../utils";
+import { MediasoupRoom } from "../../mediasoup/room.js";
+import type { Event, EventPayload } from "../types.js";
+import { NotInRoomError } from "../utils.js";
 
 export const handler: Event<"active speaker"> = {
   on: "active speaker",

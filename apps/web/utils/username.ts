@@ -13,7 +13,17 @@ const adjectives = [
   "Only",
   "Big",
   "White",
-  "Political"
+  "Political",
+  "Red",
+  "Blue",
+  "Green",
+  "Happy",
+  "Sad",
+  "Bright",
+  "Dark",
+  "Soft",
+  "Hard",
+  "Quiet"
 ];
 
 const nouns = [
@@ -31,7 +41,17 @@ const nouns = [
   "Father",
   "Government",
   "Country",
-  "Mother"
+  "Mother",
+  "Car",
+  "Tree",
+  "Book",
+  "City",
+  "Dog",
+  "Cat",
+  "Child",
+  "Phone",
+  "Computer",
+  "Friend"
 ];
 
 export const username = (): string => {

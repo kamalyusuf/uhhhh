@@ -1,5 +1,11 @@
-import { Center, Group, Paper, Stack, Text } from "@mantine/core";
-import { c } from "../utils/constants";
+import {
+  Center,
+  Group,
+  Paper,
+  Stack,
+  Text,
+  useMantineTheme
+} from "@mantine/core";
 import { Layout } from "./layout";
 import {
   IconAlertTriangle,
@@ -11,7 +17,7 @@ import { parseapierror } from "../utils/error";
 import { AxiosError } from "axios";
 import type { ApiError, EventError } from "types";
 import { Container } from "./container";
-import { type CSSProperties } from "react";
+import type { CSSProperties } from "react";
 
 interface AlertProps {
   type: "success" | "error" | "warning" | "info";
@@ -27,9 +33,18 @@ const icons = {
   error: IconAlertCircle
 };
 
+const colors: Record<AlertProps["type"], string> = {
+  warning: "yellow",
+  success: "green",
+  info: "indigo",
+  error: "red"
+};
+
 export const Alert = ({ type, message, wrap, style }: AlertProps) => {
-  const color = c.colors[type];
+  const theme = useMantineTheme();
+
   const Icon = icons[type];
+  const color = colors[type];
 
   const component = (
     <Container my={wrap ? 20 : undefined} style={style}>
@@ -39,12 +54,18 @@ export const Alert = ({ type, message, wrap, style }: AlertProps) => {
           p={20}
           radius="md"
           style={{
-            backgroundColor: c.colors.shade,
-            borderColor: c.colors.shade
+            backgroundColor: "var(--color-shade)",
+            borderColor: "var(--color-shade)"
           }}
         >
           <Group gap={20} align="center">
-            <Icon size={28} strokeWidth={2} color={color} />
+            <Icon
+              size={24}
+              strokeWidth={2}
+              style={{
+                color: theme.colors[color]!.at(6)
+              }}
+            />
 
             {Array.isArray(message) ? (
               <Stack gap={5}>
@@ -62,7 +83,7 @@ export const Alert = ({ type, message, wrap, style }: AlertProps) => {
               <Stack gap={5}>
                 {("errors" in message
                   ? message.errors.map((m) => m.message)
-                  : parseapierror(message).messages
+                  : parseapierror(message).errors.map((error) => error.message)
                 ).map((m) => (
                   <Text key={m} fw={500} size="lg" c={color}>
                     {m}

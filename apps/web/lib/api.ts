@@ -18,11 +18,9 @@ api.interceptors.response.use(
   (error: AxiosError<ApiError>) => {
     if (typeof window === "undefined") return Promise.reject(error);
 
-    const { messages } = parseapierror(error);
+    const { errors } = parseapierror(error);
 
-    if (messages.length === 0) messages.push("something went wrong");
-
-    messages.forEach((message) => toast.error(message));
+    errors.forEach((error) => toast.error(error.message));
 
     return Promise.reject(error);
   }

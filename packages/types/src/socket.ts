@@ -1,6 +1,6 @@
-import type { Room, ChatMessage, RoomVisibility } from "./room";
-import type { User } from "./user";
-import type { ErrorProps } from "./error";
+import type { Room, ChatMessage, RoomVisibility } from "./room.js";
+import type { User } from "./user.js";
+import type { ErrorProps } from "./error.js";
 
 type Cb<T> = (t: T) => void;
 
@@ -96,6 +96,8 @@ export interface ServerToClientEvents<
   "room login": (t: { ok: boolean }) => void;
 
   "room session at": (t: { in_session_at: string }) => void;
+
+  "transport closed": (t: { room_id: string }) => void;
 }
 
 export interface ClientToServerEvents<

@@ -1,7 +1,7 @@
-import type { Event, EventPayload } from "../types";
+import type { Event, EventPayload } from "../types.js";
 import type { ChatMessage } from "types";
 import crypto from "node:crypto";
-import { NotInRoomError } from "../utils";
+import { NotInRoomError } from "../utils.js";
 
 export const handler: Event<"chat message"> = {
   on: "chat message",

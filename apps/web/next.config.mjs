@@ -1,5 +1,7 @@
 /** @type {import("next").NextConfig} */
-module.exports = {
+const config = {
   reactStrictMode: true,
   transpilePackages: ["types"]
 };
+
+export default config;

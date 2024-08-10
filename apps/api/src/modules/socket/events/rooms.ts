@@ -1,6 +1,6 @@
-import type { CallbackEvent } from "../types";
-import { MediasoupRoom } from "../../mediasoup/room";
-import { Room } from "../../room/room.model";
+import type { CallbackEvent } from "../types.js";
+import { MediasoupRoom } from "../../mediasoup/room.js";
+import { Room } from "../../room/room.model.js";
 
 export const handler: CallbackEvent<"rooms"> = {
   on: "rooms",

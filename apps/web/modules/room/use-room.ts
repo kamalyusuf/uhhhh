@@ -10,6 +10,7 @@ import { usePeerStore } from "../../store/peer";
 import { useProducerStore } from "../../store/producer";
 import { useMicStore } from "../../store/mic";
 import { useRoomChatStore } from "../../store/room-chat";
+import { reset } from "../../utils/reset";
 import type { EventError } from "types";
 
 const loaddevice = () => {
@@ -27,7 +28,6 @@ export const useRoom = (room_id: string) => {
   const producerstore = useProducerStore();
   const transportstore = useTransportStore();
   const resetchatstore = useRoomChatStore((state) => state.reset);
-  const resetroomstore = useRoomStore((state) => state.reset);
   const setroomstore = useRoomStore((state) => state.set);
   const micstore = useMicStore((state) => ({
     reset: state.reset,
@@ -52,12 +52,7 @@ export const useRoom = (room_id: string) => {
       payload: {}
     });
 
-    micstore.reset();
-    transportstore.reset();
-    producerstore.reset();
-    peerstore.reset();
-    resetroomstore();
-    resetchatstore();
+    reset();
   }, [socket]);
 
   const join = useCallback(async () => {
@@ -78,7 +73,7 @@ export const useRoom = (room_id: string) => {
           audio: micstore.id ? { deviceId: micstore.id } : true
         });
 
-        const track = stream.getAudioTracks()[0];
+        const track = stream.getAudioTracks()[0]!;
 
         track.enabled = false;
 
@@ -230,7 +225,7 @@ export const useRoom = (room_id: string) => {
         audio: micstore.id ? { deviceId: micstore.id } : true
       });
 
-      const track = stream.getAudioTracks()[0];
+      const track = stream.getAudioTracks()[0]!;
 
       micstore.setstream(stream);
       micstore.settrack(track);
@@ -271,7 +266,7 @@ export const useRoom = (room_id: string) => {
         state: "error",
         error: "errors" in error ? (error as EventError) : error.message,
         active_speakers: {},
-        warn_message: ""
+        warn_message: null
       });
     }
   }, [

@@ -8,6 +8,7 @@ import { useRoomStore } from "../../store/room";
 import { useRoomChatStore } from "../../store/room-chat";
 import { useUpdateSocketQuery } from "../../hooks/use-update-socket-query";
 import { useSettingsStore } from "../../store/settings";
+import { reset } from "../../utils/reset";
 
 export const SocketHandler = () => {
   const { socket } = useSocket();
@@ -125,6 +126,10 @@ export const SocketHandler = () => {
 
     socket.on("room session at", ({ in_session_at }) => {
       setroomstore({ in_session_at });
+    });
+
+    socket.on("transport closed", () => {
+      reset("closed");
     });
 
     return () => {

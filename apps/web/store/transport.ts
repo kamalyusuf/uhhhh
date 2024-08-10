@@ -1,44 +1,46 @@
+import { createstore } from "../utils/store";
 import type { Transport } from "mediasoup-client/lib/types";
-import { create } from "zustand";
-import { combine, devtools } from "zustand/middleware";
 
-export const useTransportStore = create(
-  devtools(
-    combine(
-      {
-        send_transport: null as Transport | null,
-        receive_transport: null as Transport | null
-      },
-      (set) => ({
-        setsendtransport: (send_transport: Transport | null) =>
-          set({ send_transport }),
+interface TransportStore {
+  send_transport: Transport | null;
+  receive_transport: Transport | null;
+  setsendtransport: (transport: Transport) => void;
+  setreceivetransport: (transport: Transport) => void;
+  resetsendtransport: () => void;
+  resetreceivetransport: () => void;
+  reset: () => void;
+}
 
-        setreceivetransport: (receive_transport: Transport | null) =>
-          set({ receive_transport }),
+export const useTransportStore = createstore<TransportStore>(
+  "Transport",
+  (set) => ({
+    send_transport: null,
+    receive_transport: null,
 
-        resetsendtransport: () =>
-          set((state) => {
-            state.send_transport?.close();
+    setsendtransport: (transport) => set({ send_transport: transport }),
 
-            return { send_transport: null };
-          }),
+    setreceivetransport: (transport) => set({ receive_transport: transport }),
 
-        resetreceivetransport: () =>
-          set((state) => {
-            state.receive_transport?.close();
+    resetsendtransport: () =>
+      set((state) => {
+        state.send_transport?.close();
 
-            return { receive_transport: null };
-          }),
+        return { send_transport: null };
+      }),
 
-        reset: () =>
-          set((state) => {
-            state.send_transport?.close();
-            state.receive_transport?.close();
+    resetreceivetransport: () =>
+      set((state) => {
+        state.receive_transport?.close();
 
-            return { send_transport: null, receive_transport: null };
-          })
+        return { receive_transport: null };
+      }),
+
+    reset: () =>
+      set((state) => {
+        state.send_transport?.close();
+        state.receive_transport?.close();
+
+        return { send_transport: null, receive_transport: null };
       })
-    ),
-    { name: "Transport" }
-  )
+  })
 );

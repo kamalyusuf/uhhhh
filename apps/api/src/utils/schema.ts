@@ -1,6 +1,7 @@
-import { ErrorProps, JoiValidationError } from "@kamalyb/errors";
+import { JoiValidationError } from "@kamalyb/errors";
+import type { ErrorProps } from "@kamalyb/errors";
 import Joi, { type SchemaMap, type ValidationOptions } from "joi";
-import { v } from "./validation";
+import { v } from "./validation.js";
 
 export type S = typeof s;
 

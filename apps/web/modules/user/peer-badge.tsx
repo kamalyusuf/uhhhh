@@ -1,6 +1,5 @@
 import { Badge, Stack, Modal, Slider, Text } from "@mantine/core";
 import type { User } from "types";
-import { c } from "../../utils/constants";
 import { Audio } from "../audio/audio";
 import { useConsumerStore } from "../../store/consumer";
 import { AiOutlineAudioMuted } from "react-icons/ai";
@@ -33,7 +32,7 @@ export const PeerBadge = ({
         color={me ? "red" : "indigo"}
         style={{
           boxShadow: speaker
-            ? `0px 0px 6px 3px ${me ? c.colors.red : c.colors.indigo}`
+            ? `0px 0px 6px 3px ${me ? "var(--color-danger)" : "var(--color-primary)"}`
             : "",
           pointerEvents: me ? "none" : undefined
         }}

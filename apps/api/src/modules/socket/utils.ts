@@ -1,6 +1,6 @@
-import { Peer } from "../mediasoup/peer";
-import { logger } from "./../../lib/logger";
-import { SocketEventError } from "./socket-event-error";
+import { Peer } from "../mediasoup/peer.js";
+import { logger } from "./../../lib/logger.js";
+import { SocketEventError } from "./socket-event-error.js";
 import {
   CustomError,
   JoiValidationError,
@@ -13,10 +13,10 @@ import type {
   ServerEvent,
   TypedIO,
   TypedSocket
-} from "./types";
+} from "./types.js";
 import type { User, Anything } from "types";
-import { v } from "../../utils/validation";
-import { s } from "../../utils/schema";
+import { v } from "../../utils/validation.js";
+import { s } from "../../utils/schema.js";
 import joi from "joi";
 
 const overload = `
@@ -192,7 +192,7 @@ export const onerror = ({
     }
   });
 
-  socket.emit(
+  return socket.emit(
     ev,
     new SocketEventError(
       {

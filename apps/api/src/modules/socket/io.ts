@@ -1,22 +1,34 @@
-import { logger } from "../../lib/logger";
+import { logger } from "../../lib/logger.js";
 import { Server } from "node:http";
 import { Server as SocketServer } from "socket.io";
-import type { ServerEvent, TypedIO, EventPayload, EventCb, E } from "./types";
+import type {
+  ServerEvent,
+  TypedIO,
+  EventPayload,
+  EventCb,
+  E
+} from "./types.js";
 import fs from "node:fs";
 import path from "node:path";
-import { Peer } from "../mediasoup/peer";
+import { Peer } from "../mediasoup/peer.js";
 import type { User } from "types";
-import { ondisconnect } from "./events/disconnect";
-import { env } from "../../lib/env";
-import { authenticate, onerror, validateargs } from "./utils";
-import { s } from "../../utils/schema";
+import { ondisconnect } from "./events/disconnect.js";
+import { env } from "../../lib/env.js";
+import { authenticate, onerror, validateargs } from "./utils.js";
+import { s } from "../../utils/schema.js";
 
 class SocketIO {
   private io?: TypedIO;
 
   public events = new Map<ServerEvent, E>();
 
-  initialize(server: Server) {
+  get connection() {
+    if (!this.io) throw new Error("io not initialized");
+
+    return this.io;
+  }
+
+  async initialize(server: Server) {
     this.io = new SocketServer(server, {
       cors: {
         origin: env.WEB_URL,
@@ -29,7 +41,7 @@ class SocketIO {
       transports: ["websocket", "polling"]
     });
 
-    this.loadevents();
+    await this.loadevents();
 
     this.io.use(authenticate);
 
@@ -75,21 +87,22 @@ class SocketIO {
     });
   }
 
-  private loadevents() {
-    const exclude: string[] = ["disconnect"];
+  private async loadevents() {
+    const dir = path.resolve(import.meta.dirname, "events");
+    const files = fs
+      .readdirSync(dir)
+      .filter((file) => !file.startsWith("disconnect"))
+      .map((file) => file.replace(/\.ts$/, ".js"));
 
-    const dir = path.resolve(__dirname, "events");
-    const files = fs.readdirSync(dir);
+    await Promise.all(
+      files.map(async (file) => {
+        const { handler }: { handler: E } = await import(`./events/${file}`);
 
-    for (const file of files) {
-      if (exclude.some((ex) => file.startsWith(ex))) continue;
+        if (!handler) throw new Error(`no handler found for ${file}`);
 
-      const handler = require(`./events/${file}`).handler as E;
-
-      if (!handler) throw new Error(`no handler found for ${file}`);
-
-      this.events.set(handler.on, handler);
-    }
+        this.events.set(handler.on, handler);
+      })
+    );
   }
 }
 

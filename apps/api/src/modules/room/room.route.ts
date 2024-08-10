@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { Room } from "./room.model";
+import { Room } from "./room.model.js";
 
 export const router = Router();
 

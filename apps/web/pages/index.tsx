@@ -25,40 +25,40 @@ const HomePage: PageComponent = () => {
         <Box>
           <Center>
             <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>
-              <Stack>
-                <TextInput
-                  placeholder="display name"
-                  label="display name"
-                  required
-                  value={name}
-                  onChange={(event) => setname(event.currentTarget.value)}
-                />
-                <Checkbox
-                  label="remember me"
-                  size="xs"
-                  checked={remember}
-                  onChange={(e) => setremember(e.currentTarget.checked)}
-                />
-                <Button
-                  onClick={() => {
-                    const n = name.trim();
+              <form
+                onSubmit={(event) => {
+                  event.preventDefault();
 
-                    if (!n) return toast.error("where yo name at?");
+                  const displayname = name.trim();
 
-                    if (n.length < 3)
-                      return toast.error(
-                        "name should be at least 3 characters"
-                      );
+                  if (displayname.length < 3)
+                    return toast.error("name should be at least 3 characters");
 
-                    if (!/^[a-z0-9]+$/i.test(n))
-                      return toast.error("no special characters allowed");
+                  if (!/^[a-z0-9]+$/i.test(displayname))
+                    return toast.error("no special characters allowed");
 
-                    load(n, remember);
-                  }}
-                >
-                  submit
-                </Button>
-              </Stack>
+                  load(displayname, remember);
+                }}
+              >
+                <Stack>
+                  <TextInput
+                    placeholder="display name"
+                    label="display name"
+                    required
+                    value={name}
+                    onChange={(event) => setname(event.currentTarget.value)}
+                  />
+                  <Checkbox
+                    label="remember me"
+                    size="xs"
+                    checked={remember}
+                    onChange={(e) => setremember(e.currentTarget.checked)}
+                  />
+                  <Button type="submit" disabled={!name.trim()}>
+                    submit
+                  </Button>
+                </Stack>
+              </form>
             </Paper>
           </Center>
         </Box>

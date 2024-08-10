@@ -1,8 +1,7 @@
 import type { EventError } from "types";
-import { create } from "zustand";
-import { combine, devtools } from "zustand/middleware";
+import { createstore, type Set } from "../utils/store";
 
-type State =
+export type RoomState =
   | "idle"
   | "connecting"
   | "connected"
@@ -11,40 +10,41 @@ type State =
   | "closed"
   | "error";
 
-export const useRoomStore = create(
-  devtools(
-    combine(
-      {
-        state: "idle" as State,
-        active_speakers: {} as Record<string, boolean>,
-        error: undefined as string | EventError | undefined,
-        warn_message: undefined as string | undefined,
-        in_session_at: undefined as string | undefined
-      },
-      (set) => ({
-        set,
-        setstate: (state: State) => set({ state }),
+interface RoomStore {
+  state: RoomState;
+  active_speakers: Record<string, boolean>;
+  error: string | EventError | null;
+  warn_message: string | null;
+  in_session_at: string | null;
+  setactivespeaker: (peer_id: string, speaking: boolean) => void;
+  reset: (state?: RoomState) => void;
+  set: Set<RoomStore>;
+}
 
-        setactivespeaker: (peer_id: string, speaking: boolean) =>
-          set((state) => {
-            return {
-              active_speakers: {
-                ...state.active_speakers,
-                [peer_id]: speaking
-              }
-            };
-          }),
+export const useRoomStore = createstore<RoomStore>("Room", (set) => ({
+  state: "idle",
+  active_speakers: {},
+  error: null,
+  warn_message: null,
+  in_session_at: null,
+  set,
 
-        reset: () =>
-          set({
-            state: "disconnected",
-            active_speakers: {},
-            error: undefined,
-            warn_message: undefined,
-            in_session_at: undefined
-          })
-      })
-    ),
-    { name: "Room" }
-  )
-);
+  setactivespeaker: (peer_id, speaking) =>
+    set((state) => {
+      return {
+        active_speakers: {
+          ...state.active_speakers,
+          [peer_id]: speaking
+        }
+      };
+    }),
+
+  reset: (state) =>
+    set({
+      state: state ?? "disconnected",
+      active_speakers: {},
+      error: null,
+      warn_message: null,
+      in_session_at: null
+    })
+}));

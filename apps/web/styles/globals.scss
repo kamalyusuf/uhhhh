@@ -7,6 +7,14 @@
   --toastify-color-success: #059669;
   --toastify-color-warning: #d97706;
   --toastify-toast-min-height: 24px;
+
+  --color-primary: #4F46E5;
+  --color-secondary: #DCE546;
+  --color-danger: #DC2626;
+  --color-success: #059669;
+  --color-warning: #D97706;
+  --color-info: #4F46E5;
+  --color-shade: #191b1e;
 }
 
 * {
@@ -33,21 +41,21 @@ body,
 }
 
 #nprogress .bar {
-  background: #4f46e5 !important;
+  background: var(--color-primary) !important;
   height: 3px !important;
 }
 
 #nprogress .peg {
-  box-shadow: 0 0 10px #4f46e5, 0 0 5px #4f46e5 !important;
+  box-shadow: 0 0 10px var(--color-primary), 0 0 5px var(--color-primary) !important;
 }
 
 #nprogress .spinner-icon {
-  border-top-color: #4f46e5 !important;
-  border-left-color: #4f46e5 !important;
+  border-top-color: var(--color-primary) !important;
+  border-left-color: var(--color-primary) !important;
 }
 
 .span.indigo {
-  color: #4f46e5;
+  color: var(--color-primary);
 }
 
 .Toastify__toast-body {
@@ -69,7 +77,7 @@ body,
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4f46e5;
+  background: var(--color-primary);
   border-radius: 12px;
 }
 
@@ -79,4 +87,16 @@ body,
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.full-width {
+  width: 100%;
+}
+
+.full-height {
+  height: 100%;
+}
+
+[data-orientation="vertical"] .mantine-ScrollArea-thumb {
+  background-color: var(--color-primary);
 }

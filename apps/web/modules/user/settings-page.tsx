@@ -10,7 +10,7 @@ import {
   Switch
 } from "@mantine/core";
 import { Layout } from "../../components/layout";
-import { PageComponent } from "../../types";
+import type { PageComponent } from "../../types";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import { REMEMBER_ME_KEY, useUserStore } from "../../store/user";
@@ -26,6 +26,7 @@ export const SettingsPage: PageComponent = () => {
   const { socket } = useSocket();
   const autojoin = useSettingsStore((state) => state.auto_join_room);
   const notifyonjoin = useSettingsStore((state) => state.notify_on_join);
+  const timestamp = useSettingsStore((state) => state.message_timestamp);
   const setsettings = useSettingsStore((state) => state.set);
   const [remember, setremember] = useState(
     localStorage.getItem(REMEMBER_ME_KEY) === "true"
@@ -95,6 +96,16 @@ export const SettingsPage: PageComponent = () => {
                   checked={notifyonjoin}
                   onChange={(event) =>
                     setsettings({ notify_on_join: event.currentTarget.checked })
+                  }
+                />
+
+                <Switch
+                  label="timestamp for messages"
+                  checked={timestamp}
+                  onChange={(event) =>
+                    setsettings({
+                      message_timestamp: event.currentTarget.checked
+                    })
                   }
                 />
 

@@ -1,4 +1,4 @@
-FROM node:alpine AS builder
+FROM node:20.6.0-alpine AS builder
 
 RUN apk add --no-cache libc6-compat
 RUN apk update
@@ -24,7 +24,7 @@ RUN \
 
 RUN \
     apt install -y curl dirmngr apt-transport-https lsb-release ca-certificates && \
-    curl -sL https://deb.nodesource.com/setup_18.x | bash - && \
+    curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
     apt-get install -y nodejs
 
 RUN npm install -g yarn

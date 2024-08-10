@@ -12,7 +12,6 @@ import {
   Modal
 } from "@mantine/core";
 import { ToggleMuteButton } from "../audio/toggle-mute-button";
-import { c } from "../../utils/constants";
 import { PeerBadge } from "../user/peer-badge";
 import { useRouter } from "next/router";
 import type { Room } from "types";
@@ -146,7 +145,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
           style={{
             width: "100%"
           }}
-          styles={{ thumb: { backgroundColor: c.colors.indigo } }}
+          styles={{ thumb: { backgroundColor: "var(--color-primary)" } }}
           type="auto"
           offsetScrollbars
         >
@@ -159,20 +158,18 @@ export const RoomPanel = ({ room, actions }: Props) => {
           >
             <PeerBadge
               peer={user}
-              speaker={activespeakers[user._id]}
+              speaker={activespeakers[user._id]!}
               me={true}
             />
 
-            {Object.values(peers)
-              .filter(Boolean)
-              .map((peer) => (
-                <PeerBadge
-                  key={peer._id}
-                  peer={peer}
-                  speaker={activespeakers[peer._id]}
-                  me={false}
-                />
-              ))}
+            {Object.values(peers).map((peer) => (
+              <PeerBadge
+                key={peer._id}
+                peer={peer}
+                speaker={!!activespeakers[peer._id]}
+                me={false}
+              />
+            ))}
           </Group>
         </ScrollArea>
       </Group>

@@ -1,10 +1,10 @@
-import type { Peer } from "./peer";
-import type { Router, Producer, Consumer } from "mediasoup/node/lib/types";
-import { workers } from "./workers";
+import type { Peer } from "./peer.js";
+import type { Router, Producer, Consumer } from "mediasoup/node/lib/types.js";
+import { workers } from "./workers.js";
 import { NotFoundError } from "@kamalyb/errors";
-import type { TypedIO } from "../socket/types";
-import { logger } from "../../lib/logger";
-import { Room } from "../room/room.model";
+import type { TypedIO } from "../socket/types.js";
+import { logger } from "../../lib/logger.js";
+import { Room } from "../room/room.model.js";
 
 export class MediasoupRoom {
   private static rooms: Map<string, MediasoupRoom> = new Map();
@@ -137,8 +137,8 @@ export class MediasoupRoom {
     );
   }
 
-  has(id: string) {
-    return this.peers.has(id);
+  has(peer_id: string) {
+    return this.peers.has(peer_id);
   }
 
   async createconsumer({
@@ -178,7 +178,8 @@ export class MediasoupRoom {
         producerId: producer.id,
         rtpCapabilities: consumerpeer.rtp_capabilities,
         paused: true,
-        enableRtx: true
+        enableRtx: true,
+        ignoreDtx: true
       });
     } catch (e) {
       const error = e as Error;
@@ -278,5 +279,8 @@ export class MediasoupRoom {
 
       MediasoupRoom.remove(this.id);
     }
+
+    peer.socket.leave(this.id);
+    peer.socket.to(this.id).emit("peer left", { peer: peer.user });
   }
 }

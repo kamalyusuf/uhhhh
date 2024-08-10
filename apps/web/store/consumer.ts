@@ -1,110 +1,105 @@
-import { create } from "zustand";
-import { combine, devtools } from "zustand/middleware";
 import type { Consumer } from "mediasoup-client/lib/types";
+import { createstore } from "../utils/store";
+import { produce } from "immer";
 
-export const useConsumerStore = create(
-  devtools(
-    combine(
-      {
-        consumers: {} as Record<
-          string,
-          { consumer: Consumer; paused: boolean; volume: number }
-        >
-      },
-      (set) => ({
-        add: ({
-          consumer,
-          paused,
-          peer_id,
-          volume = 100
-        }: {
-          peer_id: string;
-          consumer: Consumer;
-          paused: boolean;
-          volume?: number;
-        }) =>
-          set((state) => {
-            return {
-              consumers: {
-                ...state.consumers,
-                [peer_id]: {
-                  consumer,
-                  paused,
-                  volume
-                }
-              }
-            };
-          }),
+interface ConsumerStore {
+  consumers: Record<
+    string,
+    { consumer: Consumer; paused: boolean; volume: number }
+  >;
 
-        remove: (peer_id: string) =>
-          // @ts-ignore
-          set((state) => {
-            if (!state.consumers[peer_id]) return state;
+  add: (t: {
+    peer_id: string;
+    consumer: Consumer;
+    paused: boolean;
+    volume?: number;
+  }) => void;
 
-            return {
-              consumers: {
-                ...state.consumers,
-                [peer_id]: undefined
-              }
-            };
-          }),
+  remove: (peer_id: string) => void;
+  pause: (peer_id: string) => void;
+  resume: (peer_id: string) => void;
+  setvolume: (peer_id: string, volume: number) => void;
+}
 
-        pause: (peer_id: string) =>
-          set((state) => {
-            const c = state.consumers[peer_id];
+export const useConsumerStore = createstore<ConsumerStore>(
+  "Consumer",
+  (set) => ({
+    consumers: {},
 
-            if (!c) return state;
+    add: ({ consumer, paused, peer_id, volume = 100 }) =>
+      set((state) => {
+        return {
+          consumers: {
+            ...state.consumers,
+            [peer_id]: {
+              consumer,
+              paused,
+              volume
+            }
+          }
+        };
+      }),
 
-            c.consumer.pause();
+    remove: (peer_id) =>
+      set((state) =>
+        produce(state, (draft) => {
+          delete draft.consumers[peer_id];
+        })
+      ),
 
-            return {
-              consumers: {
-                ...state.consumers,
-                [peer_id]: {
-                  ...state.consumers[peer_id],
-                  paused: true
-                }
-              }
-            };
-          }),
+    pause: (peer_id) =>
+      set((state) => {
+        const c = state.consumers[peer_id];
 
-        resume: (peer_id: string) =>
-          set((state) => {
-            const c = state.consumers[peer_id];
+        if (!c) return state;
 
-            if (!c) return state;
+        c.consumer.pause();
 
-            c.consumer.resume();
+        return {
+          consumers: {
+            ...state.consumers,
+            [peer_id]: {
+              ...state.consumers[peer_id]!,
+              paused: true
+            }
+          }
+        };
+      }),
 
-            return {
-              consumers: {
-                ...state.consumers,
-                [peer_id]: {
-                  ...state.consumers[peer_id],
-                  paused: false
-                }
-              }
-            };
-          }),
+    resume: (peer_id) =>
+      set((state) => {
+        const c = state.consumers[peer_id];
 
-        setvolume: (peer_id: string, volume: number) =>
-          set((state) => {
-            const c = state.consumers[peer_id];
+        if (!c) return state;
 
-            if (!c) return state;
+        c.consumer.resume();
 
-            return {
-              consumers: {
-                ...state.consumers,
-                [peer_id]: {
-                  ...state.consumers[peer_id],
-                  volume
-                }
-              }
-            };
-          })
+        return {
+          consumers: {
+            ...state.consumers,
+            [peer_id]: {
+              ...state.consumers[peer_id]!,
+              paused: false
+            }
+          }
+        };
+      }),
+
+    setvolume: (peer_id, volume) =>
+      set((state) => {
+        const c = state.consumers[peer_id];
+
+        if (!c) return state;
+
+        return {
+          consumers: {
+            ...state.consumers,
+            [peer_id]: {
+              ...state.consumers[peer_id]!,
+              volume
+            }
+          }
+        };
       })
-    ),
-    { name: "Consumer" }
-  )
+  })
 );

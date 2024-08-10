@@ -5,14 +5,13 @@ import { styles } from "./styles";
 export const theme = createTheme({
   fontFamily: "Finlandica, sans-serif",
   primaryColor: "indigo",
-  primaryShade: 6,
+  components: styles,
+  colors,
   fontSizes: {
     xs: "14",
     sm: "16",
     md: "20",
     lg: "22",
     xl: "26"
-  },
-  components: styles,
-  colors
+  }
 });

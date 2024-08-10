@@ -1,13 +1,13 @@
-import "./instrument";
-import "./utils/ip";
+import "./instrument.js";
+import "./utils/ip.js";
 import type { Server } from "node:http";
-import { app } from "./app";
-import { workers } from "./modules/mediasoup/workers";
-import { logger } from "./lib/logger";
-import { shutdown } from "./utils/shutdown";
-import { env } from "./lib/env";
-import { io } from "./modules/socket/io";
-import { start } from "./utils/start";
+import { app } from "./app.js";
+import { workers } from "./modules/mediasoup/workers.js";
+import { logger } from "./lib/logger.js";
+import { shutdown } from "./utils/shutdown.js";
+import { env } from "./lib/env.js";
+import { io } from "./modules/socket/io.js";
+import { start } from "./utils/start.js";
 
 let server: Server;
 
@@ -16,7 +16,9 @@ const bootstrap = async () => {
 
   server = await start({ app, port: env.PORT });
 
-  io.initialize(server);
+  await io.initialize(server);
+
+  logger.info(`api on http://localhost:${env.PORT}`);
 };
 
 bootstrap().catch((e) => {

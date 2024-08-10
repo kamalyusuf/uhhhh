@@ -1,23 +1,24 @@
 {
   "name": "uhhhh",
   "private": true,
-  "workspaces": {
-    "packages": [
-      "apps/*",
-      "packages/*"
-    ]
-  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
-    "build": "turbo run build",
-    "dev": "turbo run dev --no-cache --continue",
-    "api:dev": "turbo run dev --filter=api... --no-cache",
-    "api:build": "turbo run build --filter=api",
-    "web:dev": "turbo run dev --filter=web... --no-cache",
-    "web:build": "turbo run build --filter=web"
+    "build": "turbo build",
+    "dev": "turbo dev",
+    "api:dev": "turbo dev --filter=api... --no-cache",
+    "api:build": "turbo build --filter=api",
+    "web:dev": "turbo dev --filter=web... --no-cache",
+    "web:build": "turbo build --filter=web"
   },
   "devDependencies": {
-    "prettier": "^3.2.5",
-    "turbo": "^1.13.3"
+    "prettier": "^3.3.3",
+    "turbo": "^2.0.12"
   },
-  "packageManager": "yarn@1.22.11"
+  "engines": {
+    "node": ">=20.6.0"
+  },
+  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
 }

@@ -1,6 +1,4 @@
-import type { ReactNode } from "react";
-
-export const AbsoluteCenter = ({ children }: { children: ReactNode }) => (
+export const AbsoluteCenter = ({ children }: { children: React.ReactNode }) => (
   <div
     style={{
       width: "100%",

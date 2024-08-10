@@ -1,5 +1,5 @@
-import type { CallbackEvent } from "../types";
-import { MediasoupRoom } from "../../mediasoup/room";
+import type { CallbackEvent } from "../types.js";
+import { MediasoupRoom } from "../../mediasoup/room.js";
 
 export const handler: CallbackEvent<"join"> = {
   on: "join",

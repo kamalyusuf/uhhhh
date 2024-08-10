@@ -1,6 +1,6 @@
-import { logger } from "../../../lib/logger";
-import { Peer } from "../../mediasoup/peer";
-import { MediasoupRoom } from "../../mediasoup/room";
+import { logger } from "../../../lib/logger.js";
+import { Peer } from "../../mediasoup/peer.js";
+import { MediasoupRoom } from "../../mediasoup/room.js";
 
 export const ondisconnect = (peer: Peer) => async (reason: string) => {
   logger.cinfo(`peer ${peer.user.display_name} disconnected because ${reason}`);

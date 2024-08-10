@@ -1,6 +1,6 @@
-import type { CallbackEvent, EventPayload } from "../types";
-import { MediasoupRoom } from "../../mediasoup/room";
-import { Room } from "../../room/room.model";
+import type { CallbackEvent, EventPayload } from "../types.js";
+import { MediasoupRoom } from "../../mediasoup/room.js";
+import { Room } from "../../room/room.model.js";
 import { RoomVisibility } from "types";
 
 export const handler: CallbackEvent<"create room"> = {

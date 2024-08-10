@@ -1,5 +1,5 @@
-import type { Event } from "../types";
-import { NoConsumerFoundError } from "../utils";
+import type { Event } from "../types.js";
+import { NoConsumerFoundError } from "../utils.js";
 
 export const handler: Event<"consumer consumed"> = {
   on: "consumer consumed",

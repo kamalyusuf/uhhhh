@@ -1,17 +1,52 @@
-import { create } from "zustand";
-import { combine, devtools } from "zustand/middleware";
 import { nanoid } from "nanoid";
 import type { User } from "types";
 import joi from "joi";
+import { createstore } from "../utils/store";
 
 export const REMEMBER_ME_KEY = "remember me";
+
+interface UserStore {
+  user: User | null;
+  load: (display_name: string, remember: boolean) => void;
+  update: (display_name: string, remember: boolean) => void;
+}
 
 const schema = joi.object<User, true>({
   _id: joi.string(),
   display_name: joi.string()
 });
 
-const initial = (): User | null => {
+export const useUserStore = createstore<UserStore>("User", (set) => ({
+  user: initial(),
+
+  load: (display_name, remember) =>
+    set(() => {
+      const user = { _id: nanoid(24), display_name };
+
+      if (remember) {
+        localStorage.setItem(REMEMBER_ME_KEY, JSON.stringify(true));
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+
+      return { user };
+    }),
+
+  update: (display_name, remember) =>
+    set((state) => {
+      if (!state.user) throw new Error("thou shalt not");
+
+      const user = { _id: state.user._id, display_name };
+
+      localStorage.setItem(REMEMBER_ME_KEY, JSON.stringify(remember));
+
+      if (remember) localStorage.setItem("user", JSON.stringify(user));
+      else localStorage.removeItem("user");
+
+      return { user };
+    })
+}));
+
+function initial(): User | null {
   const remember =
     typeof localStorage !== "undefined" &&
     localStorage.getItem(REMEMBER_ME_KEY);
@@ -33,42 +68,4 @@ const initial = (): User | null => {
 
     return user as User;
   } else return null;
-};
-
-export const useUserStore = create(
-  devtools(
-    combine(
-      {
-        user: initial() as User | null
-      },
-      (set) => ({
-        load: (display_name: string, remember: boolean) =>
-          set(() => {
-            const user = { _id: nanoid(24), display_name };
-
-            if (remember) {
-              localStorage.setItem(REMEMBER_ME_KEY, JSON.stringify(true));
-              localStorage.setItem("user", JSON.stringify(user));
-            }
-
-            return { user };
-          }),
-
-        update: (display_name: string, remember: boolean) =>
-          set((state) => {
-            if (!state.user) throw new Error("thou shalt not");
-
-            const user = { _id: state.user._id, display_name };
-
-            localStorage.setItem(REMEMBER_ME_KEY, JSON.stringify(remember));
-
-            if (remember) localStorage.setItem("user", JSON.stringify(user));
-            else localStorage.removeItem("user");
-
-            return { user };
-          })
-      })
-    ),
-    { name: "User" }
-  )
-);
+}

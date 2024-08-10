@@ -1,9 +1,10 @@
 import consola from "consola";
 import type { Anything, AnyObject } from "types";
 import winston, { format as f } from "winston";
-import { env } from "./env";
-import { Sentry } from "./sentry";
+import { env } from "./env.js";
 import { CustomError } from "@kamalyb/errors";
+import { captureException, captureMessage } from "@sentry/node";
+import joi from "joi";
 
 const format = f.printf(({ level, message, timestamp, stack, extra }) => {
   const log = `${timestamp} ${level}: ${message}`;
@@ -92,12 +93,9 @@ class Logger {
 
   warn(message: string, extra?: AnyObject) {
     if (env.SENTRY_DSN)
-      Sentry.withScope((scope) => {
-        scope.setLevel("warning");
-
-        if (extra) scope.setExtras(extra);
-
-        Sentry.captureMessage(message);
+      captureMessage(message, {
+        level: "warning",
+        extra
       });
 
     this.output.log({
@@ -115,13 +113,14 @@ class Logger {
     const o = (typeof a === "string" ? c : b) as Options;
     const message = typeof a === "string" ? a : a.message;
 
-    const tocapture = !(error instanceof CustomError);
+    const report = !(error instanceof CustomError || joi.isError(error));
 
-    if (tocapture && env.SENTRY_DSN)
-      Sentry.captureException(error, (scope) => {
-        scope.setExtras({ message, ...(o?.extra ?? {}) });
-
-        return scope;
+    if (report && env.SENTRY_DSN)
+      captureException(error, {
+        extra: {
+          message,
+          ...(o?.extra ?? {})
+        }
       });
 
     this.output.log({
@@ -129,7 +128,7 @@ class Logger {
       message,
       stack: typeof a === "string" ? (b as Error).stack : a.stack,
       dev: true,
-      skip: !tocapture,
+      skip: !report,
       extra: o?.extra
     });
   }
