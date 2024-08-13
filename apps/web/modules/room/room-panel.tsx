@@ -73,13 +73,16 @@ export const RoomPanel = ({ room, actions }: Props) => {
       <Group style={{ flex: 1 }}>
         <Stack gap={0} style={{ width: "100%" }}>
           {!!warning && (
-            <Notification
-              color="yellow"
-              style={{ width: "100%" }}
-              onClose={() => setroomstore({ warn_message: "" })}
-            >
-              {warning}
-            </Notification>
+            <>
+              <Notification
+                color="yellow"
+                style={{ width: "100%" }}
+                onClose={() => setroomstore({ warn_message: "" })}
+              >
+                {warning}
+              </Notification>
+              <Space h="md" />
+            </>
           )}
 
           <Group justify="right">
@@ -158,7 +161,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
           >
             <PeerBadge
               peer={user}
-              speaker={activespeakers[user._id]!}
+              speaker={!!activespeakers[user._id]}
               me={true}
             />
 

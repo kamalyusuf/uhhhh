@@ -49,7 +49,7 @@ export class Room {
 
   static async create(
     payload: EventPayload<"create room"> & { creator: User }
-  ) {
+  ): Promise<Room> {
     if (payload.password)
       payload.password = await argon2.hash(payload.password);
 
@@ -60,13 +60,13 @@ export class Room {
     return room;
   }
 
-  static find() {
+  static find(): Room[] {
     return Array.from(Room.rooms.values())
       .filter((room) => room.visibility === RoomVisibility.PUBLIC)
       .sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
   }
 
-  static findbyidorfail(id: string) {
+  static findbyidorfail(id: string): Room {
     const room = Room.rooms.get(id);
 
     if (!room) throw new NotFoundError("room not found");
@@ -74,7 +74,7 @@ export class Room {
     return room;
   }
 
-  static delete(id: string) {
+  static delete(id: string): boolean {
     const room = Room.rooms.get(id);
 
     if (!room || (env.isDevelopment && room?.name === "test")) return false;
@@ -88,6 +88,17 @@ export class Room {
     return this.password ? RoomStatus.PROTECTED : RoomStatus.UNPROTECTED;
   }
 
+  verifypassword(plain: string): Promise<boolean> {
+    if (!this.password)
+      throw new BadRequestError("room is not password protected");
+
+    return argon2.verify(this.password, plain);
+  }
+
+  ispublic(): boolean {
+    return this.visibility === RoomVisibility.PUBLIC;
+  }
+
   json(): Omit<RoomType, "members_count"> {
     return {
       _id: this._id,
@@ -99,20 +110,5 @@ export class Room {
       creator: this.creator,
       status: this.status
     };
-  }
-
-  verifypassword(plain: string): Promise<boolean> {
-    if (!this.password)
-      throw new BadRequestError("room is not password protected");
-
-    return argon2.verify(this.password, plain);
-  }
-
-  isprivate() {
-    return this.visibility === RoomVisibility.PRIVATE;
-  }
-
-  ispublic() {
-    return this.visibility === RoomVisibility.PUBLIC;
   }
 }

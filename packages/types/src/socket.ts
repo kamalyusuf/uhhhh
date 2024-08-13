@@ -115,8 +115,6 @@ export interface ClientToServerEvents<
   "create transport": (
     t: {
       room_id: string;
-      producing: boolean;
-      consuming: boolean;
       direction: Direction;
     },
     cb: Cb<{ transport_options: TransportOptions }>

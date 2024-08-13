@@ -65,7 +65,7 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
         draft.rooms.unshift(room);
       });
 
-      router[
+      await router[
         autojoin || room.visibility === RoomVisibility.PRIVATE
           ? "push"
           : "prefetch"

@@ -22,8 +22,8 @@ export const RoomLogin = ({ room, onok }: Props) => {
       <Container>
         <Paper p={"xl"} shadow={"sm"} radius="md" style={{ width: 350 }}>
           <form
-            onSubmit={async (e) => {
-              e.preventDefault();
+            onSubmit={async (event) => {
+              event.preventDefault();
 
               if (!socket) return toast.error("web server is down");
 

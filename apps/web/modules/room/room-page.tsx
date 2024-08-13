@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { Group, Loader } from "@mantine/core";
 import { useMediaQuery, useHotkeys, useMounted } from "@mantine/hooks";
 import { type Room, RoomStatus } from "types";
@@ -9,7 +9,7 @@ import { Chat } from "./chat/chat";
 import { RoomPanel } from "./room-panel";
 import type { PageComponent } from "../../types";
 import { useRoomStore } from "../../store/room";
-import { useSocket } from "../../modules/socket/socket-provider";
+import { useSocket } from "../socket/socket-provider";
 import { RoomLogin } from "./room-login";
 import { RoomError } from "./room-error";
 import { useActiveSpeaker } from "../../hooks/use-active-speaker";
@@ -87,10 +87,13 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
           <Group style={{ height: "97%" }} align="start">
             <RoomPanel
               room={room}
-              actions={{
-                leave,
-                togglemute
-              }}
+              actions={useMemo(
+                () => ({
+                  leave,
+                  togglemute
+                }),
+                [leave, togglemute]
+              )}
             />
             {!matches ? <Chat /> : null}
           </Group>

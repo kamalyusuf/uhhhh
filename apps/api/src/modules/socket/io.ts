@@ -22,12 +22,6 @@ class SocketIO {
 
   public events = new Map<ServerEvent, E>();
 
-  get connection() {
-    if (!this.io) throw new Error("io not initialized");
-
-    return this.io;
-  }
-
   async initialize(server: Server) {
     this.io = new SocketServer(server, {
       cors: {

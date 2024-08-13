@@ -9,17 +9,8 @@ import { useTransportStore } from "../../store/transport";
 import { usePeerStore } from "../../store/peer";
 import { useProducerStore } from "../../store/producer";
 import { useMicStore } from "../../store/mic";
-import { useRoomChatStore } from "../../store/room-chat";
 import { reset } from "../../utils/reset";
 import type { EventError } from "types";
-
-const loaddevice = () => {
-  let handlername = detectDevice();
-
-  if (!handlername) handlername = "Chrome74";
-
-  return new Device({ handlerName: handlername });
-};
 
 export const useRoom = (room_id: string) => {
   const { socket } = useSocket();
@@ -27,11 +18,10 @@ export const useRoom = (room_id: string) => {
   const router = useRouter();
   const producerstore = useProducerStore();
   const transportstore = useTransportStore();
-  const resetchatstore = useRoomChatStore((state) => state.reset);
   const setroomstore = useRoomStore((state) => state.set);
+  const micid = useMicStore((state) => state.id);
   const micstore = useMicStore((state) => ({
     reset: state.reset,
-    id: state.id,
     setstream: state.setstream,
     settrack: state.settrack
   }));
@@ -68,18 +58,6 @@ export const useRoom = (room_id: string) => {
       transportstore.resetreceivetransport();
 
     try {
-      {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          audio: micstore.id ? { deviceId: micstore.id } : true
-        });
-
-        const track = stream.getAudioTracks()[0]!;
-
-        track.enabled = false;
-
-        setTimeout(() => track.stop(), 120000);
-      }
-
       const { rtp_capabilities } = await request({
         socket,
         event: "rtp capabilities",
@@ -90,13 +68,23 @@ export const useRoom = (room_id: string) => {
 
       await device.load({ routerRtpCapabilities: rtp_capabilities });
 
+      {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: micid ? { deviceId: micid } : true
+        });
+
+        const track = stream.getAudioTracks()[0]!;
+
+        track.enabled = false;
+
+        setTimeout(() => track.stop(), 120000);
+      }
+
       const { transport_options: sendtransportoptions } = await request({
         socket,
         event: "create transport",
         payload: {
           room_id,
-          producing: true,
-          consuming: false,
           direction: "send"
         }
       });
@@ -163,8 +151,6 @@ export const useRoom = (room_id: string) => {
         event: "create transport",
         payload: {
           room_id,
-          producing: false,
-          consuming: true,
           direction: "receive"
         }
       });
@@ -222,7 +208,7 @@ export const useRoom = (room_id: string) => {
       }
 
       const stream = await navigator.mediaDevices.getUserMedia({
-        audio: micstore.id ? { deviceId: micstore.id } : true
+        audio: micid ? { deviceId: micid } : true
       });
 
       const track = stream.getAudioTracks()[0]!;
@@ -247,7 +233,7 @@ export const useRoom = (room_id: string) => {
 
         await leave();
 
-        router.replace("/rooms");
+        await router.replace("/rooms");
       });
 
       producerstore.add(producer);
@@ -255,18 +241,13 @@ export const useRoom = (room_id: string) => {
       setroomstore({ state: "connected" });
     } catch (e) {
       const error = e as Error;
-      console.log("[useRoom.join] error", error);
+      console.error("[useRoom.join()] error", error);
 
-      micstore.reset();
-      transportstore.reset();
-      producerstore.reset();
-      peerstore.reset();
-      resetchatstore();
-      setroomstore({
-        state: "error",
-        error: "errors" in error ? (error as EventError) : error.message,
-        active_speakers: {},
-        warn_message: null
+      reset({
+        room: {
+          state: "error",
+          error: "errors" in error ? (error as EventError) : error.message
+        }
       });
     }
   }, [
@@ -356,3 +337,11 @@ export const useRoom = (room_id: string) => {
     togglemute
   };
 };
+
+function loaddevice(): Device {
+  let handlername = detectDevice();
+
+  if (!handlername) handlername = "Chrome74";
+
+  return new Device({ handlerName: handlername });
+}

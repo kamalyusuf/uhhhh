@@ -67,7 +67,7 @@ export const RoomCard = ({ room }: Props) => {
         onClick={async () => {
           if (!(await micenabled())) return;
 
-          router.push(`/rooms/${room._id}`);
+          await router.push(`/rooms/${room._id}`);
         }}
       >
         join

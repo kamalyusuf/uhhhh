@@ -9,5 +9,6 @@ export default defineConfig({
   clean: true,
   splitting: false,
   watch: true,
-  onSuccess: "node --env-file .env dev/index.js"
+  onSuccess: "node --env-file .env dev/index.js",
+  silent: true
 });

@@ -4,18 +4,18 @@ import { useEffect, useState } from "react";
 export const useTimeElapsed = (start: string) => {
   const [duration, setduration] = useState<Duration>();
 
-  const update = (start: string) => {
-    if (!start) return;
-
-    setduration(
-      intervalToDuration({
-        start: new Date(start),
-        end: new Date()
-      })
-    );
-  };
-
   useEffect(() => {
+    const update = (start: string) => {
+      if (!start) return;
+
+      setduration(
+        intervalToDuration({
+          start: new Date(start),
+          end: new Date()
+        })
+      );
+    };
+
     update(start);
 
     const timer = setInterval(() => update(start), 1000);

@@ -129,7 +129,11 @@ export const SocketHandler = () => {
     });
 
     socket.on("transport closed", () => {
-      reset("closed");
+      reset({
+        room: {
+          state: "closed"
+        }
+      });
     });
 
     return () => {

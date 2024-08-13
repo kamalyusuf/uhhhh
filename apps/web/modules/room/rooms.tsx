@@ -2,7 +2,7 @@ import { useSocketQuery } from "../../hooks/use-socket-query";
 import { Center, Loader, ScrollArea, Stack } from "@mantine/core";
 import { RoomCard } from "./room-card";
 import { Alert } from "../../components/alert";
-import { useSocket } from "../../modules/socket/socket-provider";
+import { useSocket } from "../socket/socket-provider";
 
 export const Rooms = () => {
   const { state } = useSocket();

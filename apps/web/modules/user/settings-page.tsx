@@ -57,8 +57,8 @@ export const SettingsPage: PageComponent = () => {
             <Paper p="xl" shadow="sm" radius="md" style={{ width: 350 }}>
               <Stack gap={10}>
                 <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
+                  onSubmit={(event) => {
+                    event.preventDefault();
 
                     onsubmit();
                   }}

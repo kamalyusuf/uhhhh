@@ -42,10 +42,10 @@ export const ChatMessageInput = () => {
         onChange={(e) =>
           setcontent(e.currentTarget.value.slice(0, CHAT_TEXT_LIMIT))
         }
-        onKeyDown={(e) => {
-          switch (e.key) {
+        onKeyDown={(event) => {
+          switch (event.key) {
             case "Enter":
-              e.preventDefault();
+              event.preventDefault();
               send();
               break;
           }

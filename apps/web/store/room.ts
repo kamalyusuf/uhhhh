@@ -1,5 +1,6 @@
 import type { EventError } from "types";
 import { createstore, type Set } from "../utils/store";
+import type { State } from "../types";
 
 export type RoomState =
   | "idle"
@@ -10,14 +11,14 @@ export type RoomState =
   | "closed"
   | "error";
 
-interface RoomStore {
+export interface RoomStore {
   state: RoomState;
   active_speakers: Record<string, boolean>;
   error: string | EventError | null;
   warn_message: string | null;
   in_session_at: string | null;
   setactivespeaker: (peer_id: string, speaking: boolean) => void;
-  reset: (state?: RoomState) => void;
+  reset: (state?: State<RoomStore>) => void;
   set: Set<RoomStore>;
 }
 
@@ -41,10 +42,11 @@ export const useRoomStore = createstore<RoomStore>("Room", (set) => ({
 
   reset: (state) =>
     set({
-      state: state ?? "disconnected",
+      state: "disconnected",
       active_speakers: {},
       error: null,
       warn_message: null,
-      in_session_at: null
+      in_session_at: null,
+      ...(state ?? {})
     })
 }));
