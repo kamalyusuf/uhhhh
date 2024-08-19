@@ -27,7 +27,6 @@ export const PeerBadge = ({
     <>
       <Badge
         variant="dot"
-        p={15}
         size="lg"
         color={me ? "red" : "indigo"}
         style={{

@@ -54,7 +54,7 @@ export const RoomLogin = ({ room, onok }: Props) => {
                 placeholder="password"
                 required
                 value={password}
-                onChange={(e) => setpassword(e.currentTarget.value)}
+                onChange={(event) => setpassword(event.currentTarget.value)}
               />
 
               <Button type="submit" disabled={oking} loading={oking}>

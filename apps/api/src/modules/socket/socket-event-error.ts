@@ -6,8 +6,8 @@ export class SocketEventError implements EventError {
   errors: EventError["errors"];
 
   constructor(
-    param: string | EventError["errors"] | EventError["errors"][number],
-    event: EventError["event"]
+    event: EventError["event"],
+    param: EventError["errors"][number] | Array<EventError["errors"][number]>
   ) {
     this.errors = this.parse(param);
 
@@ -15,20 +15,8 @@ export class SocketEventError implements EventError {
   }
 
   private parse(
-    param: string | EventError["errors"] | EventError["errors"][number]
+    param: EventError["errors"][number] | Array<EventError["errors"][number]>
   ): EventError["errors"] {
-    if (typeof param === "string") return [{ message: param }];
-
-    if (Array.isArray(param))
-      return param.map((p) => {
-        if (typeof p === "string") return { message: p };
-
-        return {
-          message: p.message,
-          path: p.path
-        };
-      });
-
-    return [param];
+    return Array.isArray(param) ? param.map((p) => p) : [param];
   }
 }

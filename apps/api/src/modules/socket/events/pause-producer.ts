@@ -1,5 +1,5 @@
 import type { CallbackEvent } from "../types.js";
-import { NoProducerFoundError, NotInRoomError } from "../utils.js";
+import { NoProducerFoundError, NotInRoomError } from "../errors.js";
 
 export const handler: CallbackEvent<"pause producer"> = {
   on: "pause producer",

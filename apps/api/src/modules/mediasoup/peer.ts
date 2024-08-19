@@ -36,25 +36,23 @@ export class Peer {
     return peer;
   }
 
-  static remove(peer: Peer) {
-    if (!this.peers.has(peer.user._id)) return;
-
-    this.peers.delete(peer.user._id);
+  static remove(peer: Peer): boolean {
+    return this.peers.delete(peer.user._id);
   }
 
-  private closeproducers() {
+  private closeproducers(): void {
     for (const producer of this.producers.values()) producer.close();
 
     this.producers.clear();
   }
 
-  private closetransports() {
+  private closetransports(): void {
     for (const transport of this.transports.values()) transport.close();
 
     this.transports.clear();
   }
 
-  private closeconsumers() {
+  private closeconsumers(): void {
     for (const consumer of this.consumers.values()) consumer.close();
 
     this.consumers.clear();
@@ -63,11 +61,11 @@ export class Peer {
   notify<T extends keyof ServerToClientEvents>(
     event: T,
     data: Parameters<ServerToClientEvents[T]>
-  ) {
+  ): void {
     this.socket.emit(event, ...data);
   }
 
-  reset() {
+  reset(): void {
     this.closeproducers();
     this.closetransports();
     this.closeconsumers();

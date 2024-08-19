@@ -1,5 +1,5 @@
 import type { Express } from "express";
-import { Server } from "node:http";
+import type { Server } from "node:http";
 
 export const start = ({
   app,
@@ -15,7 +15,5 @@ export const start = ({
       resolve(server);
     });
 
-    server.on("error", (error) => {
-      reject(error);
-    });
+    server.on("error", reject);
   });

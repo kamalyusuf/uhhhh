@@ -43,7 +43,7 @@ const connect = (me: User | null): Promise<TypedSocket> =>
       transports: ["websocket", "polling"],
       withCredentials: true,
       query: {
-        user: JSON.stringify(me)
+        "@me": JSON.stringify(me)
       }
     });
 

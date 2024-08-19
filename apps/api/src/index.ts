@@ -1,5 +1,3 @@
-import "./instrument.js";
-import "./utils/ip.js";
 import type { Server } from "node:http";
 import { app } from "./app.js";
 import { workers } from "./modules/mediasoup/workers.js";
@@ -31,12 +29,12 @@ bootstrap().catch((e) => {
   process.on(signal, (error: Error) => {
     logger.error(error);
 
-    void shutdown(server, 1);
+    shutdown(server, 1);
   });
 });
 
 ["SIGINT", "SIGTERM"].forEach((signal) => {
   process.on(signal, () => {
-    void shutdown(server);
+    shutdown(server);
   });
 });

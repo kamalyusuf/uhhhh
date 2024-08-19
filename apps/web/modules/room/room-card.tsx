@@ -1,5 +1,5 @@
 import { Group, Text, ThemeIcon, Button, Stack, Title } from "@mantine/core";
-import { type Room, RoomStatus } from "types";
+import type { Room } from "types";
 import { MdRoom } from "react-icons/md";
 import { GoDotFill } from "react-icons/go";
 import { useRouter } from "next/router";
@@ -26,7 +26,7 @@ export const RoomCard = ({ room }: Props) => {
         <Stack gap={0}>
           <Group align="center">
             <Title order={3}>{room.name}</Title>
-            {room.status === RoomStatus.PROTECTED ? (
+            {room.status === "protected" ? (
               <ThemeIcon
                 variant="light"
                 style={{

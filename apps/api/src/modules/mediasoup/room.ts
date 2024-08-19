@@ -61,19 +61,7 @@ export class MediasoupRoom {
     return room;
   }
 
-  static find() {
-    const rooms = [];
-
-    for (const room of this.rooms.values())
-      rooms.push({
-        ...room.doc.json(),
-        members: room.findusers()
-      });
-
-    return rooms;
-  }
-
-  static findbyid(room_id: string) {
+  static findbyid(room_id: string): MediasoupRoom {
     const room = this.rooms.get(room_id);
 
     if (!room) throw new NotFoundError("mediasoup room not found");
@@ -81,7 +69,7 @@ export class MediasoupRoom {
     return room;
   }
 
-  static findbyidsafe(room_id: string) {
+  static findbyidsafe(room_id: string): MediasoupRoom | undefined {
     return this.rooms.get(room_id);
   }
 
@@ -93,8 +81,8 @@ export class MediasoupRoom {
     return this.create({ io, doc });
   }
 
-  static remove(room_id: string) {
-    this.rooms.delete(room_id);
+  static remove(room_id: string): boolean {
+    return this.rooms.delete(room_id);
   }
 
   get rtpcapabilities() {
@@ -105,7 +93,7 @@ export class MediasoupRoom {
     return this.peers.size;
   }
 
-  join(peer: Peer) {
+  join(peer: Peer): void {
     if (this.peers.has(peer.user._id)) throw new Error("already joined");
 
     if (!this.members_count) this.in_session_at = new Date();
@@ -125,19 +113,13 @@ export class MediasoupRoom {
       });
   }
 
-  findusers({ except }: { except?: string } = { except: undefined }) {
-    return Array.from(this.peers.values())
-      .map((peer) => peer.user)
-      .filter((peer) => peer._id !== except);
-  }
-
-  findpeers({ except }: { except?: string } = { except: undefined }) {
+  findpeers({ except }: { except?: string } = { except: undefined }): Peer[] {
     return Array.from(this.peers.values()).filter(
       (peer) => peer.user._id !== except
     );
   }
 
-  has(peer_id: string) {
+  has(peer_id: string): boolean {
     return this.peers.has(peer_id);
   }
 
@@ -149,7 +131,7 @@ export class MediasoupRoom {
     consumer_peer: Peer;
     producer_peer: Peer;
     producer: Producer;
-  }) {
+  }): Promise<void> {
     if (!consumerpeer.rtp_capabilities)
       return logger.warn(
         `[createconsumer()] ${consumerpeer.user.display_name} does not have rtp capabilities`
@@ -249,7 +231,7 @@ export class MediasoupRoom {
     // await consumer.resume(); // moved to "consumer consumed" event
   }
 
-  async leave(peer: Peer) {
+  async leave(peer: Peer): Promise<void> {
     if (
       !peer.active_room_id ||
       !this.peers.has(peer.user._id) ||

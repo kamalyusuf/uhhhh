@@ -1,7 +1,5 @@
-import { JoiValidationError } from "@kamalyb/errors";
-import type { ErrorProps } from "@kamalyb/errors";
-import Joi, { type SchemaMap, type ValidationOptions } from "joi";
-import { v } from "./validation.js";
+import joi from "joi";
+import type { Schema, SchemaMap, ValidationOptions } from "joi";
 
 export type S = typeof s;
 
@@ -19,44 +17,23 @@ const options: ValidationOptions = {
   }
 };
 
-const string = () => Joi.string().required().trim();
+const string = () => joi.string().required().trim();
 
-const number = () => Joi.number().required();
+const number = () => joi.number().required();
 
-const boolean = () => Joi.boolean().required();
+const boolean = () => joi.boolean().required();
 
-const date = () => Joi.date().required();
+const date = () => joi.date().required();
 
-const object = <T>(map: SchemaMap<T, true>) => Joi.object<T, true>(map);
+const object = <T>(map: SchemaMap<T, true>) => joi.object<T, true>(map);
 
-const anyobject = () => Joi.object();
+const anyobject = () => joi.object();
 
-const validate = (schema: Joi.Schema, value: any, o?: ValidationOptions) =>
-  schema.validate(value, { ...options, ...(o ?? {}) });
+const validate = <T>(schema: Schema<T>, value: any) =>
+  schema.validate(value, options);
 
-const validateasync = (schema: Joi.Schema, value: any, o?: ValidationOptions) =>
-  schema.validateAsync(value, { ...options, ...(o ?? {}) });
-
-const isodate: Joi.CustomValidator = (value: string, helpers) => {
-  if (!v.isisodate(value)) return helpers.error("any.invalid");
-
-  return value;
-};
-
-const parse = <T>(result: Joi.ValidationResult<T>) => {
-  if (!result.error) return { value: result.value };
-
-  const errors: ErrorProps[] = [];
-
-  for (const e of new JoiValidationError(result.error.details).serialize())
-    errors.push(e);
-
-  return { errors };
-};
-
-const custom = {
-  isodate
-};
+const validateasync = <T>(schema: Schema<T>, value: any) =>
+  schema.validateAsync(value, options);
 
 export const s = {
   options,
@@ -65,9 +42,7 @@ export const s = {
   boolean,
   date,
   object,
+  anyobject,
   validate,
-  validateasync,
-  custom,
-  parse,
-  anyobject
-};
+  validateasync
+} as const;

@@ -1,4 +1,4 @@
-import { Server } from "node:http";
+import type { Server } from "node:http";
 import { logger } from "../lib/logger.js";
 
 const closeserver = (server: Server) =>
@@ -10,7 +10,10 @@ const closeserver = (server: Server) =>
     });
   });
 
-export const shutdown = async (server?: Server, code: 0 | 1 = 0) => {
+export const shutdown = async (
+  server?: Server,
+  code: 0 | 1 = 0
+): Promise<void> => {
   try {
     if (server) await closeserver(server);
 

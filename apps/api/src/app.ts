@@ -45,4 +45,4 @@ app.use(
   }
 );
 
-listroutes(app);
+listroutes(app, { spacer: 6 });

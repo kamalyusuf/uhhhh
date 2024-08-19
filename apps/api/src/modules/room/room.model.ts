@@ -1,5 +1,4 @@
-import { RoomVisibility, RoomStatus } from "types";
-import type { Room as RoomType, User } from "types";
+import type { Room as RoomType, User, RoomVisibility, RoomStatus } from "types";
 import { randomUUID } from "node:crypto";
 import argon2 from "argon2";
 import { env } from "../../lib/env.js";
@@ -32,7 +31,7 @@ export class Room {
     password,
     creator
   }: EventPayload<"create room"> & { creator: User }) {
-    this._id = randomUUID();
+    this._id = randomUUID().replace(/-/g, "");
 
     this.name = name;
 
@@ -62,7 +61,7 @@ export class Room {
 
   static find(): Room[] {
     return Array.from(Room.rooms.values())
-      .filter((room) => room.visibility === RoomVisibility.PUBLIC)
+      .filter((room) => room.visibility === "public")
       .sort((a, b) => b.created_at.getTime() - a.created_at.getTime());
   }
 
@@ -77,7 +76,8 @@ export class Room {
   static delete(id: string): boolean {
     const room = Room.rooms.get(id);
 
-    if (!room || (env.isDevelopment && room?.name === "test")) return false;
+    if (!room || (env.isDevelopment && room?.name.toLowerCase() === "test"))
+      return false;
 
     Room.rooms.delete(room._id);
 
@@ -85,7 +85,7 @@ export class Room {
   }
 
   get status(): RoomStatus {
-    return this.password ? RoomStatus.PROTECTED : RoomStatus.UNPROTECTED;
+    return this.password ? "protected" : "unprotected";
   }
 
   verifypassword(plain: string): Promise<boolean> {
@@ -96,7 +96,7 @@ export class Room {
   }
 
   ispublic(): boolean {
-    return this.visibility === RoomVisibility.PUBLIC;
+    return this.visibility === "public";
   }
 
   json(): Omit<RoomType, "members_count"> {

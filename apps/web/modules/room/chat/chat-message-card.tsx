@@ -1,7 +1,8 @@
 import { Box, Group, Text } from "@mantine/core";
 import type { ChatMessage } from "types";
-import dayjs from "dayjs";
+import { format } from "date-fns";
 import { useSettingsStore } from "../../../store/settings";
+import { TextHyperlink } from "../../../components/text-hyperlink";
 
 interface Props {
   message: ChatMessage;
@@ -26,7 +27,7 @@ export const ChatMessageCard = ({ message }: Props) => {
       >
         {timestamp && (
           <span style={{ fontSize: 14, color: "white" }}>
-            {dayjs(message.created_at).format("HH:mm")}{" "}
+            {format(message.created_at, "HH:mm")}{" "}
           </span>
         )}
         <Text
@@ -40,9 +41,9 @@ export const ChatMessageCard = ({ message }: Props) => {
           {message.creator.display_name}
         </Text>
         <span style={{ color: "white", fontSize: 14 }}>: </span>
-        <Text c="white" style={{ display: "inline", fontSize: 14 }}>
+        <TextHyperlink c="white" style={{ display: "inline", fontSize: 14 }}>
           {message.content}
-        </Text>
+        </TextHyperlink>
       </Box>
     </Group>
   );

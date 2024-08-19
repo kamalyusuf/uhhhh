@@ -1,20 +1,19 @@
 @import url("https://fonts.googleapis.com/css2?family=Finlandica&display=swap");
 
 :root {
-  --toastify-color-info: #4f46e5;
-  --toastify-color-error: #dc2626;
-  --toastify-text-color-light: #25262b;
-  --toastify-color-success: #059669;
-  --toastify-color-warning: #d97706;
-  --toastify-toast-min-height: 24px;
-
-  --color-primary: #4F46E5;
-  --color-secondary: #DCE546;
-  --color-danger: #DC2626;
+  --color-primary: #4f46e5;
+  --color-secondary: #dce546;
+  --color-danger: #dc2626;
   --color-success: #059669;
-  --color-warning: #D97706;
-  --color-info: #4F46E5;
+  --color-warning: #d97706;
   --color-shade: #191b1e;
+
+  --toastify-color-info: var(--color-primary) !important;
+  --toastify-color-error: var(--color-danger) !important;
+  --toastify-text-color-light: #25262b !important;
+  --toastify-color-success: var(--color-success) !important;
+  --toastify-color-warning: var(--color-warning) !important;
+  --toastify-toast-min-height: 24px !important;
 }
 
 * {
@@ -46,7 +45,9 @@ body,
 }
 
 #nprogress .peg {
-  box-shadow: 0 0 10px var(--color-primary), 0 0 5px var(--color-primary) !important;
+  box-shadow:
+    0 0 10px var(--color-primary),
+    0 0 5px var(--color-primary) !important;
 }
 
 #nprogress .spinner-icon {
@@ -59,8 +60,8 @@ body,
 }
 
 .Toastify__toast-body {
-  font-size: 14px;
-  white-space: pre-line;
+  font-size: 14px !important;
+  white-space: pre-line !important;
 }
 
 ::-webkit-scrollbar {
@@ -99,4 +100,8 @@ body,
 
 [data-orientation="vertical"] .mantine-ScrollArea-thumb {
   background-color: var(--color-primary);
+}
+
+.hover-underline:hover {
+  text-decoration: underline;
 }

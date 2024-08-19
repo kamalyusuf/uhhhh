@@ -1,24 +1,16 @@
-version: "3.8"
-
 services:
   api:
     image: uhhhh-api
+    restart: unless-stopped
     ports:
       - "2300:2300/tcp"
       - "2000-2020:2000-2020/udp"
       - "2000-2020:2000-2020/tcp"
     environment:
+      - NODE_ENV=production
       - PORT=2300
       - MEDIASOUP_MIN_PORT=2000
       - MEDIASOUP_MAX_PORT=2020
       - LISTEN_IP=0.0.0.0
       - WEB_URL=http://localhost:3000
       - ANNOUNCED_IP=127.0.0.1
-  web:
-    build:
-      context: .
-      dockerfile: apps/web/Dockerfile
-    ports:
-      - "3000:3000"
-    depends_on:
-      - api

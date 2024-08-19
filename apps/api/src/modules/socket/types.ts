@@ -14,7 +14,7 @@ import type {
 } from "types";
 import type { Socket, Server as SocketServer } from "socket.io";
 import type { Peer } from "../mediasoup/peer.js";
-import type { ObjectSchema } from "joi";
+import type { SchemaMap } from "joi";
 import type { S } from "../../utils/schema.js";
 
 interface OutgoingTransportOptions {
@@ -98,7 +98,7 @@ type Invoke<T extends ServerEvent> = (
 interface BaseEvent<T extends ServerEvent> {
   on: T;
   invoke: Invoke<T>;
-  schema?: (s: S) => ObjectSchema<EventPayload<T>>;
+  input?: (s: S) => SchemaMap<EventPayload<T>, true>;
 }
 
 export interface Event<T extends ServerEvent> extends BaseEvent<T> {}

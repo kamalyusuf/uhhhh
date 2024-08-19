@@ -1,6 +1,6 @@
 import { MediasoupRoom } from "../../mediasoup/room.js";
 import type { CallbackEvent } from "../types.js";
-import { NotInRoomError, NoTransportFoundError } from "../utils.js";
+import { NotInRoomError, NoTransportFoundError } from "../errors.js";
 
 export const handler: CallbackEvent<"produce"> = {
   on: "produce",

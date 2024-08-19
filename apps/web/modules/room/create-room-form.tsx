@@ -10,10 +10,8 @@ import {
 import { useRouter } from "next/router";
 import { useSocket } from "../socket/socket-provider";
 import { request } from "../../utils/request";
-import { RoomVisibility } from "types";
 import { toast } from "react-toastify";
 import { micenabled } from "../../utils/mic";
-import { useForm } from "@mantine/form";
 import { useState } from "react";
 import { useSettingsStore } from "../../store/settings";
 import { useUpdateSocketQuery } from "../../hooks/use-update-socket-query";
@@ -28,34 +26,43 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
   const [creating, setcreating] = useState(false);
   const autojoin = useSettingsStore((state) => state.auto_join_room);
   const update = useUpdateSocketQuery();
-  const form = useForm({
-    initialValues: {
-      name: "",
-      description: "",
-      private: false,
-      require_password: false,
-      password: ""
-    }
+  const [form, setform] = useState({
+    name: "",
+    description: "",
+    private: false,
+    require_password: false,
+    password: ""
   });
 
-  const onsubmit = form.onSubmit(async (values) => {
-    if (!socket) return toast.error("web server is down");
+  const onchange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setform((prev) => ({
+      ...prev,
+      [event.target.name]: ["private", "require_password"].includes(
+        event.target.name
+      )
+        ? event.target.checked
+        : event.target.value
+    }));
+  };
 
-    if (!(await micenabled())) return;
+  const onsubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!socket) return toast.error("web server is down");
 
     setcreating(true);
 
     try {
+      if (!(await micenabled())) return;
+
       const { room } = await request({
         socket,
         event: "create room",
         payload: {
-          name: values.name,
-          description: values.description,
-          password: (values.require_password && values.password) || undefined,
-          visibility: values.private
-            ? RoomVisibility.PRIVATE
-            : RoomVisibility.PUBLIC
+          name: form.name,
+          description: form.description,
+          password: (form.require_password && form.password) || undefined,
+          visibility: form.private ? "private" : "public"
         }
       });
 
@@ -66,14 +73,13 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
       });
 
       await router[
-        autojoin || room.visibility === RoomVisibility.PRIVATE
-          ? "push"
-          : "prefetch"
+        autojoin || room.visibility === "private" ? "push" : "prefetch"
       ](`/rooms/${room._id}`);
     } catch (e) {
+    } finally {
       setcreating(false);
     }
-  });
+  };
 
   return (
     <form onSubmit={onsubmit}>
@@ -83,37 +89,42 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
 
       <Stack>
         <TextInput
+          name="name"
           label="name"
           placeholder="name"
           required
           data-autofocus
           autoComplete="off"
-          {...form.getInputProps("name")}
+          onChange={onchange}
         />
 
         <TextInput
+          name="description"
           label="description"
           placeholder="description"
           autoComplete="off"
-          {...form.getInputProps("description")}
+          onChange={onchange}
         />
 
         <Checkbox
+          name="private"
           label="private"
           size="sm"
-          {...form.getInputProps("private", { type: "checkbox" })}
+          onChange={onchange}
         />
 
         <Checkbox
+          name="require_password"
           label="password"
           size="sm"
-          {...form.getInputProps("require_password", { type: "checkbox" })}
+          onChange={onchange}
         />
 
-        {form.values.require_password && (
+        {form.require_password && (
           <PasswordInput
+            name="password"
             placeholder="password"
-            {...form.getInputProps("password")}
+            onChange={onchange}
           />
         )}
 
@@ -121,7 +132,7 @@ export const CreateRoomForm = ({ oncancel }: Props) => {
           <Button
             type="submit"
             loading={creating}
-            disabled={creating || !form.values.name.trim()}
+            disabled={creating || !form.name.trim()}
           >
             create
           </Button>

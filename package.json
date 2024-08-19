@@ -6,6 +6,7 @@
     "packages/*"
   ],
   "scripts": {
+    "start": "turbo start",
     "build": "turbo build",
     "dev": "turbo dev",
     "api:dev": "turbo dev --filter=api... --no-cache",
@@ -15,7 +16,7 @@
   },
   "devDependencies": {
     "prettier": "^3.3.3",
-    "turbo": "^2.0.12"
+    "turbo": "^2.0.14"
   },
   "engines": {
     "node": ">=20.6.0"

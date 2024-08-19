@@ -1,43 +1,39 @@
-FROM node:20.6.0-alpine AS builder
-
-RUN apk add --no-cache libc6-compat
-RUN apk update
+FROM node:20-slim AS builder
 
 WORKDIR /app
-RUN yarn global add turbo
+RUN corepack enable
 COPY . .
+RUN yarn global add turbo
 RUN turbo prune --scope=api --docker
 
-FROM ubuntu:20.04 AS installer
+FROM node:20-slim AS installer
 WORKDIR /app
 
-RUN \
-    apt-get update && \
-    apt-get install -y build-essential
+ENV MEDIASOUP_SKIP_WORKER_PREBUILT_DOWNLOAD="true"
 
-RUN \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y tzdata && \
-    apt install -y software-properties-common && \
-    add-apt-repository ppa:deadsnakes/ppa && \
-    apt update && \
-    apt install -y python3.8 python3-pip
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential \
+        python3 \
+        python3-pip
 
-RUN \
-    apt install -y curl dirmngr apt-transport-https lsb-release ca-certificates && \
-    curl -sL https://deb.nodesource.com/setup_20.x | bash - && \
-    apt-get install -y nodejs
-
-RUN npm install -g yarn
+RUN corepack enable
 
 COPY --from=builder /app/out/json/ .
 COPY --from=builder /app/out/yarn.lock ./yarn.lock
-RUN yarn install
+RUN yarn install --frozen-lockfile
 
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
 RUN yarn turbo run build --filter=api
 
-WORKDIR /app/apps/api
+FROM node:20-slim AS runner
+WORKDIR /app
 
-CMD ["node", "dist/index.js"]
+# RUN corepack enable
+
+COPY --from=installer /app/apps/api/package.json .
+COPY --from=installer /app/apps/api/dist ./dist
+COPY --from=installer /app/node_modules ./node_modules
+
+CMD ["node", "--import", "./dist/instrument.js", "./dist/index.js"]

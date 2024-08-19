@@ -1,19 +1,18 @@
-import type { Event, EventPayload } from "../types.js";
+import type { Event } from "../types.js";
 import type { ChatMessage } from "types";
-import crypto from "node:crypto";
-import { NotInRoomError } from "../utils.js";
+import { randomUUID } from "node:crypto";
+import { NotInRoomError } from "../errors.js";
 
 export const handler: Event<"chat message"> = {
   on: "chat message",
-  schema: (s) =>
-    s.object<EventPayload<"chat message">>({
-      content: s.string()
-    }),
+  input: (s) => ({
+    content: s.string().max(120)
+  }),
   invoke: ({ peer, payload, io }) => {
     if (!peer.active_room_id) throw new NotInRoomError();
 
     const message: ChatMessage = {
-      _id: crypto.randomUUID(),
+      _id: randomUUID().replace(/-/g, ""),
       content: payload.content,
       creator: peer.user,
       created_at: new Date().toISOString()

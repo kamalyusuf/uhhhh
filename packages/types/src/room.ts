@@ -19,12 +19,6 @@ export interface ChatMessage {
   created_at: string;
 }
 
-export enum RoomVisibility {
-  PRIVATE = "private",
-  PUBLIC = "public"
-}
+export type RoomVisibility = "private" | "public";
 
-export enum RoomStatus {
-  PROTECTED = "protected",
-  UNPROTECTED = "unprotected"
-}
+export type RoomStatus = "protected" | "unprotected";

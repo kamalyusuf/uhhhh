@@ -1,7 +1,7 @@
-import "@mantine/core/styles.css";
-import "react-toastify/dist/ReactToastify.css";
-import "../styles/globals.scss";
 import "nprogress/nprogress.css";
+import "react-toastify/dist/ReactToastify.css";
+import "@mantine/core/styles.css";
+import "../styles/globals.css";
 import { MantineProvider } from "@mantine/core";
 import type { AppProps } from "next/app";
 import Head from "next/head";
@@ -18,7 +18,6 @@ import { Authenticate } from "../modules/auth/authenticate";
 import { SocketHandler } from "../modules/socket/socket-handler";
 import { isFirefox } from "react-device-detect";
 import { Alert } from "../components/alert";
-import { api } from "../lib/api";
 import { useMounted } from "@mantine/hooks";
 import { Analytics } from "@vercel/analytics/react";
 
@@ -38,8 +37,6 @@ const App = ({ Component: C, pageProps }: AppProps) => {
           queries: {
             retry: false,
             staleTime: Infinity,
-            queryFn: async ({ queryKey }) =>
-              (await api.get(`${queryKey[0]}`)).data,
             refetchOnWindowFocus: false,
             refetchOnReconnect: false,
             retryOnMount: false,

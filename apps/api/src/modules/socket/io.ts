@@ -1,5 +1,5 @@
-import { logger } from "../../lib/logger.js";
-import { Server } from "node:http";
+import consola from "consola";
+import type { Server } from "node:http";
 import { Server as SocketServer } from "socket.io";
 import type {
   ServerEvent,
@@ -40,11 +40,12 @@ class SocketIO {
     this.io.use(authenticate);
 
     this.io.on("connection", (socket) => {
-      const raw = socket.handshake.query.user as string;
+      const raw = socket.handshake.query["@me"] as string;
       const user = JSON.parse(raw) as User;
       const peer = Peer.create({ user, socket });
 
-      logger.cinfo(`peer ${peer.user.display_name} connected`);
+      if (env.isDevelopment)
+        consola.info(`peer ${peer.user.display_name} connected`);
 
       socket.join(peer.user._id);
 
@@ -60,8 +61,8 @@ class SocketIO {
 
             __request__ = t.__request__;
 
-            if (event.schema && t.eventpayload)
-              await s.validateasync(event.schema(s), t.eventpayload);
+            if (event.input && t.eventpayload)
+              await s.validateasync(s.object(event.input(s)), t.eventpayload);
 
             await event.invoke({
               io: this.io,

@@ -54,7 +54,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
       async () => {
         await actions.leave();
 
-        router.replace("/rooms");
+        await router.replace("/rooms");
       }
     ],
     ["s", () => clipboard.copy(window.location)]
@@ -63,7 +63,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
   const leave = useCallback(async () => {
     await actions.leave();
 
-    router.replace("/rooms");
+    await router.replace("/rooms");
   }, [actions.leave]);
 
   if (!user) return null;
@@ -161,7 +161,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
           >
             <PeerBadge
               peer={user}
-              speaker={!!activespeakers[user._id]}
+              speaker={Boolean(activespeakers[user._id])}
               me={true}
             />
 
@@ -169,7 +169,7 @@ export const RoomPanel = ({ room, actions }: Props) => {
               <PeerBadge
                 key={peer._id}
                 peer={peer}
-                speaker={!!activespeakers[peer._id]}
+                speaker={Boolean(activespeakers[peer._id])}
                 me={false}
               />
             ))}

@@ -1,5 +1,4 @@
-import consola from "consola";
-import type { Anything, AnyObject } from "types";
+import type { AnyObject } from "types";
 import winston, { format as f } from "winston";
 import { env } from "./env.js";
 import { CustomError } from "@kamalyb/errors";
@@ -66,14 +65,6 @@ class Logger {
 
   constructor() {
     this.output = env.isProduction ? prod() : dev();
-  }
-
-  cinfo(message: Anything, ...args: unknown[]) {
-    if (env.isDevelopment)
-      consola.info(
-        typeof message === "string" ? `${message}` : message,
-        ...args
-      );
   }
 
   info(

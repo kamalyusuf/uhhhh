@@ -7,7 +7,3 @@ export interface AnyObject {
 export type Anything = any;
 
 export type Fn = (...args: Anything[]) => Anything;
-
-export interface SomeObject {
-  [key: string]: string | number | boolean | object | SomeObject;
-}

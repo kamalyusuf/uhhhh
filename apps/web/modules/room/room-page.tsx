@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Group, Loader } from "@mantine/core";
 import { useMediaQuery, useHotkeys, useMounted } from "@mantine/hooks";
-import { type Room, RoomStatus } from "types";
+import type { Room } from "types";
 import { useRoom } from "./use-room";
 import { Layout } from "../../components/layout";
 import { Container } from "../../components/container";
@@ -31,9 +31,9 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
   const [ok, setok] = useState(false);
   const matches = useMediaQuery("(max-width: 768px)");
   const called = useRef(false);
-  const { replace } = useRouter();
+  const { replace, asPath } = useRouter();
 
-  const locked = room.status === RoomStatus.PROTECTED;
+  const locked = room.status === "protected";
 
   useEffect(() => {
     if (
@@ -53,6 +53,19 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
     toast.error("audio connection lost");
     replace("/rooms");
   }, [roomstate, replace]);
+
+  useEffect(() => {
+    const listener = () => {
+      window.history.pushState(null, "", asPath);
+    };
+
+    window.history.pushState(null, "", asPath);
+    window.addEventListener("popstate", listener);
+
+    return () => {
+      window.removeEventListener("popstate", listener);
+    };
+  }, [asPath]);
 
   useHotkeys([["m", () => togglemute()]]);
 
@@ -85,16 +98,7 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
       <Layout title={room.name}>
         <Container style={{ width: "100%", height: "100%" }}>
           <Group style={{ height: "97%" }} align="start">
-            <RoomPanel
-              room={room}
-              actions={useMemo(
-                () => ({
-                  leave,
-                  togglemute
-                }),
-                [leave, togglemute]
-              )}
-            />
+            <RoomPanel room={room} actions={{ leave, togglemute }} />
             {!matches ? <Chat /> : null}
           </Group>
         </Container>

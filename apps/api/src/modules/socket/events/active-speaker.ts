@@ -1,13 +1,12 @@
 import { MediasoupRoom } from "../../mediasoup/room.js";
-import type { Event, EventPayload } from "../types.js";
-import { NotInRoomError } from "../utils.js";
+import type { Event } from "../types.js";
+import { NotInRoomError } from "../errors.js";
 
 export const handler: Event<"active speaker"> = {
   on: "active speaker",
-  schema: (s) =>
-    s.object<EventPayload<"active speaker">>({
-      speaking: s.boolean()
-    }),
+  input: (s) => ({
+    speaking: s.boolean()
+  }),
   invoke: ({ peer, payload, io }) => {
     if (!peer.active_room_id) return;
 

@@ -52,7 +52,9 @@ const HomePage: PageComponent = () => {
                     label="remember me"
                     size="xs"
                     checked={remember}
-                    onChange={(e) => setremember(e.currentTarget.checked)}
+                    onChange={(event) =>
+                      setremember(event.currentTarget.checked)
+                    }
                   />
                   <Button type="submit" disabled={!name.trim()}>
                     submit

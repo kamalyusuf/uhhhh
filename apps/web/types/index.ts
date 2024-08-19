@@ -1,7 +1,7 @@
 import type { NextPage } from "next";
 import type { Fn } from "types";
 
-export type PageComponent<T = {}> = NextPage<T> & {
+export type PageComponent<T extends object = {}> = NextPage<T> & {
   authenticate?: "yes" | "not";
 };
 

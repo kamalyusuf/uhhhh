@@ -1,4 +1,3 @@
-import { Peer } from "../mediasoup/peer.js";
 import { logger } from "./../../lib/logger.js";
 import { SocketEventError } from "./socket-event-error.js";
 import {
@@ -7,6 +6,10 @@ import {
   NotAuthorizedError,
   UnprocessableEntityError
 } from "@kamalyb/errors";
+import { s } from "../../utils/schema.js";
+import joi from "joi";
+import type { Peer } from "../mediasoup/peer.js";
+import type { User, Anything, AnyObject, Fn } from "types";
 import type {
   E,
   EventPayload,
@@ -14,10 +17,6 @@ import type {
   TypedIO,
   TypedSocket
 } from "./types.js";
-import type { User, Anything } from "types";
-import { v } from "../../utils/validation.js";
-import { s } from "../../utils/schema.js";
-import joi from "joi";
 
 const overload = `
   (data: object, cb: Function); 
@@ -35,7 +34,7 @@ export const validateargs = (
   ...args: Anything[]
 ): {
   eventpayload: EventPayload<ServerEvent> | undefined;
-  cb: Function | undefined;
+  cb: Fn | undefined;
   __request__?: boolean | undefined;
 } => {
   if (!args.length) return { eventpayload: undefined, cb: undefined };
@@ -50,7 +49,7 @@ export const validateargs = (
   let __request__ = false;
 
   const set = (p: { [key: string]: unknown }) => {
-    if (!v.isobject(p))
+    if (!isobject(p))
       throw new UnprocessableEntityError("expected data to be an object");
 
     if (typeof p.__request__ === "undefined")
@@ -58,11 +57,14 @@ export const validateargs = (
 
     if (!p.payload)
       throw new UnprocessableEntityError(
-        `expected payload to be contained in 'payload' property if __request__ (i.e the request is coming from 'socketrequest' function) is present [and must be true]`
+        `expected payload to be contained in 'payload' property if __request__ (i.e the request is coming from 'request' function) is present [and must be true]`
       );
 
-    const { error } = s.validate(
-      s.object<{}>({
+    const { error, value } = s.validate(
+      s.object<{
+        payload: AnyObject;
+        __request__: true;
+      }>({
         __request__: s.boolean().valid(true),
         payload: s.anyobject()
       }),
@@ -71,22 +73,22 @@ export const validateargs = (
 
     if (error) throw new JoiValidationError(error.details);
 
-    __request__ = true;
+    __request__ = value.__request__;
 
-    return p.payload as EventPayload<ServerEvent>;
+    return value.payload as EventPayload<ServerEvent>;
   };
 
   if (data && cb) {
-    if (!v.isobject(data))
+    if (!isobject(data))
       throw new UnprocessableEntityError("expected data to be an object");
 
-    if (!v.isfunction(cb))
+    if (!isfunction(cb))
       throw new UnprocessableEntityError("expected callback to be a function");
 
     eventpayload = set(data);
     callbackfn = cb;
   } else if (data && !cb && typeof data !== "function") {
-    if (!v.isobject(data))
+    if (!isobject(data))
       throw new UnprocessableEntityError("expected data to be an object");
 
     eventpayload = set(data);
@@ -98,7 +100,7 @@ export const validateargs = (
     eventpayload = undefined;
     callbackfn = undefined;
   } else if (!data && cb) {
-    if (!v.isfunction(cb))
+    if (!isfunction(cb))
       throw new UnprocessableEntityError("expected callback to be a function");
 
     eventpayload = undefined;
@@ -108,37 +110,13 @@ export const validateargs = (
   return { eventpayload, cb: callbackfn, __request__ };
 };
 
-export class NotInRoomError extends Error {
-  constructor() {
-    super("not in room");
-  }
-}
-
-export class NoProducerFoundError extends Error {
-  constructor() {
-    super("producer not found");
-  }
-}
-
-export class NoTransportFoundError extends Error {
-  constructor() {
-    super("transport not found");
-  }
-}
-
-export class NoConsumerFoundError extends Error {
-  constructor() {
-    super("consumer not found");
-  }
-}
-
-const schema = s.object<User>({
+const UserSchema = s.object<User>({
   _id: s.string(),
   display_name: s.string()
 });
 
 export const authenticate: Parameters<TypedIO["use"]>[0] = (socket, next) => {
-  const raw = socket.handshake.query.user;
+  const raw = socket.handshake.query["@me"];
 
   if (!raw || typeof raw !== "string") return next(new NotAuthorizedError());
 
@@ -150,7 +128,7 @@ export const authenticate: Parameters<TypedIO["use"]>[0] = (socket, next) => {
 
   if (!parsed) return next(new NotAuthorizedError());
 
-  const { error } = schema.validate(parsed);
+  const { error } = UserSchema.validate(parsed);
 
   if (error) return next(new NotAuthorizedError());
 
@@ -170,19 +148,19 @@ export const onerror = ({
   peer: Peer;
   __request__?: boolean;
 }) => {
-  const ev = __request__ ? "request error" : "error";
+  const on = __request__ ? "request error" : "error";
 
   if (error instanceof CustomError)
-    return socket.emit(ev, new SocketEventError(error.serialize(), event.on));
+    return socket.emit(on, new SocketEventError(event.on, error.serialize()));
 
-  if (error instanceof joi.ValidationError)
-    return socket.emit(ev, {
-      event: event.on,
-      errors: error.details.map((ve) => ({
-        message: ve.message,
-        path: ve.path.at(0)?.toString()
-      }))
-    });
+  if (joi.isError(error))
+    return socket.emit(
+      on,
+      new SocketEventError(
+        event.on,
+        new JoiValidationError(error.details).serialize()
+      )
+    );
 
   logger.error(error, {
     extra: {
@@ -193,12 +171,23 @@ export const onerror = ({
   });
 
   return socket.emit(
-    ev,
-    new SocketEventError(
-      {
-        message: error.message
-      },
-      event.on
-    )
+    on,
+    new SocketEventError(event.on, {
+      message: error.message
+    })
   );
 };
+
+function isobject(x: unknown) {
+  return !(
+    typeof x !== "object" ||
+    Array.isArray(x) ||
+    x instanceof Date ||
+    x === null ||
+    x instanceof Map
+  );
+}
+
+function isfunction(x: unknown) {
+  return typeof x === "function";
+}
