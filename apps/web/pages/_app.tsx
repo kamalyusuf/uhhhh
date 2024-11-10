@@ -3,23 +3,23 @@ import "react-toastify/dist/ReactToastify.css";
 import "@mantine/core/styles.css";
 import "../styles/globals.css";
 import { MantineProvider } from "@mantine/core";
-import type { AppProps } from "next/app";
 import Head from "next/head";
 import Router from "next/router";
 import NProgress from "nprogress";
 import { Slide, ToastContainer } from "react-toastify";
 import { theme } from "../mantine/theme";
 import { SocketProvider } from "../modules/socket/socket-provider";
-import type { PageComponent } from "../types";
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { Authenticate } from "../modules/auth/authenticate";
+import { Authenticated, Unauthenticated } from "../modules/auth/authenticate";
 import { SocketHandler } from "../modules/socket/socket-handler";
 import { isFirefox } from "react-device-detect";
 import { Alert } from "../components/alert";
 import { useMounted } from "@mantine/hooks";
 import { Analytics } from "@vercel/analytics/react";
+import type { AppProps } from "next/app";
+import type { PageComponent } from "../types";
 
 if (!process.env.NEXT_PUBLIC_API_URL) throw new Error("where API_URL at?");
 
@@ -72,13 +72,13 @@ const App = ({ Component: C, pageProps }: AppProps) => {
           <SocketProvider>
             <>
               {Component.authenticate === "yes" ? (
-                <Authenticate.Yes>
+                <Authenticated>
                   <Component {...pageProps} />
-                </Authenticate.Yes>
+                </Authenticated>
               ) : Component.authenticate === "not" ? (
-                <Authenticate.Not>
+                <Unauthenticated>
                   <Component {...pageProps} />
-                </Authenticate.Not>
+                </Unauthenticated>
               ) : (
                 <Component {...pageProps} />
               )}

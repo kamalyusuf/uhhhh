@@ -25,6 +25,7 @@ import { useRoomTimeElapsed } from "./use-room-time-elapsed";
 import { useCallback } from "react";
 import { IconInfoCircle } from "@tabler/icons-react";
 import { KeyboardShortcut } from "../../components/keyboard-shortcut";
+import { useShallow } from "../../hooks/use-shallow";
 
 interface Props {
   room: Room;
@@ -41,10 +42,14 @@ export const RoomPanel = ({ room, actions }: Props) => {
   const clipboard = useClipboard({ timeout: 1500 });
   const elapsed = useRoomTimeElapsed();
   const [opened, { open, close }] = useDisclosure(false);
-  const roomstate = useRoomStore((state) => state.state);
-  const warning = useRoomStore((state) => state.warn_message);
-  const activespeakers = useRoomStore((state) => state.active_speakers);
-  const setroomstore = useRoomStore((state) => state.set);
+  const { activespeakers, roomstate, setroomstore, warning } = useRoomStore(
+    useShallow((state) => ({
+      roomstate: state.state,
+      warning: state.warn_message,
+      activespeakers: state.active_speakers,
+      setroomstore: state.set
+    }))
+  );
 
   const leaving = roomstate === "disconnecting";
 

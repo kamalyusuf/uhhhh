@@ -1,3 +1,4 @@
+import joi from "joi";
 import { logger } from "./../../lib/logger.js";
 import { SocketEventError } from "./socket-event-error.js";
 import {
@@ -7,7 +8,6 @@ import {
   UnprocessableEntityError
 } from "@kamalyb/errors";
 import { s } from "../../utils/schema.js";
-import joi from "joi";
 import type { Peer } from "../mediasoup/peer.js";
 import type { User, Anything, AnyObject, Fn } from "types";
 import type {

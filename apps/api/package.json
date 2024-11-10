@@ -4,37 +4,43 @@
   "type": "module",
   "scripts": {
     "build": "rimraf dist dev && tsc",
-    "dev": "rimraf dist dev && tsup",
+    "dev": "rimraf dist dev && tsx watch --clear-screen=false -r dotenv/config src/index.ts < NUL",
+    "devt": "rimraf dist dev && tsup",
+    "typecheck": "tsc --noEmit",
     "madge": "madge src/index.ts --ts-config tsconfig.json -c --warning"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@kamalyb/errors": "^3.1.0",
-    "@sentry/node": "^8.26.0",
-    "@sentry/profiling-node": "^8.26.0",
-    "argon2": "^0.40.3",
+    "@sentry/node": "^8.37.1",
+    "@sentry/profiling-node": "^8.37.1",
+    "argon2": "^0.41.1",
     "consola": "^3.2.3",
     "cors": "^2.8.5",
     "envalid": "^8.0.0",
-    "express": "^4.19.2",
+    "express": "^4.21.1",
     "express-async-errors": "^3.1.1",
-    "express-list-routes": "^1.2.2",
-    "helmet": "^7.1.0",
+    "express-list-routes": "^1.2.4",
+    "helmet": "^8.0.0",
     "joi": "^17.13.3",
     "mediasoup": "^3.14.11",
-    "socket.io": "^4.7.5",
-    "winston": "^3.14.2"
+    "node-cron": "^3.0.3",
+    "socket.io": "^4.8.1",
+    "winston": "^3.16.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
-    "@types/express": "^4.17.21",
-    "@types/node": "^22.3.0",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.9.0",
+    "@types/node-cron": "^3.0.11",
+    "dotenv": "^16.4.5",
     "madge": "^8.0.0",
     "rimraf": "^6.0.1",
     "tsconfig": "*",
-    "tsup": "^8.2.4",
+    "tsup": "^8.3.5",
+    "tsx": "^4.19.2",
     "types": "*",
-    "typescript": "^5.5.4"
+    "typescript": "^5.6.3"
   }
 }

@@ -1,15 +1,20 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import { useMicStore } from "../../store/mic";
 import { Stack, Text, Select, Button, Loader, Center } from "@mantine/core";
 import { toast } from "react-toastify";
+import { useShallow } from "../../hooks/use-shallow";
 
 export const DefaultMicSelector = () => {
   const [mics, setmics] = useState<{ id: string; label: string }[]>([]);
   const [enumerating, setenumerating] = useState(true);
-  const micid = useMicStore((state) => state.id);
-  const setdefaultmic = useMicStore((state) => state.setdefaultmicid);
+  const { micid, setdefaultmic } = useMicStore(
+    useShallow((state) => ({
+      micid: state.id,
+      setdefaultmic: state.setdefaultmicid
+    }))
+  );
 
-  const enumerate = useCallback(() => {
+  const enumerate = () => {
     setenumerating(true);
 
     navigator.mediaDevices
@@ -27,7 +32,7 @@ export const DefaultMicSelector = () => {
         toast.error(error.message);
       })
       .finally(() => setenumerating(false));
-  }, []);
+  };
 
   useEffect(() => {
     enumerate();

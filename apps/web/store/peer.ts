@@ -1,6 +1,6 @@
-import type { User } from "types";
 import { createstore } from "../utils/store";
 import { produce } from "immer";
+import type { User } from "types";
 
 interface PeerStore {
   peers: Record<string, User>;

@@ -1,4 +1,4 @@
-import type { Server } from "node:http";
+import cron from "node-cron";
 import { app } from "./app.js";
 import { workers } from "./modules/mediasoup/workers.js";
 import { logger } from "./lib/logger.js";
@@ -6,6 +6,8 @@ import { shutdown } from "./utils/shutdown.js";
 import { env } from "./lib/env.js";
 import { io } from "./modules/socket/io.js";
 import { start } from "./utils/start.js";
+import { MediasoupRoom } from "./modules/mediasoup/room.js";
+import type { Server } from "node:http";
 
 let server: Server;
 
@@ -16,11 +18,13 @@ const bootstrap = async () => {
 
   await io.initialize(server);
 
+  cron.schedule("*/10 * * * *", MediasoupRoom.cleanup);
+
   logger.info(`api on http://localhost:${env.PORT}`);
 };
 
 bootstrap().catch((e) => {
-  logger.error(`bootstrap error. reason: ${e.message}`, e);
+  logger.error(e);
 
   process.exit(1);
 });

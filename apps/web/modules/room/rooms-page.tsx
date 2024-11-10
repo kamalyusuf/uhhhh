@@ -4,9 +4,9 @@ import { Box, Group, Divider, Space, ActionIcon, Title } from "@mantine/core";
 import { Container } from "../../components/container";
 import { MdOutlineAdd } from "react-icons/md";
 import { CreateRoomModal } from "./create-room-modal";
-import type { PageComponent } from "../../types";
 import { Rooms } from "./rooms";
 import { useMounted } from "@mantine/hooks";
+import type { PageComponent } from "../../types";
 
 export const RoomsPage: PageComponent = () => {
   const [opened, setopened] = useState(false);

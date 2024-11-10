@@ -10,6 +10,7 @@ import { usePeerStore } from "../../store/peer";
 import { useProducerStore } from "../../store/producer";
 import { useMicStore } from "../../store/mic";
 import { reset } from "../../utils/reset";
+import { useShallow } from "../../hooks/use-shallow";
 import type { EventError } from "types";
 
 export const useRoom = (room_id: string) => {
@@ -19,17 +20,21 @@ export const useRoom = (room_id: string) => {
   const producerstore = useProducerStore();
   const transportstore = useTransportStore();
   const setroomstore = useRoomStore((state) => state.set);
-  const micid = useMicStore((state) => state.id);
-  const micstore = useMicStore((state) => ({
-    reset: state.reset,
-    setstream: state.setstream,
-    settrack: state.settrack
-  }));
-  const peerstore = usePeerStore((state) => ({
-    reset: state.reset,
-    peers: state.peers,
-    add: state.add
-  }));
+  const { micid, ...micstore } = useMicStore(
+    useShallow((state) => ({
+      micid: state.id,
+      reset: state.reset,
+      setstream: state.setstream,
+      settrack: state.settrack
+    }))
+  );
+  const peerstore = usePeerStore(
+    useShallow((state) => ({
+      reset: state.reset,
+      peers: state.peers,
+      add: state.add
+    }))
+  );
 
   const leave = useCallback(async () => {
     if (!socket) return;

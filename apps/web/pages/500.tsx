@@ -1,5 +1,5 @@
-import type { CSSProperties } from "@mantine/core";
 import { rem, Title, Text, Button, Container, Group } from "@mantine/core";
+import type { CSSProperties } from "@mantine/core";
 
 const styles = {
   root: {

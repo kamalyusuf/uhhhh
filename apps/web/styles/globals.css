@@ -73,8 +73,10 @@ body,
   background: #f9fafb;
 }
 
-::-webkit-scrollbar-track:hover ::-webkit-scrollbar-thumb {
-  background: #555;
+::-webkit-scrollbar-track:hover {
+  ::-webkit-scrollbar-thumb {
+    background: #555;
+  }
 }
 
 ::-webkit-scrollbar-thumb {

@@ -1,6 +1,6 @@
 import { MediasoupRoom } from "../../mediasoup/room.js";
-import type { CallbackEvent } from "../types.js";
 import { env } from "../../../lib/env.js";
+import type { CallbackEvent } from "../types.js";
 import type { AppData } from "../../mediasoup/types.js";
 
 export const handler: CallbackEvent<"create transport"> = {

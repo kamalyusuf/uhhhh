@@ -1,7 +1,7 @@
+import { parseapierror } from "./error";
 import type { AxiosError } from "axios";
 import type { GetServerSidePropsContext, GetServerSideProps } from "next";
 import type { ApiError } from "types";
-import { parseapierror } from "./error";
 
 export const ssquery =
   <T extends { [key: string]: any }>(

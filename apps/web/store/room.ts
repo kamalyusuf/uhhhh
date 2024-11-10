@@ -1,5 +1,5 @@
-import type { EventError } from "types";
 import { createstore, type Set } from "../utils/store";
+import type { EventError } from "types";
 import type { State } from "../types";
 
 export type RoomState =

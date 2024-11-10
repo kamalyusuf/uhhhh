@@ -1,18 +1,18 @@
-import type { Peer } from "./peer.js";
-import type { Router, Producer, Consumer } from "mediasoup/node/lib/types.js";
 import { workers } from "./workers.js";
 import { NotFoundError } from "@kamalyb/errors";
-import type { TypedIO } from "../socket/types.js";
 import { logger } from "../../lib/logger.js";
 import { Room } from "../room/room.model.js";
+import type { Peer } from "./peer.js";
+import type { Router, Producer, Consumer } from "mediasoup/node/lib/types.js";
+import type { TypedIO } from "../socket/types.js";
 
 export class MediasoupRoom {
-  private static rooms: Map<string, MediasoupRoom> = new Map();
+  public static rooms: Map<string, MediasoupRoom> = new Map();
 
   public id: string;
   public peers: Map<string, Peer>;
   public router: Router;
-  public in_session_at?: Date;
+  public in_session_at?: Date | null;
 
   private io: TypedIO;
   private doc: Room;
@@ -26,7 +26,7 @@ export class MediasoupRoom {
     io: TypedIO;
     doc: Room;
   }) {
-    this.id = doc._id.toString();
+    this.id = doc._id;
     this.router = router;
     this.io = io;
     this.doc = doc;
@@ -59,6 +59,12 @@ export class MediasoupRoom {
     this.rooms.set(room.id, room);
 
     return room;
+  }
+
+  static cleanup() {
+    MediasoupRoom.rooms.forEach((room) => {
+      if (room.isstale()) room.cleanup();
+    });
   }
 
   static findbyid(room_id: string): MediasoupRoom {
@@ -250,6 +256,7 @@ export class MediasoupRoom {
 
     if (this.members_count === 0) {
       this.router.close();
+      this.in_session_at = null;
 
       const deleted = Room.delete(this.id);
 
@@ -264,5 +271,25 @@ export class MediasoupRoom {
 
     peer.socket.leave(this.id);
     peer.socket.to(this.id).emit("peer left", { peer: peer.user });
+  }
+
+  cleanup(): void {
+    const id = this.id;
+
+    this.router.close();
+    MediasoupRoom.remove(id);
+    Room.delete(id);
+
+    this.io.emit("delete room", { room_id: id });
+  }
+
+  isstale(): boolean {
+    const tenminutes = 10 * 60 * 1000;
+
+    const now = Date.now();
+
+    return (
+      now - this.doc.created_at.getTime() >= tenminutes && this.peers.size === 0
+    );
   }
 }

@@ -9,10 +9,10 @@ import {
   type ReactNode,
   useContext
 } from "react";
-import type { TypedSocket } from "./types";
 import { useUserStore } from "../../store/user";
-import type { User } from "types";
 import { toast } from "react-toastify";
+import type { TypedSocket } from "./types";
+import type { User } from "types";
 
 type SocketState =
   | "idle"

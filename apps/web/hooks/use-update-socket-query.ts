@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
-import type { ServerToClientEvents } from "../modules/socket/types";
 import { produce, type Draft } from "immer";
 import { useCallback } from "react";
+import type { ServerToClientEvents } from "../modules/socket/types";
 
 type QueryKey = keyof ServerToClientEvents;
 

@@ -11,8 +11,8 @@ import {
 import { useUserStore } from "../store/user";
 import { toast } from "react-toastify";
 import { Layout } from "../components/layout";
-import type { PageComponent } from "../types";
 import { username } from "../utils/username";
+import type { PageComponent } from "../types";
 
 const HomePage: PageComponent = () => {
   const [name, setname] = useState(username());

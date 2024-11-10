@@ -1,9 +1,9 @@
-import type { AnyObject } from "types";
+import joi from "joi";
 import winston, { format as f } from "winston";
 import { env } from "./env.js";
 import { CustomError } from "@kamalyb/errors";
 import { captureException, captureMessage } from "@sentry/node";
-import joi from "joi";
+import type { AnyObject } from "types";
 
 const format = f.printf(({ level, message, timestamp, stack, extra }) => {
   const log = `${timestamp} ${level}: ${message}`;

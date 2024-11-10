@@ -1,5 +1,5 @@
-import type { CallbackEvent } from "../types.js";
 import { NotInRoomError, NoProducerFoundError } from "../errors.js";
+import type { CallbackEvent } from "../types.js";
 
 export const handler: CallbackEvent<"resume producer"> = {
   on: "resume producer",

@@ -1,5 +1,5 @@
-import type { User } from "types";
 import { createstore } from "../utils/store";
+import type { User } from "types";
 
 export const REMEMBER_ME_KEY = "remember me";
 

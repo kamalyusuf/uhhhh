@@ -1,8 +1,8 @@
 import { Box, Group, Text } from "@mantine/core";
-import type { ChatMessage } from "types";
 import { format } from "date-fns";
 import { useSettingsStore } from "../../../store/settings";
 import { TextHyperlink } from "../../../components/text-hyperlink";
+import type { ChatMessage } from "types";
 
 interface Props {
   message: ChatMessage;

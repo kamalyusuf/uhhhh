@@ -1,5 +1,5 @@
-import { Group, Box, Button, Title } from "@mantine/core";
 import Link from "next/link";
+import { Group, Box, Button, Title } from "@mantine/core";
 import { Container } from "./container";
 import { useUserStore } from "../store/user";
 import { useRouter } from "next/router";

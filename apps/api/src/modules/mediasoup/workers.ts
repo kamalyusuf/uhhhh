@@ -1,8 +1,8 @@
 import * as mediasoup from "mediasoup";
-import type { Worker } from "mediasoup/node/lib/types.js";
 import os from "node:os";
 import { logger } from "../../lib/logger.js";
 import { env } from "../../lib/env.js";
+import type { Worker } from "mediasoup/node/lib/types.js";
 
 class MediasoupWorkers {
   private workers: Worker[];

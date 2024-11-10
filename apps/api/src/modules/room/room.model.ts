@@ -1,9 +1,9 @@
-import type { Room as RoomType, User, RoomVisibility, RoomStatus } from "types";
-import { randomUUID } from "node:crypto";
 import argon2 from "argon2";
+import { randomUUID } from "node:crypto";
 import { env } from "../../lib/env.js";
-import type { EventPayload } from "../socket/types.js";
 import { BadRequestError, NotFoundError } from "@kamalyb/errors";
+import type { Room as RoomType, User, RoomVisibility, RoomStatus } from "types";
+import type { EventPayload } from "../socket/types.js";
 
 export class Room {
   static rooms = new Map<string, Room>();
@@ -79,9 +79,7 @@ export class Room {
     if (!room || (env.isDevelopment && room?.name.toLowerCase() === "test"))
       return false;
 
-    Room.rooms.delete(room._id);
-
-    return true;
+    return Room.rooms.delete(room._id);
   }
 
   get status(): RoomStatus {

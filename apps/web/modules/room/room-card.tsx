@@ -1,10 +1,10 @@
 import { Group, Text, ThemeIcon, Button, Stack, Title } from "@mantine/core";
-import type { Room } from "types";
 import { MdRoom } from "react-icons/md";
 import { GoDotFill } from "react-icons/go";
 import { useRouter } from "next/router";
 import { IoMdLock } from "react-icons/io";
 import { micenabled } from "../../utils/mic";
+import type { Room } from "types";
 
 interface Props {
   room: Room;

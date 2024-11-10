@@ -10,7 +10,6 @@ import {
   Switch
 } from "@mantine/core";
 import { Layout } from "../../components/layout";
-import type { PageComponent } from "../../types";
 import { toast } from "react-toastify";
 import { useState } from "react";
 import { REMEMBER_ME_KEY, useUserStore } from "../../store/user";
@@ -18,16 +17,26 @@ import { useSocket } from "../socket/socket-provider";
 import { DefaultMicSelector } from "../audio/default-mic-selector";
 import { useSettingsStore } from "../../store/settings";
 import { request } from "../../utils/request";
+import { useShallow } from "../../hooks/use-shallow";
+import type { PageComponent } from "../../types";
 
 export const SettingsPage: PageComponent = () => {
-  const user = useUserStore((state) => state.user)!;
-  const update = useUserStore((state) => state.update);
+  const { update, user } = useUserStore(
+    useShallow((state) => ({
+      user: state.user!,
+      update: state.update
+    }))
+  );
   const [name, setname] = useState(user.display_name);
   const { socket } = useSocket();
-  const autojoin = useSettingsStore((state) => state.auto_join_room);
-  const notifyonjoin = useSettingsStore((state) => state.notify_on_join);
-  const timestamp = useSettingsStore((state) => state.message_timestamp);
-  const setsettings = useSettingsStore((state) => state.set);
+  const { autojoin, notifyonjoin, setsettings, timestamp } = useSettingsStore(
+    useShallow((state) => ({
+      autojoin: state.auto_join_room,
+      notifyonjoin: state.notify_on_join,
+      timestamp: state.message_timestamp,
+      setsettings: state.set
+    }))
+  );
   const [remember, setremember] = useState(
     localStorage.getItem(REMEMBER_ME_KEY) === "true"
   );

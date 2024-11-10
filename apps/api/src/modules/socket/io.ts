@@ -1,6 +1,14 @@
 import consola from "consola";
-import type { Server } from "node:http";
+import fs from "node:fs";
+import path from "node:path";
 import { Server as SocketServer } from "socket.io";
+import { Peer } from "../mediasoup/peer.js";
+import { ondisconnect } from "./events/disconnect.js";
+import { env } from "../../lib/env.js";
+import { authenticate, onerror, validateargs } from "./utils.js";
+import { s } from "../../utils/schema.js";
+import type { Server } from "node:http";
+import type { User } from "types";
 import type {
   ServerEvent,
   TypedIO,
@@ -8,14 +16,6 @@ import type {
   EventCb,
   E
 } from "./types.js";
-import fs from "node:fs";
-import path from "node:path";
-import { Peer } from "../mediasoup/peer.js";
-import type { User } from "types";
-import { ondisconnect } from "./events/disconnect.js";
-import { env } from "../../lib/env.js";
-import { authenticate, onerror, validateargs } from "./utils.js";
-import { s } from "../../utils/schema.js";
 
 class SocketIO {
   private io?: TypedIO;

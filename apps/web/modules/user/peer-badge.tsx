@@ -1,10 +1,11 @@
 import { Badge, Stack, Modal, Slider, Text } from "@mantine/core";
-import type { User } from "types";
 import { Audio } from "../audio/audio";
 import { useConsumerStore } from "../../store/consumer";
 import { AiOutlineAudioMuted } from "react-icons/ai";
 import { Icon } from "../../components/icon";
 import { useDisclosure } from "@mantine/hooks";
+import { useShallow } from "../../hooks/use-shallow";
+import type { User } from "types";
 
 export const PeerBadge = ({
   peer,
@@ -16,8 +17,12 @@ export const PeerBadge = ({
   me: boolean;
 }) => {
   const [opened, { open, close }] = useDisclosure(false);
-  const consumers = useConsumerStore((state) => state.consumers);
-  const setvolume = useConsumerStore((state) => state.setvolume);
+  const { consumers, setvolume } = useConsumerStore(
+    useShallow((state) => ({
+      consumers: state.consumers,
+      setvolume: state.setvolume
+    }))
+  );
 
   const consumer = consumers[peer._id]?.consumer;
   const paused = consumers[peer._id]?.paused;

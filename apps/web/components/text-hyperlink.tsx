@@ -5,7 +5,8 @@ interface Props extends TextProps {
   children: string;
 }
 
-const pattern = /(https?:\/\/(?:www\.)?[^\s]+|www\.[^\s]+)/g;
+const pattern =
+  /(https?:\/\/(?:www\.)?[^\s]+|www\.[^\s]+|(?:[a-zA-Z0-9-]+\.)+[a-zA-Z]{2,}(?:\/[^\s]*|\?[^\s]*)?)/g;
 
 export const TextHyperlink = ({ children, ...props }: Props) => {
   return (

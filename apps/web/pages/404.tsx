@@ -1,4 +1,3 @@
-import type { CSSProperties } from "@mantine/core";
 import {
   Button,
   Container,
@@ -10,6 +9,7 @@ import {
 } from "@mantine/core";
 import { useRouter } from "next/router";
 import type { ComponentProps } from "react";
+import type { CSSProperties } from "@mantine/core";
 
 const styles = {
   root: {

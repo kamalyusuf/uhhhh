@@ -3,15 +3,15 @@ import {
   type SocketRequestParams,
   request
 } from "../utils/request";
-import type { Fn, EventError as SocketEventError } from "types";
-import type { ServerEvent } from "../modules/socket/types";
 import {
   type UseQueryResult,
   type UseQueryOptions,
   useQuery
 } from "@tanstack/react-query";
-import type { ExtraQueryKeys } from "../types";
 import { useSocket } from "../modules/socket/socket-provider";
+import type { ExtraQueryKeys } from "../types";
+import type { Fn, EventError as SocketEventError } from "types";
+import type { ServerEvent } from "../modules/socket/types";
 
 type Params<T extends ServerEvent> = SocketRequestParams<T>[0] extends
   | undefined
