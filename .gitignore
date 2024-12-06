@@ -17,6 +17,7 @@ dist
 dev
 /.next/
 /out/
+.yarn
 
 # production
 /build

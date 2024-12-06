@@ -35,17 +35,20 @@ export const useSocket = () => useContext(SocketContext);
 
 const connect = (me: User | null): Promise<TypedSocket> =>
   new Promise<TypedSocket>((resolve, reject) => {
-    const socket: TypedSocket = io(process.env.NEXT_PUBLIC_API_URL as string, {
-      rememberUpgrade: true,
-      path: "/ws",
-      autoConnect: true,
-      reconnectionAttempts: 5,
-      transports: ["websocket", "polling"],
-      withCredentials: true,
-      query: {
-        "@me": JSON.stringify(me)
+    const socket: TypedSocket = io(
+      process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:2300",
+      {
+        rememberUpgrade: true,
+        path: "/ws",
+        autoConnect: true,
+        reconnectionAttempts: 5,
+        transports: ["websocket", "polling"],
+        withCredentials: true,
+        query: {
+          "@me": JSON.stringify(me)
+        }
       }
-    });
+    );
 
     socket.on("connect", () => resolve(socket));
 

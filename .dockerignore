@@ -15,3 +15,5 @@ run.sh
 __.github__
 .git
 .gitignore
+.yarn
+*.pem

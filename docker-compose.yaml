@@ -1,6 +1,6 @@
 services:
   api:
-    image: uhhhh-api
+    image: kamalyb/uhhhh-api
     restart: unless-stopped
     ports:
       - "2300:2300/tcp"

@@ -22,4 +22,4 @@ docker run \
         -e WEB_URL \
         -it \
         --rm \
-        uhhhh-api
+        kamalyb/uhhhh-api

@@ -111,7 +111,7 @@ export const SettingsPage: PageComponent = () => {
                 />
 
                 <Switch
-                  label="timestamp for messages"
+                  label="message timestamp"
                   checked={timestamp}
                   onChange={(event) =>
                     setsettings({

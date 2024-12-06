@@ -21,8 +21,6 @@ import { Analytics } from "@vercel/analytics/react";
 import type { AppProps } from "next/app";
 import type { PageComponent } from "../types";
 
-if (!process.env.NEXT_PUBLIC_API_URL) throw new Error("where API_URL at?");
-
 Router.events.on("routeChangeStart", NProgress.start);
 Router.events.on("routeChangeComplete", NProgress.done);
 Router.events.on("routeChangeError", NProgress.done);

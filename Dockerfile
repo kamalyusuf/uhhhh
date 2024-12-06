@@ -3,8 +3,7 @@ FROM node:20-slim AS builder
 WORKDIR /app
 RUN corepack enable
 COPY . .
-RUN yarn global add turbo
-RUN turbo prune --scope=api --docker
+RUN yarn dlx turbo prune --scope=api --docker
 
 FROM node:20-slim AS installer
 WORKDIR /app
@@ -25,7 +24,7 @@ RUN yarn install --frozen-lockfile
 COPY --from=builder /app/out/full/ .
 COPY turbo.json turbo.json
 
-RUN yarn turbo run build --filter=api
+RUN yarn api:build
 
 FROM node:20-slim AS runner
 WORKDIR /app
