@@ -10,6 +10,8 @@ import { useUpdateSocketQuery } from "../../hooks/use-update-socket-query";
 import { useSettingsStore } from "../../store/settings";
 import { reset } from "../../utils/reset";
 import { useShallow } from "../../hooks/use-shallow";
+import { useRoomChatDrawer } from "../../store/room-chat-drawer";
+import { useUserStore } from "../../store/user";
 
 export const SocketHandler = () => {
   const { socket } = useSocket();
@@ -27,7 +29,12 @@ export const SocketHandler = () => {
       removepeer: state.remove
     }))
   );
-  const notifyonjoin = useSettingsStore((state) => state.notify_on_join);
+  const { notifyonjoin, layout } = useSettingsStore(
+    useShallow((state) => ({
+      notifyonjoin: state.notify_on_join,
+      layout: state.layout
+    }))
+  );
   const receivetransport = useTransportStore(
     (state) => state.receive_transport
   );
@@ -37,6 +44,12 @@ export const SocketHandler = () => {
       remove: state.remove,
       pause: state.pause,
       resume: state.resume
+    }))
+  );
+  const chatdrawer = useRoomChatDrawer(
+    useShallow((state) => ({
+      opened: state.opened,
+      setunread: state.setunread
     }))
   );
 
@@ -124,6 +137,13 @@ export const SocketHandler = () => {
     });
 
     socket.on("chat message", ({ message }) => {
+      if (
+        !chatdrawer.opened &&
+        layout === "small" &&
+        message.creator._id !== useUserStore.getState().user?._id
+      )
+        chatdrawer.setunread(true);
+
       addchat(message);
     });
 
@@ -150,7 +170,7 @@ export const SocketHandler = () => {
     return () => {
       socket.removeAllListeners();
     };
-  }, [socket, receivetransport, notifyonjoin]);
+  }, [socket, receivetransport, notifyonjoin, layout, chatdrawer.opened]);
 
   return null;
 };

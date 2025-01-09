@@ -15,9 +15,10 @@ app.use(express.json({ limit: "500kb" }));
 app.use(helmet());
 app.use(cors({ origin: env.WEB_URL.split(",") }));
 
-app.get("/", (_req, res) => {
-  res.send({ ok: true });
-});
+app.get(
+  ["/", "/health", "/api/health"],
+  (_req, res) => void res.send({ ok: true, uptime: process.uptime() })
+);
 
 app.use("/api/rooms", roomrouter);
 
@@ -34,10 +35,8 @@ app.use(
     res: express.Response,
     _next: express.NextFunction
   ) => {
-    if (error instanceof CustomError) {
-      res.status(error.status).send({ errors: error.serialize() });
-      return;
-    }
+    if (error instanceof CustomError)
+      return void res.status(error.status).send({ errors: error.serialize() });
 
     res.status(500).send({
       errors: [

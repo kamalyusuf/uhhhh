@@ -44,3 +44,5 @@ yarn-error.log*
 .vercel
 
 ignore.txt
+*.conf
+*.yml

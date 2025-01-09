@@ -9,17 +9,18 @@ import NProgress from "nprogress";
 import { Slide, ToastContainer } from "react-toastify";
 import { theme } from "../mantine/theme";
 import { SocketProvider } from "../modules/socket/socket-provider";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { Authenticated, Unauthenticated } from "../modules/auth/authenticate";
 import { SocketHandler } from "../modules/socket/socket-handler";
 import { isFirefox } from "react-device-detect";
 import { Alert } from "../components/alert";
-import { useMounted } from "@mantine/hooks";
-import { Analytics } from "@vercel/analytics/react";
+import { useMediaQuery, useMounted } from "@mantine/hooks";
+import { Analytics } from "@vercel/analytics/next";
 import type { AppProps } from "next/app";
 import type { PageComponent } from "../types";
+import { useSettingsStore } from "../store/settings";
 
 Router.events.on("routeChangeStart", NProgress.start);
 Router.events.on("routeChangeComplete", NProgress.done);
@@ -46,6 +47,11 @@ const App = ({ Component: C, pageProps }: AppProps) => {
         }
       })
   );
+  const matches = useMediaQuery("(max-width: 768px)");
+
+  useEffect(() => {
+    useSettingsStore.setState({ layout: matches ? "small" : "large" });
+  }, [matches]);
 
   if (!mounted) return null;
 
@@ -98,7 +104,7 @@ const App = ({ Component: C, pageProps }: AppProps) => {
           </SocketProvider>
         )}
       </MantineProvider>
-      <ReactQueryDevtools initialIsOpen={false} />
+      <ReactQueryDevtools initialIsOpen={false} buttonPosition="bottom-left" />
     </QueryClientProvider>
   );
 };

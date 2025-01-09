@@ -1,6 +1,7 @@
 @import url("https://fonts.googleapis.com/css2?family=Finlandica&display=swap");
 
 :root {
+  --color-background: #101113;
   --color-primary: #4f46e5;
   --color-secondary: #dce546;
   --color-danger: #dc2626;
@@ -27,7 +28,7 @@ body,
 #__next {
   height: 100%;
   width: 100%;
-  background-color: #101113;
+  background-color: var(--color-background);
 }
 
 #__next {
@@ -97,7 +98,7 @@ body,
 }
 
 .full-height {
-  height: 100%;
+  height: 100% !important;
 }
 
 [data-orientation="vertical"] .mantine-ScrollArea-thumb {
@@ -106,4 +107,18 @@ body,
 
 .hover-underline:hover {
   text-decoration: underline;
+}
+
+.mantine-Drawer-content,
+.mantine-Drawer-header {
+  background-color: transparent;
+}
+
+.mantine-Drawer-close {
+  color: white;
+}
+
+.mantine-Drawer-close svg {
+  height: 32px !important;
+  width: 32px !important;
 }

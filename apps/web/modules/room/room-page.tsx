@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { Group, Loader } from "@mantine/core";
-import { useMediaQuery, useHotkeys, useMounted } from "@mantine/hooks";
+import { Group, Loader, ActionIcon, Drawer, Badge } from "@mantine/core";
+import { useHotkeys, useMounted } from "@mantine/hooks";
 import type { Room } from "types";
 import { useRoom } from "./use-room";
 import { Layout } from "../../components/layout";
@@ -17,6 +17,9 @@ import { Alert } from "../../components/alert";
 import { AbsoluteCenter } from "../../components/absolute-center";
 import { useRouter } from "next/router";
 import { toast } from "react-toastify";
+import { IconMessage } from "@tabler/icons-react";
+import { useRoomChatDrawer } from "../../store/room-chat-drawer";
+import { useSettingsStore } from "../../store/settings";
 
 interface Props {
   room: Room;
@@ -29,9 +32,10 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
   const roomstate = useRoomStore((state) => state.state);
   const { state } = useSocket();
   const [ok, setok] = useState(false);
-  const matches = useMediaQuery("(max-width: 768px)");
   const called = useRef(false);
   const { replace, asPath } = useRouter();
+  const layout = useSettingsStore((state) => state.layout);
+  const { opened, open, close, unread } = useRoomChatDrawer();
 
   const locked = room.status === "protected";
 
@@ -99,7 +103,48 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
         <Container style={{ width: "100%", height: "100%" }}>
           <Group style={{ height: "97%" }} align="start">
             <RoomPanel room={room} actions={{ leave, togglemute }} />
-            {!matches ? <Chat /> : null}
+            {layout === "small" ? (
+              <>
+                <ActionIcon
+                  variant="transparent"
+                  onClick={open}
+                  size={32}
+                  style={{
+                    position: "fixed",
+                    bottom: 16,
+                    right: 16
+                  }}
+                >
+                  <IconMessage
+                    stroke={1.5}
+                    style={{
+                      width: "100%",
+                      height: "100%"
+                    }}
+                  />
+                  {unread && (
+                    <Badge
+                      color="red"
+                      size="xs"
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        right: 0,
+                        borderRadius: "50%"
+                      }}
+                    >
+                      !
+                    </Badge>
+                  )}
+                </ActionIcon>
+
+                <Drawer opened={opened} onClose={close} size="100%">
+                  <Chat drawer />
+                </Drawer>
+              </>
+            ) : (
+              <Chat />
+            )}
           </Group>
         </Container>
       </Layout>

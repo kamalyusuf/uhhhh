@@ -4,10 +4,11 @@
   "type": "module",
   "scripts": {
     "build": "rimraf dist dev && tsc",
-    "dev": "rimraf dist dev && tsx watch --clear-screen=false -r dotenv/config src/index.ts",
+    "dev": "kill-port 2300 && rimraf dist dev && tsx watch --clear-screen=false -r dotenv/config src/index.ts",
     "devt": "rimraf dist dev && tsup",
     "typecheck": "tsc --noEmit",
-    "madge": "madge src/index.ts --ts-config tsconfig.json -c --warning"
+    "madge": "madge src/index.ts --ts-config tsconfig.json -c --warning",
+    "clean": "rimraf dist dev .turbo"
   },
   "author": "",
   "license": "ISC",
@@ -25,6 +26,7 @@
     "helmet": "^8.0.0",
     "joi": "^17.13.3",
     "mediasoup": "^3.14.11",
+    "nanoid": "^5.0.9",
     "node-cron": "^3.0.3",
     "socket.io": "^4.8.1",
     "winston": "^3.16.0"
@@ -32,9 +34,11 @@
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/kill-port": "^2",
     "@types/node": "^22.9.0",
     "@types/node-cron": "^3.0.11",
     "dotenv": "^16.4.5",
+    "kill-port": "^2.0.1",
     "madge": "^8.0.0",
     "tsconfig": "*",
     "tsup": "^8.3.5",

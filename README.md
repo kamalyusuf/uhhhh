@@ -94,7 +94,7 @@ bash run.sh
 You can also use the provided `docker-compose.yaml` file to run the API. Simply execute:
 
 ```bash
-docker-compose up
+docker-compose up -d
 ```
 
 #### 2. Run the Web App Locally
@@ -109,6 +109,11 @@ Start the web app:
 
 ```bash
 yarn workspace web dev
+
+# or
+
+yarn workspace web build
+yarn workspace web start # to run the production build
 ```
 
 The web app will run on `http://localhost:3000`.

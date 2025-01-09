@@ -12,7 +12,9 @@
     "api:dev": "turbo dev --filter=api... --no-cache",
     "api:build": "turbo build --filter=api",
     "web:dev": "turbo dev --filter=web... --no-cache",
-    "web:build": "turbo build --filter=web"
+    "web:build": "turbo build --filter=web",
+    "clean": "turbo clean",
+    "typecheck": "turbo typecheck"
   },
   "devDependencies": {
     "prettier": "^3.3.3",

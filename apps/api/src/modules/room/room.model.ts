@@ -1,9 +1,9 @@
 import argon2 from "argon2";
-import { randomUUID } from "node:crypto";
 import { env } from "../../lib/env.js";
 import { BadRequestError, NotFoundError } from "@kamalyb/errors";
 import type { Room as RoomType, User, RoomVisibility, RoomStatus } from "types";
 import type { EventPayload } from "../socket/types.js";
+import { nanoid } from "nanoid";
 
 export class Room {
   static rooms = new Map<string, Room>();
@@ -31,7 +31,7 @@ export class Room {
     password,
     creator
   }: EventPayload<"create room"> & { creator: User }) {
-    this._id = randomUUID().replace(/-/g, "");
+    this._id = nanoid(6);
 
     this.name = name;
 
