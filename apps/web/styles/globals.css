@@ -111,7 +111,7 @@ body,
 
 .mantine-Drawer-content,
 .mantine-Drawer-header {
-  background-color: transparent;
+  background-color: transparent !important;
 }
 
 .mantine-Drawer-close {
@@ -121,4 +121,8 @@ body,
 .mantine-Drawer-close svg {
   height: 32px !important;
   width: 32px !important;
+}
+
+.debug {
+  border: 1px solid red;
 }

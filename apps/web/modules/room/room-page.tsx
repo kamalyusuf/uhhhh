@@ -28,7 +28,7 @@ interface Props {
 export const RoomPage: PageComponent<Props> = ({ room }) => {
   useActiveSpeaker();
   const mounted = useMounted();
-  const { join, leave, togglemute } = useRoom(room._id);
+  const { join, leave, togglemute } = useRoom(room);
   const roomstate = useRoomStore((state) => state.state);
   const { state } = useSocket();
   const [ok, setok] = useState(false);
@@ -138,7 +138,19 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
                   )}
                 </ActionIcon>
 
-                <Drawer opened={opened} onClose={close} size="100%">
+                <Drawer
+                  opened={opened}
+                  onClose={close}
+                  size="100%"
+                  styles={{
+                    content: {
+                      backgroundColor: "transparent"
+                    },
+                    header: {
+                      backgroundColor: "transparent"
+                    }
+                  }}
+                >
                   <Chat drawer />
                 </Drawer>
               </>

@@ -11,9 +11,11 @@ import { useProducerStore } from "../../store/producer";
 import { useMicStore } from "../../store/mic";
 import { reset } from "../../utils/reset";
 import { useShallow } from "../../hooks/use-shallow";
-import type { EventError } from "types";
+import { useUserStore } from "../../store/user";
+import { useUpdateSocketQuery } from "../../hooks/use-update-socket-query";
+import type { EventError, Room } from "types";
 
-export const useRoom = (room_id: string) => {
+export const useRoom = (room: Room) => {
   const { socket } = useSocket();
   const device = useRef(loaddevice()).current;
   const router = useRouter();
@@ -35,6 +37,7 @@ export const useRoom = (room_id: string) => {
       add: state.add
     }))
   );
+  const updatequery = useUpdateSocketQuery();
 
   const leave = useCallback(async () => {
     if (!socket) return;
@@ -48,7 +51,17 @@ export const useRoom = (room_id: string) => {
     });
 
     reset();
-  }, [socket]);
+
+    if (
+      room.visibility === "private" &&
+      room.creator._id === useUserStore.getState().user?._id
+    )
+      updatequery("rooms", (draft) => {
+        const index = draft.rooms.findIndex((r) => r._id === room._id);
+
+        if (index > -1) draft.rooms.splice(index, 1);
+      });
+  }, [socket, room.visibility, room.creator._id]);
 
   const join = useCallback(async () => {
     if (!socket) return;
@@ -67,7 +80,7 @@ export const useRoom = (room_id: string) => {
         socket,
         event: "rtp capabilities",
         payload: {
-          room_id
+          room_id: room._id
         }
       });
 
@@ -89,7 +102,7 @@ export const useRoom = (room_id: string) => {
         socket,
         event: "create transport",
         payload: {
-          room_id,
+          room_id: room._id,
           direction: "send"
         }
       });
@@ -112,7 +125,7 @@ export const useRoom = (room_id: string) => {
             socket,
             event: "connect transport",
             payload: {
-              room_id,
+              room_id: room._id,
               transport_id: sendtransport.id,
               dtls_parameters
             }
@@ -134,7 +147,7 @@ export const useRoom = (room_id: string) => {
               socket,
               event: "produce",
               payload: {
-                room_id,
+                room_id: room._id,
                 transport_id: sendtransport.id,
                 kind,
                 rtp_parameters,
@@ -155,7 +168,7 @@ export const useRoom = (room_id: string) => {
         socket,
         event: "create transport",
         payload: {
-          room_id,
+          room_id: room._id,
           direction: "receive"
         }
       });
@@ -180,7 +193,7 @@ export const useRoom = (room_id: string) => {
             socket,
             event: "connect transport",
             payload: {
-              room_id,
+              room_id: room._id,
               transport_id: receivetransport.id,
               dtls_parameters
             }
@@ -194,7 +207,7 @@ export const useRoom = (room_id: string) => {
         socket,
         event: "join",
         payload: {
-          room_id,
+          room_id: room._id,
           rtp_capabilities: device.rtpCapabilities
         }
       });
@@ -256,7 +269,7 @@ export const useRoom = (room_id: string) => {
       });
     }
   }, [
-    room_id,
+    room._id,
     socket,
     producerstore.producer,
     transportstore.send_transport,

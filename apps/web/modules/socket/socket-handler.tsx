@@ -49,6 +49,7 @@ export const SocketHandler = () => {
   const chatdrawer = useRoomChatDrawer(
     useShallow((state) => ({
       opened: state.opened,
+      unread: state.unread,
       setunread: state.setunread
     }))
   );
@@ -140,7 +141,8 @@ export const SocketHandler = () => {
       if (
         !chatdrawer.opened &&
         layout === "small" &&
-        message.creator._id !== useUserStore.getState().user?._id
+        message.creator._id !== useUserStore.getState().user?._id &&
+        !chatdrawer.unread
       )
         chatdrawer.setunread(true);
 
@@ -170,7 +172,14 @@ export const SocketHandler = () => {
     return () => {
       socket.removeAllListeners();
     };
-  }, [socket, receivetransport, notifyonjoin, layout, chatdrawer.opened]);
+  }, [
+    socket,
+    receivetransport,
+    notifyonjoin,
+    layout,
+    chatdrawer.opened,
+    chatdrawer.unread
+  ]);
 
   return null;
 };
