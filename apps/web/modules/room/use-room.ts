@@ -11,8 +11,6 @@ import { useProducerStore } from "../../store/producer";
 import { useMicStore } from "../../store/mic";
 import { reset } from "../../utils/reset";
 import { useShallow } from "../../hooks/use-shallow";
-import { useUserStore } from "../../store/user";
-import { useUpdateSocketQuery } from "../../hooks/use-update-socket-query";
 import type { EventError, Room } from "types";
 
 export const useRoom = (room: Room) => {
@@ -37,7 +35,6 @@ export const useRoom = (room: Room) => {
       add: state.add
     }))
   );
-  const updatequery = useUpdateSocketQuery();
 
   const leave = useCallback(async () => {
     if (!socket) return;
@@ -51,17 +48,7 @@ export const useRoom = (room: Room) => {
     });
 
     reset();
-
-    if (
-      room.visibility === "private" &&
-      room.creator._id === useUserStore.getState().user?._id
-    )
-      updatequery("rooms", (draft) => {
-        const index = draft.rooms.findIndex((r) => r._id === room._id);
-
-        if (index > -1) draft.rooms.splice(index, 1);
-      });
-  }, [socket, room.visibility, room.creator._id]);
+  }, [socket]);
 
   const join = useCallback(async () => {
     if (!socket) return;

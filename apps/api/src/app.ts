@@ -17,7 +17,7 @@ app.use(cors({ origin: env.WEB_URL.split(",") }));
 
 app.get(
   ["/", "/health", "/api/health"],
-  (_req, res) => void res.send({ ok: true, uptime: process.uptime() })
+  (_req, res) => void res.json({ ok: true, uptime: process.uptime() })
 );
 
 app.use("/api/rooms", roomrouter);

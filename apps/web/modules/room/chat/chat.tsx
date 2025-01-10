@@ -24,10 +24,8 @@ export const Chat: React.FC<Props> = ({ drawer }) => {
   return (
     <Box
       style={{
-        borderWidth: 1,
-        borderStyle: "solid",
-        borderColor: "var(--color-primary)",
-        height: "100%",
+        border: "1px solid var(--color-primary)",
+        height: drawer ? "100%" : "100%",
         flex: 0.6,
         padding: 7,
         minWidth: drawer ? undefined : 350,
@@ -40,8 +38,8 @@ export const Chat: React.FC<Props> = ({ drawer }) => {
         viewportRef={viewport}
         type="auto"
         scrollbarSize={6}
+        h="100%"
         style={{
-          height: drawer ? 500 : 520,
           width: "100%"
         }}
         styles={{

@@ -267,7 +267,11 @@ export class MediasoupRoom {
       }
 
       MediasoupRoom.remove(this.id);
-    }
+    } else if (
+      this.doc.visibility === "private" &&
+      this.doc.creator._id === peer.user._id
+    )
+      peer.socket.emit("delete room", { room_id: this.id });
 
     peer.socket.leave(this.id);
     peer.socket.to(this.id).emit("peer left", { peer: peer.user });

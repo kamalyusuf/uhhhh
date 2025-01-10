@@ -115,12 +115,16 @@ body,
 }
 
 .mantine-Drawer-close {
-  color: white;
+  color: white !important;
 }
 
 .mantine-Drawer-close svg {
   height: 32px !important;
   width: 32px !important;
+}
+
+.mantine-Drawer-body {
+  height: 90% !important;
 }
 
 .debug {

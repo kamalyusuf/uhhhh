@@ -100,8 +100,8 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
   if (roomstate === "connected")
     return (
       <Layout title={room.name}>
-        <Container style={{ width: "100%", height: "100%" }}>
-          <Group style={{ height: "97%" }} align="start">
+        <Container style={{ width: "100%", height: "85%" }}>
+          <Group style={{ height: "100%" }} align="start">
             <RoomPanel room={room} actions={{ leave, togglemute }} />
             {layout === "small" ? (
               <>
@@ -148,6 +148,12 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
                     },
                     header: {
                       backgroundColor: "transparent"
+                    },
+                    close: {
+                      color: "white"
+                    },
+                    body: {
+                      height: "90%"
                     }
                   }}
                 >
