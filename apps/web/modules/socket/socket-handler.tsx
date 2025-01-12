@@ -12,6 +12,7 @@ import { reset } from "../../utils/reset";
 import { useShallow } from "../../hooks/use-shallow";
 import { useRoomChatDrawer } from "../../store/room-chat-drawer";
 import { useUserStore } from "../../store/user";
+import { useSmallLayout } from "../../hooks/use-small-layout";
 
 export const SocketHandler = () => {
   const { socket } = useSocket();
@@ -29,12 +30,7 @@ export const SocketHandler = () => {
       removepeer: state.remove
     }))
   );
-  const { notifyonjoin, layout } = useSettingsStore(
-    useShallow((state) => ({
-      notifyonjoin: state.notify_on_join,
-      layout: state.layout
-    }))
-  );
+  const notifyonjoin = useSettingsStore((state) => state.notify_on_join);
   const receivetransport = useTransportStore(
     (state) => state.receive_transport
   );
@@ -53,6 +49,7 @@ export const SocketHandler = () => {
       setunread: state.setunread
     }))
   );
+  const matches = useSmallLayout();
 
   useEffect(() => {
     if (!socket) return;
@@ -140,7 +137,7 @@ export const SocketHandler = () => {
     socket.on("chat message", ({ message }) => {
       if (
         !chatdrawer.opened &&
-        layout === "small" &&
+        matches &&
         message.creator._id !== useUserStore.getState().user?._id &&
         !chatdrawer.unread
       )
@@ -176,7 +173,7 @@ export const SocketHandler = () => {
     socket,
     receivetransport,
     notifyonjoin,
-    layout,
+    matches,
     chatdrawer.opened,
     chatdrawer.unread
   ]);

@@ -19,7 +19,7 @@ import { useRouter } from "next/router";
 import { toast } from "react-toastify";
 import { IconMessage } from "@tabler/icons-react";
 import { useRoomChatDrawer } from "../../store/room-chat-drawer";
-import { useSettingsStore } from "../../store/settings";
+import { useSmallLayout } from "../../hooks/use-small-layout";
 
 interface Props {
   room: Room;
@@ -34,7 +34,7 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
   const [ok, setok] = useState(false);
   const called = useRef(false);
   const { replace, asPath } = useRouter();
-  const layout = useSettingsStore((state) => state.layout);
+  const matches = useSmallLayout();
   const { opened, open, close, unread } = useRoomChatDrawer();
 
   const locked = room.status === "protected";
@@ -103,7 +103,7 @@ export const RoomPage: PageComponent<Props> = ({ room }) => {
         <Container style={{ width: "100%", height: "85%" }}>
           <Group style={{ height: "100%" }} align="start">
             <RoomPanel room={room} actions={{ leave, togglemute }} />
-            {layout === "small" ? (
+            {matches ? (
               <>
                 <ActionIcon
                   variant="transparent"
